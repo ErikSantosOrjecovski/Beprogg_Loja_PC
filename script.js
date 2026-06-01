@@ -2,6 +2,7 @@
 // 🔹 CONTROLE DE ABAS
 // ============================
 function trocarAba(id) {
+
     document.querySelectorAll(".conteudo")
         .forEach(sec => sec.classList.remove("ativo"));
 
@@ -9,6 +10,10 @@ function trocarAba(id) {
 
     atualizarCarrinhoUI();
     atualizarResumoPagamento();
+
+    if (id === "pedidos") {
+        carregarPedidos();
+    }
 }
 
 // ============================
@@ -172,7 +177,7 @@ async function gerarRecomendacao() {
 }
 
 // ============================
-// 👤 CADASTRO
+// 👤 LOGIN / CADASTRO
 // ============================
 function fazerCadastro(event) {
 
@@ -205,11 +210,70 @@ function fazerCadastro(event) {
     }
 
     const usuario = { nome, email, senha };
+
     localStorage.setItem("usuario", JSON.stringify(usuario));
     localStorage.setItem("usuarioLogado", "true");
 
-    msg.innerText = "✅ Conta criada com sucesso!";
+    msg.innerText = "✅ Conta criada com sucesso! Você já está logado.";
     msg.style.color = "green";
+
+    document.getElementById("nome").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("senha").value = "";
+
+    atualizarStatusLogin();
+
+    setTimeout(() => {
+        trocarAba("inicio");
+    }, 1500);
+}
+
+function fazerLogin() {
+
+    const email = document.getElementById("login-email").value.trim();
+    const senha = document.getElementById("login-senha").value.trim();
+    const msg = document.getElementById("msg-login");
+
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    if (!email || !senha) {
+        msg.innerText = "❗ Preencha email e senha!";
+        msg.style.color = "red";
+        return;
+    }
+
+    if (!usuario) {
+        msg.innerText = "❗ Nenhuma conta cadastrada. Crie uma conta primeiro.";
+        msg.style.color = "red";
+        return;
+    }
+
+    if (email !== usuario.email || senha !== usuario.senha) {
+        msg.innerText = "❗ Email ou senha incorretos!";
+        msg.style.color = "red";
+        return;
+    }
+
+    localStorage.setItem("usuarioLogado", "true");
+
+    msg.innerText = "✅ Login realizado com sucesso!";
+    msg.style.color = "green";
+
+    document.getElementById("login-email").value = "";
+    document.getElementById("login-senha").value = "";
+
+    atualizarStatusLogin();
+
+    setTimeout(() => {
+        trocarAba("inicio");
+    }, 1500);
+}
+
+function sairConta() {
+    localStorage.removeItem("usuarioLogado");
+
+    atualizarStatusLogin();
+    trocarAba("login");
 }
 
 function abrirCadastro() {
@@ -218,6 +282,31 @@ function abrirCadastro() {
 
     box.style.display = "block";
     botao.style.display = "none";
+}
+
+function atualizarStatusLogin() {
+
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+
+    const authArea = document.getElementById("auth-area");
+    const authUser = document.getElementById("auth-user");
+    const menuLogin = document.getElementById("menu-login");
+    const menuPedidos = document.getElementById("menu-pedidos");
+
+    if (!authArea || !authUser || !menuLogin) return;
+
+    if (usuario && usuarioLogado === "true") {
+        authArea.style.display = "flex";
+        authUser.innerText = "👤 Logado como: " + usuario.nome;
+        menuLogin.style.display = "none";
+        if (menuPedidos) menuPedidos.style.display = "block";
+    } else {
+        authArea.style.display = "none";
+        authUser.innerText = "";
+        menuLogin.style.display = "block";
+        if (menuPedidos) menuPedidos.style.display = "none";
+    }
 }
 
 // ============================
@@ -354,9 +443,91 @@ async function finalizarPedido() {
 }
 
 // ============================
+// 📦 MEUS PEDIDOS
+// ============================
+async function carregarPedidos() {
+
+    const lista = document.getElementById("lista-pedidos");
+
+    if (!lista) {
+        console.log("Elemento lista-pedidos não encontrado.");
+        return;
+    }
+
+    lista.innerHTML = "<p>⏳ Carregando seus pedidos...</p>";
+
+    try {
+
+        const response = await fetch("http://localhost:3000/pedidos");
+        const pedidos = await response.json();
+
+        if (!pedidos || pedidos.length === 0) {
+            lista.innerHTML = "<p>Nenhum pedido encontrado.</p>";
+            return;
+        }
+
+        const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+        if (!usuario) {
+            lista.innerHTML = "<p>⚠️ Faça login para ver seus pedidos.</p>";
+            return;
+        }
+
+        const pedidosDoUsuario = pedidos.filter(pedido => {
+            return pedido.usuario && pedido.usuario.email === usuario.email;
+        });
+
+        if (pedidosDoUsuario.length === 0) {
+            lista.innerHTML = "<p>Você ainda não realizou nenhum pedido com esta conta.</p>";
+            return;
+        }
+
+        lista.innerHTML = "";
+
+        pedidosDoUsuario.reverse().forEach((pedido, index) => {
+
+            let itensHTML = "";
+            let total = 0;
+
+            pedido.itens.forEach(item => {
+                total += item.preco;
+                itensHTML += `<li>${item.nome} - R$ ${item.preco}</li>`;
+            });
+
+            lista.innerHTML += `
+                <div class="card">
+                    <h3>📦 Pedido #${pedidosDoUsuario.length - index}</h3>
+
+                    <p><strong>Cliente:</strong> ${pedido.cliente}</p>
+                    <p><strong>Data:</strong> ${pedido.data}</p>
+                    <p><strong>Pagamento:</strong> ${pedido.pagamento}</p>
+
+                    <p><strong>Itens:</strong></p>
+                    <ul>
+                        ${itensHTML}
+                    </ul>
+
+                    <h3>Total: R$ ${total}</h3>
+                    <p><strong>Status:</strong> Pedido confirmado ✅</p>
+                </div>
+            `;
+        });
+
+    } catch (erro) {
+
+        console.log(erro);
+
+        lista.innerHTML =
+            "<p>⚠️ Não foi possível carregar os pedidos. Verifique se o backend está rodando.</p>";
+
+    }
+}
+
+// ============================
 // 🚀 INICIALIZAÇÃO
 // ============================
 window.onload = () => {
     atualizarCarrinhoUI();
     atualizarResumoPagamento();
+    atualizarStatusLogin();
 };

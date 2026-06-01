@@ -280,3 +280,33 @@ button {
     margin-top: 15px;
     font-weight: bold;
 }
+
+/* ============================
+   👤 ÁREA DO USUÁRIO LOGADO
+============================ */
+
+header {
+    position: relative;
+}
+
+.auth-area {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: #1a2332;
+    padding: 8px 12px;
+    border-radius: 10px;
+
+    color: white;
+    font-size: 14px;
+}
+
+.auth-area button {
+    padding: 6px 10px;
+    border-radius: 6px;
+}

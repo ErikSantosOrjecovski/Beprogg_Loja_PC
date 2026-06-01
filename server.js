@@ -264,6 +264,20 @@ app.post("/pedido", (req, res) => {
     });
 });
 
+// ============================
+// 📦 LISTAR PEDIDOS
+// ============================
+app.get("/pedidos", (req, res) => {
+
+    if (!fs.existsSync("pedidos.json")) {
+        return res.json([]);
+    }
+
+    const pedidos = JSON.parse(fs.readFileSync("pedidos.json"));
+
+    res.json(pedidos);
+});
+
 app.listen(3000, () => {
     console.log("Servidor rodando em http://localhost:3000");
 });
