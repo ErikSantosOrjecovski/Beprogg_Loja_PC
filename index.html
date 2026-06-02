@@ -90,6 +90,47 @@
 
     <h2>🛒 Loja Buildix</h2>
 
+    <div class="card">
+        <h3>🧩 Montar PC por Peças</h3>
+
+        <p>Selecione as peças principais para verificar se são compatíveis entre si.</p>
+
+    <select id="cpu">
+        <option value="">Escolha o processador</option>
+        <option value="amd">Ryzen 5 5600 - AMD</option>
+        <option value="intel">Intel i5 12400F - Intel</option>
+    </select><br><br>
+
+    <select id="placa-mae">
+        <option value="">Escolha a placa-mãe</option>
+        <option value="amd">Placa-mãe B550 - AMD</option>
+        <option value="intel">Placa-mãe B660 - Intel</option>
+    </select><br><br>
+
+    <select id="gpu">
+        <option value="">Escolha a placa de vídeo</option>
+        <option value="rtx4060">RTX 4060</option>
+        <option value="rtx3060">RTX 3060</option>
+    </select><br><br>
+
+    <select id="ram">
+        <option value="">Escolha a memória RAM</option>
+        <option value="ddr4">16GB DDR4</option>
+        <option value="ddr5">32GB DDR5</option>
+    </select><br><br>
+
+    <select id="fonte">
+    <option value="">Escolha a fonte</option>
+    <option value="500">Fonte 500W</option>
+    <option value="550">Fonte 550W</option>
+    <option value="650">Fonte 650W</option>
+</select><br><br>
+
+    <button onclick="verificarCompatibilidade()">Verificar Compatibilidade</button>
+
+    <div id="resultado-compatibilidade" style="margin-top:20px;"></div>
+</div>
+
     <h3>Hardware</h3>
 
     <div class="card">

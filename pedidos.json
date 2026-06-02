@@ -292,5 +292,23 @@
       }
     ],
     "data": "01/06/2026, 16:56:59"
+  },
+  {
+    "cliente": "azzax",
+    "telefone": "(41)99734-5234",
+    "endereco": "R. Pão, 123",
+    "pagamento": "Cartão",
+    "usuario": {
+      "nome": "Erik Santos Orjecovski",
+      "email": "eriksantos1133@gmail.com",
+      "senha": "TomaxxGhost22"
+    },
+    "itens": [
+      {
+        "nome": "RTX 4060",
+        "preco": 2500
+      }
+    ],
+    "data": "02/06/2026, 15:09:19"
   }
 ]

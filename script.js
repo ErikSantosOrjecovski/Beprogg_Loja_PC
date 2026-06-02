@@ -531,3 +531,134 @@ window.onload = () => {
     atualizarResumoPagamento();
     atualizarStatusLogin();
 };
+
+// ============================
+// 🧩 COMPATIBILIDADE DE HARDWARE
+// ============================
+function verificarCompatibilidade() {
+
+    const cpu = document.getElementById("cpu").value;
+    const placaMae = document.getElementById("placa-mae").value;
+    const gpu = document.getElementById("gpu").value;
+    const ram = document.getElementById("ram").value;
+    const fonte = document.getElementById("fonte").value;
+
+    const resultado = document.getElementById("resultado-compatibilidade");
+
+    function adicionarBuildAoCarrinho() {
+
+    const cpu = document.getElementById("cpu").value;
+    const placaMae = document.getElementById("placa-mae").value;
+    const gpu = document.getElementById("gpu").value;
+    const ram = document.getElementById("ram").value;
+    const fonte = document.getElementById("fonte").value;
+
+    carrinho = [];
+
+    const nomes = {
+        amd: "Ryzen 5 5600",
+        intel: "Intel i5 12400F",
+        rtx4060: "RTX 4060",
+        rtx3060: "RTX 3060",
+        ddr4: "16GB DDR4",
+        ddr5: "32GB DDR5",
+        "500": "Fonte 500W",
+        "550": "Fonte 550W",
+        "650": "Fonte 650W"
+    };
+
+    carrinho.push({ nome: nomes[cpu], preco: gerarPrecoFake(nomes[cpu]) });
+    carrinho.push({ nome: placaMae === "amd" ? "Placa-mãe B550" : "Placa-mãe B660", preco: placaMae === "amd" ? 700 : 900 });
+    carrinho.push({ nome: nomes[gpu], preco: gerarPrecoFake(nomes[gpu]) });
+    carrinho.push({ nome: nomes[ram], preco: ram === "ddr4" ? 350 : 600 });
+    carrinho.push({ nome: nomes[fonte], preco: fonte === "500" ? 250 : fonte === "550" ? 320 : 450 });
+
+    salvarCarrinho();
+    atualizarCarrinhoUI();
+    atualizarResumoPagamento();
+
+    document.getElementById("resultado-compatibilidade").innerHTML =
+        "✅ Build completa adicionada ao carrinho com sucesso!";
+}
+
+    if (!cpu || !placaMae || !gpu || !ram || !fonte) {
+        resultado.innerHTML = "⚠️ Preencha todos os campos antes de verificar a compatibilidade.";
+        resultado.style.color = "orange";
+        return;
+    }
+
+    if (cpu !== placaMae) {
+        resultado.innerHTML = "❌ Incompatibilidade detectada! Processador e placa-mãe utilizam plataformas diferentes.";
+        resultado.style.color = "red";
+        return;
+    }
+
+    if (placaMae === "amd" && ram !== "ddr4") {
+        resultado.innerHTML = "❌ A placa-mãe B550 suporta apenas memória DDR4.";
+        resultado.style.color = "red";
+        return;
+    }
+
+    if (placaMae === "intel" && ram !== "ddr5") {
+        resultado.innerHTML = "❌ A placa-mãe B660 suporta apenas memória DDR5.";
+        resultado.style.color = "red";
+        return;
+    }
+
+    if (gpu === "rtx3060" && Number(fonte) < 550) {
+        resultado.innerHTML = "❌ A RTX 3060 precisa de uma fonte de pelo menos 550W.";
+        resultado.style.color = "red";
+        return;
+    }
+
+    if (gpu === "rtx4060" && Number(fonte) < 650) {
+        resultado.innerHTML = "❌ A RTX 4060 precisa de uma fonte de pelo menos 650W.";
+        resultado.style.color = "red";
+        return;
+    }
+
+    resultado.style.color = "lightgreen";
+    resultado.innerHTML = `
+        ✅ Peças compatíveis! Sua configuração pode ser montada com segurança.<br><br>
+        <button onclick="adicionarBuildAoCarrinho()">🛒 Adicionar Build ao Carrinho</button>
+    `;
+}
+
+// ============================
+// 🛒 ADICIONAR BUILD AO CARRINHO
+// ============================
+function adicionarBuildAoCarrinho() {
+
+    const cpu = document.getElementById("cpu").value;
+    const placaMae = document.getElementById("placa-mae").value;
+    const gpu = document.getElementById("gpu").value;
+    const ram = document.getElementById("ram").value;
+    const fonte = document.getElementById("fonte").value;
+
+    carrinho = [];
+
+    const nomes = {
+        amd: "Ryzen 5 5600",
+        intel: "Intel i5 12400F",
+        rtx4060: "RTX 4060",
+        rtx3060: "RTX 3060",
+        ddr4: "16GB DDR4",
+        ddr5: "32GB DDR5",
+        "500": "Fonte 500W",
+        "550": "Fonte 550W",
+        "650": "Fonte 650W"
+    };
+
+    carrinho.push({ nome: nomes[cpu], preco: gerarPrecoFake(nomes[cpu]) });
+    carrinho.push({ nome: placaMae === "amd" ? "Placa-mãe B550" : "Placa-mãe B660", preco: placaMae === "amd" ? 700 : 900 });
+    carrinho.push({ nome: nomes[gpu], preco: gerarPrecoFake(nomes[gpu]) });
+    carrinho.push({ nome: nomes[ram], preco: ram === "ddr4" ? 350 : 600 });
+    carrinho.push({ nome: nomes[fonte], preco: fonte === "500" ? 250 : fonte === "550" ? 320 : 450 });
+
+    salvarCarrinho();
+    atualizarCarrinhoUI();
+    atualizarResumoPagamento();
+
+    document.getElementById("resultado-compatibilidade").innerHTML =
+        "✅ Build completa adicionada ao carrinho com sucesso!";
+}
