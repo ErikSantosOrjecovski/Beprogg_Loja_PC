@@ -251,18 +251,6 @@ button {
     margin-top: 10px;
 }
 
-.produto-img{
-    width: 100%;
-    height: 180px;
-    object-fit: contain;
-    margin-bottom: 10px;
-    transition: 0.3s ease;
-}
-
-.produto-img:hover{
-    transform: scale(1.05);
-}
-
 /* ============================
    💳 PAGAMENTO LADO A LADO
 ============================ */
@@ -346,13 +334,13 @@ header {
     filter:
         drop-shadow(0 0 8px #00cfff)
         drop-shadow(0 0 15px #0099ff)
-}
-   .imagem {
+        
     object-fit: contain;
     mix-blend-mode: screen;
     filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
     transition: all .3s ease;
 }
+
 .logo-img:hover {
     transform: scale(1.05);
     filter:
@@ -445,5 +433,127 @@ header {
     #loja .grade-produtos {
         grid-template-columns: 1fr;
         max-width: 320px;
+    }
+}
+
+/* ============================
+   AJUSTE FINAL DO GRID DA LOJA
+============================ */
+
+#loja .grade-produtos {
+    display: grid;
+    grid-template-columns: repeat(4, 220px);
+    justify-content: center;
+    gap: 28px;
+    margin: 35px auto 60px auto;
+}
+
+#loja .grade-produtos .card {
+    width: 220px !important;
+    min-height: 150px;
+    margin: 0 !important;
+    border-radius: 10px;
+}
+
+@media (max-width: 1000px) {
+    #loja .grade-produtos {
+        grid-template-columns: repeat(2, 220px);
+    }
+}
+
+@media (max-width: 600px) {
+    #loja .grade-produtos {
+        grid-template-columns: 220px;
+    }
+}
+
+/* FORÇAR ESPAÇAMENTO ENTRE CARDS DA LOJA */
+
+#loja .grade-produtos {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    flex-wrap: wrap !important;
+    gap: 28px !important;
+
+    max-width: 1100px !important;
+    margin: 35px auto 60px auto !important;
+}
+
+#loja .grade-produtos .card {
+    width: 220px !important;
+    max-width: 220px !important;
+    min-width: 220px !important;
+
+    height: 150px !important;
+    min-height: 150px !important;
+
+    margin: 0 !important;
+    padding: 25px !important;
+
+    border-radius: 12px !important;
+}
+
+/* ============================
+   GRID DA LOJA - 2 POR LINHA FINAL
+============================ */
+
+#loja .grade-produtos {
+    display: grid !important;
+    grid-template-columns: repeat(2, 320px) !important;
+    justify-content: center !important;
+    column-gap: 35px !important;
+    row-gap: 30px !important;
+
+    max-width: 650px !important;
+    margin: 35px auto 60px auto !important;
+}
+
+#loja .grade-produtos .card {
+    width: 320px !important;
+    max-width: 320px !important;
+    min-width: 320px !important;
+
+    min-height: 150px !important;
+    margin: 0 !important;
+    padding: 25px !important;
+    border-radius: 12px !important;
+
+    background-color: #1b2533 !important;
+    box-sizing: border-box !important;
+}
+
+@media (max-width: 600px) {
+    #loja .grade-produtos {
+        grid-template-columns: 260px !important;
+    }
+}
+
+/* ============================
+   IMAGENS DOS PRODUTOS - PEDRO
+============================ */
+
+.produto-img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    transition: 0.3s ease;
+}
+
+.produto-img:hover {
+    transform: scale(1.05);
+}
+
+/* Ajuste dos cards da loja para comportar imagem */
+#loja .grade-produtos .card {
+    min-height: 330px !important;
+    height: auto !important;
+}
+
+/* Evita imagem gigante no celular */
+@media (max-width: 600px) {
+    .produto-img {
+        height: 150px;
     }
 }

@@ -1,16 +1,40 @@
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
+const mysql = require("mysql2"); // 🔌 Importando o driver do banco de dados
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// ==========================================
+// 🔌 CONEXÃO COM O BANCO DE DADOS BEPROGG
+// ==========================================
+const db = mysql.createConnection({
+    host: '127.0.0.1',
+    user: 'root',
+    password: 'mysql', // 💡 Senha padrão que funcionou no teste do Workbench
+    database: 'beprogg',
+    port: 3306
+});
+
+db.connect((err) => {
+    if (err) {
+        console.error('❌ Erro ao conectar ao banco MySQL:', err.message);
+        return;
+    }
+    console.log('🚀 Conectado com sucesso ao banco de dados beprogg!');
+});
+
+// Rota inicial
 app.get("/", (req, res) => {
     res.send("Servidor Buildix funcionando 🚀");
 });
 
+// ==========================================
+// 🤖 SISTEMA DE RECOMENDAÇÃO (IA BUILDIX)
+// ==========================================
 app.post("/recomendar", (req, res) => {
 
     const { uso, jogo } = req.body;
@@ -237,7 +261,7 @@ Excelente para jogos AAA atuais e futuros.
 });
 
 // ============================
-// 💳 RECEBER PEDIDOS
+// 💳 RECEBER PEDIDOS (Módulo Loja)
 // ============================
 app.post("/pedido", (req, res) => {
 
@@ -265,7 +289,7 @@ app.post("/pedido", (req, res) => {
 });
 
 // ============================
-// 📦 LISTAR PEDIDOS
+// 📦 LISTAR PEDIDOS (Módulo Loja)
 // ============================
 app.get("/pedidos", (req, res) => {
 
@@ -278,6 +302,22 @@ app.get("/pedidos", (req, res) => {
     res.json(pedidos);
 });
 
+// ==========================================
+// 🎓 MÓDULO ACADEMY - BUSCAR CURSOS DO BANCO
+// ==========================================
+app.get("/cursos", (req, res) => {
+    const query = 'SELECT * FROM cursos';
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Erro na busca de cursos:", err);
+            return res.status(500).json({ error: 'Erro ao buscar os cursos no banco de dados.' });
+        }
+        res.json(results);
+    });
+});
+
+// Iniciando o servidor
 app.listen(3000, () => {
     console.log("Servidor rodando em http://localhost:3000");
 });

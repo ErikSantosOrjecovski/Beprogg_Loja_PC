@@ -11,7 +11,7 @@
     <div class="logo" onclick="trocarAba('inicio')">
 
     <img
-        src="imagens/Design sem nome (2).png"
+        src="imagens/logo-bepro.png.jpeg"
         alt="Bepro.gg"
         class="logo-img"
     >
@@ -97,226 +97,222 @@
 
     <div class="card">
         <h3>🧩 Montar PC por Peças</h3>
-
         <p>Selecione as peças principais para verificar se são compatíveis entre si.</p>
 
-    <select id="cpu">
-        <option value="">Escolha o processador</option>
-        <option value="amd">Ryzen 5 5600 - AMD</option>
-        <option value="intel">Intel i5 12400F - Intel</option>
-    </select><br><br>
+        <select id="cpu">
+            <option value="">Escolha o processador</option>
+            <option value="amd">Ryzen 5 5600 - AMD</option>
+            <option value="intel">Intel i5 12400F - Intel</option>
+        </select><br><br>
 
-    <select id="placa-mae">
-        <option value="">Escolha a placa-mãe</option>
-        <option value="amd">Placa-mãe B550 - AMD</option>
-        <option value="intel">Placa-mãe B660 - Intel</option>
-    </select><br><br>
+        <select id="placa-mae">
+            <option value="">Escolha a placa-mãe</option>
+            <option value="amd">Placa-mãe B550 - AMD</option>
+            <option value="intel">Placa-mãe B660 - Intel</option>
+        </select><br><br>
 
-    <select id="gpu">
-        <option value="">Escolha a placa de vídeo</option>
-        <option value="rtx4060">RTX 4060</option>
-        <option value="rtx3060">RTX 3060</option>
-    </select><br><br>
+        <select id="gpu">
+            <option value="">Escolha a placa de vídeo</option>
+            <option value="rtx4060">RTX 4060</option>
+            <option value="rtx3060">RTX 3060</option>
+        </select><br><br>
 
-    <select id="ram">
-        <option value="">Escolha a memória RAM</option>
-        <option value="ddr4">16GB DDR4</option>
-        <option value="ddr5">32GB DDR5</option>
-    </select><br><br>
+        <select id="ram">
+            <option value="">Escolha a memória RAM</option>
+            <option value="ddr4">16GB DDR4</option>
+            <option value="ddr5">32GB DDR5</option>
+        </select><br><br>
 
-    <select id="fonte">
-    <option value="">Escolha a fonte</option>
-    <option value="500">Fonte 500W</option>
-    <option value="550">Fonte 550W</option>
-    <option value="650">Fonte 650W</option>
-</select><br><br>
+        <select id="fonte">
+            <option value="">Escolha a fonte</option>
+            <option value="500">Fonte 500W</option>
+            <option value="550">Fonte 550W</option>
+            <option value="650">Fonte 650W</option>
+        </select><br><br>
 
-    <button onclick="verificarCompatibilidade()">Verificar Compatibilidade</button>
-
-    <div id="resultado-compatibilidade" style="margin-top:20px;"></div>
-</div>
+        <button onclick="verificarCompatibilidade()">Verificar Compatibilidade</button>
+        <div id="resultado-compatibilidade" style="margin-top:20px;"></div>
+    </div>
 
     <h3>🔥 Processadores</h3>
 
-<div class="grade-produtos">
+    <div class="grade-produtos">
 
-    <div class="card">
-        <img src="imagens/AmdRyzen5_5500_6-core.webp" alt="Ryzen 5 5600" class="produto-img">
-        <h3>Ryzen 5 5600</h3>
-        <p>R$ 800</p>
-        <button onclick="adicionarAoCarrinho('Ryzen 5 5600')">Adicionar</button>
+        <div class="card">
+            <img src="imagens/andryzen5-5560.jpg" alt="Ryzen 5 5600" class="produto-img">
+            <h3>Ryzen 5 5600</h3>
+            <p>R$ 800</p>
+            <button onclick="adicionarAoCarrinho('Ryzen 5 5600')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/amdryzen7-5700x.jpg" alt="Ryzen 7 5700X" class="produto-img">
+            <h3>Ryzen 7 5700X</h3>
+            <p>R$ 1300</p>
+            <button onclick="adicionarAoCarrinho('Ryzen 7 5700X')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/intelcore-i5.jpg" alt="Intel i5 12400F" class="produto-img">
+            <h3>Intel i5 12400F</h3>
+            <p>R$ 900</p>
+            <button onclick="adicionarAoCarrinho('Intel i5 12400F')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/intelcore-i7.jpg" alt="Intel i7 12700F" class="produto-img">
+            <h3>Intel i7 12700F</h3>
+            <p>R$ 1800</p>
+            <button onclick="adicionarAoCarrinho('Intel i7 12700F')">Adicionar</button>
+        </div>
+
     </div>
 
-    <div class="card">
-        <img src="imagens/amdryzez7.webp" alt="Ryzen 7 5700X" class="produto-img">
-        <h3>Ryzen 7 5700X</h3>
-        <p>R$ 1300</p>
-        <button onclick="adicionarAoCarrinho('Ryzen 7 5700X')">Adicionar</button>
+    <hr>
+
+    <h3>🖥️ Placas de Vídeo</h3>
+
+    <div class="grade-produtos">
+
+        <div class="card">
+            <img src="imagens/rtx3060.jpg" alt="RTX 3060" class="produto-img">
+            <h3>RTX 3060</h3>
+            <p>R$ 1800</p>
+            <button onclick="adicionarAoCarrinho('RTX 3060')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/rtx4060.jpg" alt="RTX 4060" class="produto-img">
+            <h3>RTX 4060</h3>
+            <p>R$ 2500</p>
+            <button onclick="adicionarAoCarrinho('RTX 4060')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/rtx4070.jpg" alt="RTX 4070" class="produto-img">
+            <h3>RTX 4070</h3>
+            <p>R$ 3900</p>
+            <button onclick="adicionarAoCarrinho('RTX 4070')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/rx7600.jpg" alt="RX 7600" class="produto-img">
+            <h3>RX 7600</h3>
+            <p>R$ 2200</p>
+            <button onclick="adicionarAoCarrinho('RX 7600')">Adicionar</button>
+        </div>
+
     </div>
 
-    <div class="card">
-        <img src="imagens/intelcorei5.png" alt="Intel Core I5 12400F" class="produto-img">
-        <h3>Intel i5 12400F</h3>
-        <p>R$ 900</p>
-        <button onclick="adicionarAoCarrinho('Intel i5 12400F')">Adicionar</button>
+    <hr>
+
+    <h3>⚡ Memórias RAM</h3>
+
+    <div class="grade-produtos">
+
+        <div class="card">
+            <img src="imagens/ram16gb-ddr4.jpg" alt="16GB DDR4" class="produto-img">
+            <h3>16GB DDR4</h3>
+            <p>R$ 350</p>
+            <button onclick="adicionarAoCarrinho('16GB DDR4')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/ram32gb-ddr4.jpg" alt="32GB DDR4" class="produto-img">
+            <h3>32GB DDR4</h3>
+            <p>R$ 650</p>
+            <button onclick="adicionarAoCarrinho('32GB DDR4')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/ram16gb-ddr5.jpg" alt="16GB DDR5" class="produto-img">
+            <h3>16GB DDR5</h3>
+            <p>R$ 550</p>
+            <button onclick="adicionarAoCarrinho('16GB DDR5')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/ram32gb-ddr5.jpg" alt="32GB DDR5" class="produto-img">
+            <h3>32GB DDR5</h3>
+            <p>R$ 950</p>
+            <button onclick="adicionarAoCarrinho('32GB DDR5')">Adicionar</button>
+        </div>
+
     </div>
 
-    <div class="card">
-        <img src="imagens/intel i7.png" alt="Intel Core I5 12400F" class="produto-img">
-        <h3>Intel i7 12700F</h3>
-        <p>R$ 1800</p>
-        <button onclick="adicionarAoCarrinho('Intel i7 12700F')">Adicionar</button>
+    <hr>
+
+    <h3>🔌 Fontes</h3>
+
+    <div class="grade-produtos">
+
+        <div class="card">
+            <img src="imagens/fonte550w.jpg" alt="Fonte 550W" class="produto-img">
+            <h3>Fonte 550W</h3>
+            <p>R$ 320</p>
+            <button onclick="adicionarAoCarrinho('Fonte 550W')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/fonte650w.jpg" alt="Fonte 650W" class="produto-img">
+            <h3>Fonte 650W</h3>
+            <p>R$ 420</p>
+            <button onclick="adicionarAoCarrinho('Fonte 650W')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/fonte750w.jpg" alt="Fonte 750W" class="produto-img">
+            <h3>Fonte 750W</h3>
+            <p>R$ 550</p>
+            <button onclick="adicionarAoCarrinho('Fonte 750W')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/fonte850w.jpg" alt="Fonte 850W" class="produto-img">
+            <h3>Fonte 850W</h3>
+            <p>R$ 690</p>
+            <button onclick="adicionarAoCarrinho('Fonte 850W')">Adicionar</button>
+        </div>
+
     </div>
 
-</div>
+    <hr>
 
-<hr>
+    <h3>🧩 Placas-Mãe</h3>
 
-<h3>🖥️ Placas de Vídeo</h3>
+    <div class="grade-produtos">
 
-<div class="grade-produtos">
+        <div class="card">
+            <img src="imagens/placamaeb550.jpg" alt="Placa-Mãe B550" class="produto-img">
+            <h3>B550</h3>
+            <p>R$ 700</p>
+            <button onclick="adicionarAoCarrinho('B550')">Adicionar</button>
+        </div>
 
-    <div class="card">
-        <img src="imagens/rtx3060.jpg" alt="RTX 3060" class="produto-img">
-        <h3>RTX 3060</h3>
-        <p>R$ 1800</p>
-        <button onclick="adicionarAoCarrinho('RTX 3060')">Adicionar</button>
+        <div class="card">
+            <img src="imagens/placamaex570.jpg" alt="Placa-Mãe X570" class="produto-img">
+            <h3>X570</h3>
+            <p>R$ 1200</p>
+            <button onclick="adicionarAoCarrinho('X570')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/placamaeb660.jpg" alt="Placa-Mãe B660" class="produto-img">
+            <h3>B660</h3>
+            <p>R$ 850</p>
+            <button onclick="adicionarAoCarrinho('B660')">Adicionar</button>
+        </div>
+
+        <div class="card">
+            <img src="imagens/placamaez690.jpg" alt="Placa-Mãe Z690" class="produto-img">
+            <h3>Z690</h3>
+            <p>R$ 1600</p>
+            <button onclick="adicionarAoCarrinho('Z690')">Adicionar</button>
+        </div>
+
     </div>
 
-    <div class="card">
-        <img src="imagens/rtx4060.jpg" alt="RTX 4060" class="produto-img">
-        <h3>RTX 4060</h3>
-        <p>R$ 2500</p>
-        <button onclick="adicionarAoCarrinho('RTX 4060')">Adicionar</button>
-    </div>
-
-    <div class="card">
-         <img src="imagens/rtx4070.jpg" alt="RTX 4070" class="produto-img">
-        <h3>RTX 4070</h3>
-        <p>R$ 3900</p>
-        <button onclick="adicionarAoCarrinho('RTX 4070')">Adicionar</button>
-    </div>
-
-    <div class="card">
-         <img src="imagens/rx7600.jpg" alt="RX 7600" class="produto-img">
-        <h3>RX 7600</h3>
-        <p>R$ 2200</p>
-        <button onclick="adicionarAoCarrinho('RX 7600')">Adicionar</button>
-    </div>
-
-</div>
-
-<hr>
-
-<h3>⚡ Memórias RAM</h3>
-
-<div class="grade-produtos">
-
-    <div class="card">
-        <img src="imagens/ram16gb-ddr4.jpg" alt="16GB DDR4" class="produto-img">
-        <h3>16GB DDR4</h3>
-        <p>R$ 350</p>
-        <button onclick="adicionarAoCarrinho('16GB DDR4')">Adicionar</button>
-    </div>
-
-    <div class="card">
-        <img src="imagens/ram32gb-ddr4.jpg" alt="32GB DDR4" class="produto-img">
-        <h3>32GB DDR4</h3>
-        <p>R$ 650</p>
-        <button onclick="adicionarAoCarrinho('32GB DDR4')">Adicionar</button>
-    </div>
-
-    <div class="card">
-        <img src="imagens/ram16gb-ddr5.jpg" alt="16GB DDR5" class="produto-img">
-        <h3>16GB DDR5</h3>
-        <p>R$ 550</p>
-        <button onclick="adicionarAoCarrinho('16GB DDR5')">Adicionar</button>
-    </div>
-
-    <div class="card">
-        <img src="imagens/ram32gb-ddr5.jpg" alt="32GB DDR5" class="produto-img">
-        <h3>32GB DDR5</h3>
-        <p>R$ 950</p>
-        <button onclick="adicionarAoCarrinho('32GB DDR5')">Adicionar</button>
-    </div>
-
-</div>
-
-<hr>
-
-<h3>🔌 Fontes</h3>
-
-<div class="grade-produtos">
-
-    <div class="card">
-        <img src="imagens/fonte550w.jpg" alt="Fonte 550W" class="produto-img">
-        <h3>Fonte 550W</h3>
-        <p>R$ 320</p>
-        <button onclick="adicionarAoCarrinho('Fonte 550W')">Adicionar</button>
-    </div>
-
-    <div class="card">
-        <img src="imagens/fonte650w.jpg" alt="Fonte 650W" class="produto-img">
-        <h3>Fonte 650W</h3>
-        <p>R$ 420</p>
-        <button onclick="adicionarAoCarrinho('Fonte 650W')">Adicionar</button>
-    </div>
-
-    <div class="card">
-        <img src="imagens/fonte750w.jpg" alt="Fonte 750W" class="produto-img">
-        <h3>Fonte 750W</h3>
-        <p>R$ 550</p>
-        <button onclick="adicionarAoCarrinho('Fonte 750W')">Adicionar</button>
-    </div>
-
-    <div class="card">
-        <img src="imagens/fonte850w.jpg" alt="Fonte 850W" class="produto-img">
-        <h3>Fonte 850W</h3>
-        <p>R$ 690</p>
-        <button onclick="adicionarAoCarrinho('Fonte 850W')">Adicionar</button>
-    </div>
-
-</div>
-
-<hr>
-
-<h3>🧩 Placas-Mãe</h3>
-
-<div class="grade-produtos">
-
-    <div class="card">
-        <img src="imagens/placamaeb550.jpg" alt="Placa-Mãe B550" class="produto-img">
-        <h3>B550</h3>
-        <p>R$ 700</p>
-        <button onclick="adicionarAoCarrinho('B550')">Adicionar</button>
-    </div>
-
-    <div class="card">
-        <img src="imagens/placamaex570.jpg" alt="Placa-Mãe X570" class="produto-img">
-        <h3>X570</h3>
-        <p>R$ 1200</p>
-        <button onclick="adicionarAoCarrinho('X570')">Adicionar</button>
-    </div>
-
-    <div class="card">
-        <img src="imagens/placamaeb660-2.jpg" alt="Placa-Mãe B660" class="produto-img">
-        <h3>B660</h3>
-        <p>R$ 850</p>
-        <button onclick="adicionarAoCarrinho('B660')">Adicionar</button>
-    </div>
-
-    <div class="card">
-        <img src="imagens/placamaez690.jpg" alt="Placa-Mãe Z690" class="produto-img">
-        <h3>Z690</h3>
-        <p>R$ 1600</p>
-        <button onclick="adicionarAoCarrinho('Z690')">Adicionar</button>
-    </div>
-
-</div>
-
-<hr>
-
-<hr>
+    <hr>
 
     <h3>🛒 Seu Carrinho</h3>
 
@@ -326,6 +322,7 @@
     <button onclick="trocarAba('pagamento')">Ir para Pagamento 💳</button>
 
 </section>
+
 
 <section id="pagamento" class="conteudo">
 
@@ -361,35 +358,17 @@
 
 <section id="coach" class="conteudo">
 
-    <h2>🎮 Coach Gamer Buildix</h2>
+    <h2>🎮 Coach Gamer Bepro.gg</h2>
 
     <p>
         Aprenda a melhorar seu desempenho competitivo,
         otimizar FPS e configurar seus jogos.
     </p>
 
-    <div class="card">
-        <h3>⚡ Como aumentar FPS no Fortnite</h3>
-        <p>
-            Configurações competitivas para reduzir input lag
-            e aumentar desempenho.
-        </p>
-    </div>
+    <h3>📚 Cursos disponíveis</h3>
 
-    <div class="card">
-        <h3>🎯 Melhor sensibilidade para CS</h3>
-        <p>
-            Dicas de sensibilidade, DPI e precisão para competitivo.
-        </p>
-    </div>
+    <div id="lista-cursos"></div>
 
-    <div class="card">
-        <h3>🖥️ Como escolher seu PC Gamer</h3>
-        <p>
-            Aprenda a diferença entre foco em FPS
-            e foco em qualidade gráfica.
-        </p>
-    </div>
 </section>
 
 <!-- MEUS PEDIDOS -->

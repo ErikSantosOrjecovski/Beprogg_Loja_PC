@@ -14,6 +14,10 @@ function trocarAba(id) {
     if (id === "pedidos") {
         carregarPedidos();
     }
+
+    if (id === "coach") {
+    carregarCursos();
+}
 }
 
 // ============================
@@ -661,4 +665,36 @@ function adicionarBuildAoCarrinho() {
 
     document.getElementById("resultado-compatibilidade").innerHTML =
         "✅ Build completa adicionada ao carrinho com sucesso!";
+}
+
+// ============================
+// 🎓 CARREGAR CURSOS DO BANCO
+// ============================
+async function carregarCursos() {
+    const lista = document.getElementById("lista-cursos");
+
+    if (!lista) return;
+
+    lista.innerHTML = "<p>⏳ Carregando cursos...</p>";
+
+    try {
+        const response = await fetch("http://localhost:3000/cursos");
+        const cursos = await response.json();
+
+        lista.innerHTML = "";
+
+        cursos.forEach(curso => {
+            lista.innerHTML += `
+                <div class="card">
+                    <h3>🎓 ${curso.nome}</h3>
+                    <p>${curso.descricao}</p>
+                    <h3>R$ ${curso.preco}</h3>
+                    <button>Ver detalhes</button>
+                </div>
+            `;
+        });
+
+    } catch (error) {
+        lista.innerHTML = "<p>❌ Erro ao carregar cursos do banco.</p>";
+    }
 }
