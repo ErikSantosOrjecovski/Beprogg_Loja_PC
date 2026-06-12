@@ -29,7 +29,7 @@ db.connect((err) => {
 
 // Rota inicial
 app.get("/", (req, res) => {
-    res.send("Servidor Buildix funcionando 🚀");
+    res.send("Servidor Bepro.gg funcionando 🚀");
 });
 
 // ==========================================
@@ -306,7 +306,7 @@ app.get("/pedidos", (req, res) => {
 // 🎓 MÓDULO ACADEMY - BUSCAR CURSOS DO BANCO
 // ==========================================
 app.get("/cursos", (req, res) => {
-    const query = 'SELECT * FROM cursos';
+    const query = 'SELECT * FROM aulas_coach';
     
     db.query(query, (err, results) => {
         if (err) {

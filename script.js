@@ -2,7 +2,6 @@
 // 🔹 CONTROLE DE ABAS
 // ============================
 function trocarAba(id) {
-
     document.querySelectorAll(".conteudo")
         .forEach(sec => sec.classList.remove("ativo"));
 
@@ -16,8 +15,8 @@ function trocarAba(id) {
     }
 
     if (id === "coach") {
-    carregarCursos();
-}
+        carregarCursos();
+    }
 }
 
 // ============================
@@ -675,7 +674,7 @@ async function carregarCursos() {
 
     if (!lista) return;
 
-    lista.innerHTML = "<p>⏳ Carregando cursos...</p>";
+    lista.innerHTML = "<p>📚 Carregando cursos...</p>";
 
     try {
         const response = await fetch("http://localhost:3000/cursos");
@@ -683,13 +682,16 @@ async function carregarCursos() {
 
         lista.innerHTML = "";
 
-        cursos.forEach(curso => {
+        cursos.forEach((curso) => {
             lista.innerHTML += `
                 <div class="card">
-                    <h3>🎓 ${curso.nome}</h3>
+                    <h3>🎓 ${curso.titulo}</h3>
                     <p>${curso.descricao}</p>
-                    <h3>R$ ${curso.preco}</h3>
-                    <button>Ver detalhes</button>
+                    <p><strong>Duração:</strong> ${curso.duracao}</p>
+                    <p><strong>Professor:</strong> ${curso.professor}</p>
+                    <button onclick="mostrarDetalhesCurso('${curso.titulo}', '${curso.descricao}', '${curso.duracao}', '${curso.professor}')">
+                        Ver detalhes
+                    </button>
                 </div>
             `;
         });
@@ -698,3 +700,26 @@ async function carregarCursos() {
         lista.innerHTML = "<p>❌ Erro ao carregar cursos do banco.</p>";
     }
 }
+
+function mostrarDetalhesCurso(titulo, descricao, duracao, professor) {
+    const mensagem = `
+📚 ${titulo}
+
+📝 Descrição:
+${descricao}
+
+⏱️ Duração:
+${duracao}
+
+👨‍🏫 Professor:
+${professor}
+
+✅ Aula disponível na Bepro.gg
+🎮 Conteúdo voltado para melhoria de desempenho gamer.
+`;
+
+    alert(mensagem);
+}
+window.addEventListener("load", () => {
+    carregarCursos();
+});
