@@ -17,6 +17,10 @@ function trocarAba(id) {
     if (id === "coach") {
         carregarCursos();
     }
+
+    if (id === "loja") {
+    carregarProdutos();
+}
 }
 
 // ============================
@@ -24,10 +28,10 @@ function trocarAba(id) {
 // ============================
 let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
-function adicionarAoCarrinho(nome) {
+function adicionarAoCarrinho(nome, preco = null) {
     const item = {
         nome,
-        preco: gerarPrecoFake(nome)
+        preco: preco !== null ? Number(preco) : gerarPrecoFake(nome)
     };
 
     carrinho.push(item);
@@ -664,6 +668,96 @@ function adicionarBuildAoCarrinho() {
 
     document.getElementById("resultado-compatibilidade").innerHTML =
         "✅ Build completa adicionada ao carrinho com sucesso!";
+}
+
+// ============================
+// 🛒 CARREGAR PRODUTOS DO BANCO
+// ============================
+
+function buscarImagemProduto(nome) {
+    const imagens = {
+        "Processador AMD Ryzen 5 5600X": "imagens/andryzen5-5560.jpg",
+        "Processador AMD Ryzen 7 5700X": "imagens/amdryzen7-5700x.jpg",
+        "Processador Intel Core i5-12400F": "imagens/intelcore-i5.jpg",
+        "Processador Intel Core i7-13700K": "imagens/intelcore-i7.jpg",
+
+        "Placa de Vídeo RTX 4060 Galax": "imagens/rtx4060.jpg",
+        "Placa de Vídeo RTX 4070 Ti MSI": "imagens/rtx4070.jpg",
+        "Placa de Vídeo RX 6600 AMD Radeon": "imagens/rx7600.jpg",
+        "Placa de Vídeo RX 7700 XT PowerColor": "imagens/rx7600.jpg",
+
+        "Memória RAM Kingston Fury Beast 8GB 3200MHz": "imagens/ram16gb-ddr4.jpg",
+        "Memória RAM Corsair Vengeance RGB Pro 16GB 3200MHz": "imagens/ram16gb-ddr4.jpg",
+        "Kit Memória RAM XPG Spectrix 32GB (2x16GB) 3600MHz": "imagens/ram32gb-ddr5.jpg",
+
+        "Fonte Corsair CV650 650W 80 Plus Bronze": "imagens/fonte650w.jpg",
+        "Fonte MSI Mag A650BN 650W 80 Plus Bronze": "imagens/fonte650w.jpg",
+        "Fonte XPG Core Reactor 850W 80 Plus Gold Modular": "imagens/fonte850w.jpg",
+
+        "Placa-Mãe ASUS TUF Gaming B550M-Plus": "imagens/placamaeb550.jpg",
+        "Placa-Mãe Gigabyte B760M AORUS ELITE": "imagens/placamaeb660.jpg",
+        "Placa-Mãe ASRock A520M-HVS": "imagens/placamaeb550.jpg",
+
+        "SSD Kingston NV2 1TB NVMe M.2": "imagens/logo-bepro.png.jpeg",
+        "SSD Crucial P3 500GB NVMe M.2": "imagens/logo-bepro.png.jpeg",
+        "SSD Sata III SanDisk Plus 480GB": "imagens/logo-bepro.png.jpeg"
+    };
+
+    return imagens[nome] || "imagens/logo-bepro.png.jpeg";
+}
+
+async function carregarProdutos() {
+    const lista = document.getElementById("lista-produtos");
+
+    if (!lista) return;
+
+    lista.innerHTML = "<p>🛒 Carregando produtos...</p>";
+
+    try {
+        const response = await fetch("http://localhost:3000/produtos");
+        const produtos = await response.json();
+
+        if (!produtos || produtos.length === 0) {
+            lista.innerHTML = "<p>Nenhum produto encontrado.</p>";
+            return;
+        }
+
+        const categorias = {};
+
+        produtos.forEach(produto => {
+            if (!categorias[produto.categoria]) {
+                categorias[produto.categoria] = [];
+            }
+
+            categorias[produto.categoria].push(produto);
+        });
+
+        lista.innerHTML = "";
+
+        Object.keys(categorias).forEach(categoria => {
+            lista.innerHTML += `<h3>📌 ${categoria}</h3>`;
+            lista.innerHTML += `<div class="grade-produtos">`;
+
+            categorias[categoria].forEach(produto => {
+                lista.innerHTML += `
+                    <div class="card">
+                    <img src="${buscarImagemProduto(produto.nome)}" alt="${produto.nome}" class="produto-img">
+                        <h3>${produto.nome}</h3>
+                        <p>${produto.descricao}</p>
+                        <h3>R$ ${Number(produto.preco).toFixed(2)}</h3>
+                        <button onclick="adicionarAoCarrinho('${produto.nome}', ${produto.preco})">
+                            Adicionar
+                        </button>
+                    </div>
+                `;
+            });
+
+            lista.innerHTML += `</div><hr>`;
+        });
+
+    } catch (error) {
+        lista.innerHTML = "<p>❌ Erro ao carregar produtos do banco.</p>";
+    }
 }
 
 // ============================

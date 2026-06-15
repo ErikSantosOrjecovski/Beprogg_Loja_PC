@@ -264,27 +264,36 @@ Excelente para jogos AAA atuais e futuros.
 // 💳 RECEBER PEDIDOS (Módulo Loja)
 // ============================
 app.post("/pedido", (req, res) => {
-
     const pedido = req.body;
 
-    console.log("📦 Novo pedido recebido:");
-    console.log(pedido);
+    const total = pedido.itens.reduce((soma, item) => soma + Number(item.preco), 0);
 
-    let pedidos = [];
+    const query = `
+        INSERT INTO pedidos 
+        (cliente, telefone, endereco, pagamento, usuario_email, usuario_nome, itens, total, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Confirmado')
+    `;
 
-    if (fs.existsSync("pedidos.json")) {
-        pedidos = JSON.parse(fs.readFileSync("pedidos.json"));
-    }
+    db.query(query, [
+        pedido.cliente,
+        pedido.telefone,
+        pedido.endereco,
+        pedido.pagamento,
+        pedido.usuario.email,
+        pedido.usuario.nome,
+        JSON.stringify(pedido.itens),
+        total
+    ], (err) => {
+        if (err) {
+            console.error("Erro ao salvar pedido no banco:", err);
+            return res.status(500).json({
+                mensagem: "❌ Erro ao salvar pedido no banco."
+            });
+        }
 
-    pedidos.push(pedido);
-
-    fs.writeFileSync(
-        "pedidos.json",
-        JSON.stringify(pedidos, null, 2)
-    );
-
-    res.json({
-        mensagem: "✅ Pedido realizado e salvo com sucesso!"
+        res.json({
+            mensagem: "✅ Pedido salvo no banco de dados com sucesso!"
+        });
     });
 });
 
@@ -292,16 +301,31 @@ app.post("/pedido", (req, res) => {
 // 📦 LISTAR PEDIDOS (Módulo Loja)
 // ============================
 app.get("/pedidos", (req, res) => {
+    const query = "SELECT * FROM pedidos ORDER BY data_pedido DESC";
 
-    if (!fs.existsSync("pedidos.json")) {
-        return res.json([]);
-    }
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Erro ao listar pedidos:", err);
+            return res.status(500).json([]);
+        }
 
-    const pedidos = JSON.parse(fs.readFileSync("pedidos.json"));
+        const pedidosFormatados = results.map(pedido => ({
+            cliente: pedido.cliente,
+            telefone: pedido.telefone,
+            endereco: pedido.endereco,
+            pagamento: pedido.pagamento,
+            usuario: {
+                nome: pedido.usuario_nome,
+                email: pedido.usuario_email
+            },
+            itens: typeof pedido.itens === "string" ? JSON.parse(pedido.itens) : pedido.itens,
+            data: new Date(pedido.data_pedido).toLocaleString("pt-BR"),
+            status: pedido.status
+        }));
 
-    res.json(pedidos);
+        res.json(pedidosFormatados);
+    });
 });
-
 // ==========================================
 // 🎓 MÓDULO ACADEMY - BUSCAR CURSOS DO BANCO
 // ==========================================
@@ -313,6 +337,22 @@ app.get("/cursos", (req, res) => {
             console.error("Erro na busca de cursos:", err);
             return res.status(500).json({ error: 'Erro ao buscar os cursos no banco de dados.' });
         }
+        res.json(results);
+    });
+});
+
+// ==========================================
+// 🛒 MÓDULO LOJA - BUSCAR PRODUTOS DO BANCO
+// ==========================================
+app.get("/produtos", (req, res) => {
+    const query = "SELECT * FROM produtos";
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Erro na busca de produtos:", err);
+            return res.status(500).json({ error: "Erro ao buscar os produtos no banco de dados." });
+        }
+
         res.json(results);
     });
 });
