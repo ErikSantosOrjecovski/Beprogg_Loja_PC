@@ -9,14 +9,12 @@
 
 <header>
     <div class="logo" onclick="trocarAba('inicio')">
-
-    <img
-        src="imagens/logo-bepro.png.jpeg"
-        alt="Bepro.gg"
-        class="logo-img"
-    >
-
-</div>
+        <img
+            src="imagens/logo-bepro.png.jpeg"
+            alt="Bepro.gg"
+            class="logo-img"
+        >
+    </div>
 
     <div id="auth-area" class="auth-area" style="display:none;">
         <span id="auth-user"></span>
@@ -53,111 +51,73 @@
 </section>
 
 <section id="monte" class="conteudo">
-    <h2>Análise Inteligente Bepro.gg</h2>
+    <h2>Análise Inteligente Bepro.gg Academy</h2>
+    <p>Selecione o seu foco competitivo para montarmos o setup ideal com periféricos profissionais.</p>
 
-    <p>Responda algumas perguntas para encontrarmos o PC ideal para você</p>
+    <div class="formulario-ia">
+        <label for="jogo" style="font-weight: bold; display: block; margin-bottom: 10px;">Qual jogo competitivo deseja?</label>
+        <select id="jogo">
+            <option value="" disabled selected>Selecione o jogo...</option>
+            <option value="fortnite">Fortnite</option>
+            <option value="valorant">Valorant</option>
+            <option value="cs2">Counter Strike 2</option>
+            <option value="r6">Rainbow Six Siege</option>
+            <option value="lol">League of Legends</option>
+            <option value="warzone">Call of Duty: Warzone</option>
+        </select>
+        <br><br>
 
-    <select id="orcamento">
-        <option value="">Qual seu orçamento?</option>
-        <option value="baixo">Até R$3000</option>
-        <option value="medio">R$3000 - R$6000</option>
-        <option value="alto">Acima de R$6000</option>
-    </select><br><br>
-
-    <select id="jogo">
-        <option value="">Qual jogo você quer rodar?</option>
-        <option value="fortnite">Fortnite</option>
-        <option value="cs2">CS2</option>
-        <option value="gta5">GTA V</option>
-        <option value="rdr2">Red Dead Redemption 2</option>
-        <option value="cyberpunk">Cyberpunk 2077</option>
-    </select><br><br>
-
-    <select id="uso">
-        <option value="">Qual seu estilo de jogo?</option>
-        <option value="fps">Competitivo (FPS alto)</option>
-        <option value="grafico">Qualidade Gráfica (Ultra)</option>
-    </select><br><br>
-
-    <button onclick="gerarRecomendacao()">Analisar</button>
+        <button onclick="gerarRecomendacao()">Analisar Setup Ideal</button>
+    </div>
 
     <div id="resultado-buildix"></div>
 
     <div id="robot" style="display:none; text-align:center; margin-top:20px;">
         <div id="robot-emoji">🤖</div>
-        <p id="robot-text">Analisando sua build...</p>
+        <p id="robot-text">Computando ecossistema de hardware competitivo para a Academy...</p>
     </div>
 
     <div id="resposta-ia" style="margin-top:20px;"></div>
 </section>
 
 <section id="loja" class="conteudo">
+    <h2 style="text-align: center; color: white; margin-bottom: 30px;">🛒 Store - Catálogo Completo</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        
+        <div>
+            <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">
+                💻 Peças e Hardware
+            </h3>
+            <div id="lista-pecas" class="grade-produtos" style="display: flex; flex-direction: column; gap: 15px;"></div>
+        </div>
 
-    <h2>🛒 Loja Buildix</h2>
+        <div>
+            <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">
+                🎮 Periféricos Premium
+            </h3>
+            <div id="lista-perifericos" class="grade-produtos" style="display: flex; flex-direction: column; gap: 15px;"></div>
+        </div>
 
-    <div class="card">
-        <h3>🧩 Montar PC por Peças</h3>
-        <p>Selecione as peças principais para verificar se são compatíveis entre si.</p>
-
-        <select id="cpu">
-            <option value="">Escolha o processador</option>
-            <option value="amd">Ryzen 5 5600 - AMD</option>
-            <option value="intel">Intel i5 12400F - Intel</option>
-        </select><br><br>
-
-        <select id="placa-mae">
-            <option value="">Escolha a placa-mãe</option>
-            <option value="amd">Placa-mãe B550 - AMD</option>
-            <option value="intel">Placa-mãe B660 - Intel</option>
-        </select><br><br>
-
-        <select id="gpu">
-            <option value="">Escolha a placa de vídeo</option>
-            <option value="rtx4060">RTX 4060</option>
-            <option value="rtx3060">RTX 3060</option>
-        </select><br><br>
-
-        <select id="ram">
-            <option value="">Escolha a memória RAM</option>
-            <option value="ddr4">16GB DDR4</option>
-            <option value="ddr5">32GB DDR5</option>
-        </select><br><br>
-
-        <select id="fonte">
-            <option value="">Escolha a fonte</option>
-            <option value="500">Fonte 500W</option>
-            <option value="550">Fonte 550W</option>
-            <option value="650">Fonte 650W</option>
-        </select><br><br>
-
-        <button onclick="verificarCompatibilidade()">Verificar Compatibilidade</button>
-        <div id="resultado-compatibilidade" style="margin-top:20px;"></div>
     </div>
 
-    <h3>🛒 Produtos disponíveis</h3>
+    <h3 style="margin-top: 40px;">🛒 Produtos disponíveis</h3>
+    <div id="lista-produtos" class="grade-produtos"></div>
 
-<div id="lista-produtos"></div>
-
-<hr>
+    <hr style="border: 1px solid #1a2332; margin: 30px 0;">
 
     <h3>🛒 Seu Carrinho</h3>
-
     <div id="lista-carrinho"></div>
     <h3 id="total-carrinho"></h3>
 
-    <button onclick="trocarAba('pagamento')">Ir para Pagamento 💳</button>
-
+    <button onclick="trocarAba('pagamento')" style="margin-bottom: 30px;">Ir para Pagamento 💳</button>
 </section>
 
-
 <section id="pagamento" class="conteudo">
-
     <h2>💳 Finalizar Compra</h2>
 
     <div class="card">
-
         <h3>📦 Dados para entrega</h3>
-
         <input id="nome-cliente" type="text" placeholder="Seu nome"><br><br>
         <input id="telefone" type="text" placeholder="Telefone"><br><br>
         <input id="endereco" type="text" placeholder="Endereço"><br><br>
@@ -170,42 +130,28 @@
         </select><br><br>
 
         <button onclick="finalizarPedido()">Finalizar Pedido</button>
-
         <p id="mensagem-pedido"></p>
-
     </div>
 
     <div class="card">
         <h3>🛒 Resumo do Pedido</h3>
         <div id="resumo-pagamento"></div>
     </div>
-
 </section>
 
 <section id="coach" class="conteudo">
-
-    <h2>🎮 Coach Gamer Bepro.gg</h2>
-
-    <p>
-        Aprenda a melhorar seu desempenho competitivo,
-        otimizar FPS e configurar seus jogos.
+    <h2>🎮 Coach Gamer Bepro.gg Academy</h2>
+    <p style="max-width: 600px; margin: 0 auto 35px auto; color: #a0aec0; line-height: 1.5;">
+        Eleve seu nível técnico aprendendo macro, micro, posicionamento e mecânicas com os maiores pro players reconhecidos do cenário mundial.
     </p>
 
-    <h3>📚 Cursos disponíveis</h3>
-
     <div id="lista-cursos"></div>
-
 </section>
 
-<!-- MEUS PEDIDOS -->
 <section id="pedidos" class="conteudo">
-
     <h2>📦 Meus Pedidos</h2>
-
     <p>Acompanhe aqui o histórico das suas compras realizadas na Buildix.</p>
-
     <div id="lista-pedidos"></div>
-
 </section>
 
 <section id="login" class="conteudo">
@@ -213,12 +159,10 @@
 
     <div id="login-box">
         <h3>Entrar na conta</h3>
-
         <input id="login-email" type="email" placeholder="Email"><br><br>
         <input id="login-senha" type="password" placeholder="Senha"><br><br>
 
         <button onclick="fazerLogin()">Entrar</button>
-
         <p id="msg-login"></p>
     </div>
 
@@ -230,14 +174,12 @@
     <div id="cadastro-box" style="display:none; margin-top:20px;">
         <form onsubmit="fazerCadastro(event)">
             <h3>Criar conta</h3>
-
             <input id="nome" type="text" placeholder="Nome"><br><br>
             <input id="email" type="email" placeholder="Email"><br><br>
             <input id="senha" type="password" placeholder="Senha"><br><br>
 
             <button type="submit">Cadastrar</button>
         </form>
-
         <p id="msg-cadastro"></p>
     </div>
 </section>

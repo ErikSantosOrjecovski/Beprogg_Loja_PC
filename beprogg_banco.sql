@@ -1,5 +1,8 @@
+-- ========================================================
+-- LIMPEZA E CRIAÇÃO DO BANCO DE DADOS (ZERA O BANCO ANTIGO)
+-- ========================================================
 DROP DATABASE IF EXISTS beprogg;
-CREATE DATABASE beprogg;
+CREATE DATABASE beprogg CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE beprogg;
 
 -- ========================================================
@@ -25,13 +28,11 @@ CREATE TABLE produtos (
     descricao TEXT
 );
 
--- Tabela de Aulas e Mentoria (Módulo Academy / Coach)
+-- Tabela de Aulas e Mentoria (Módulo Academy / Coach Adaptado)
 CREATE TABLE aulas_coach (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(150) NOT NULL,
-    duracao VARCHAR(20) NOT NULL,
-    professor VARCHAR(100) NOT NULL,
-    descricao TEXT
+    titulo VARCHAR(150) NOT NULL, -- Guardará o padrão 'Jogo - Pro Player'
+    descricao TEXT NOT NULL
 );
 
 -- Tabela de Pedidos (Carrinho de Compras integrado ao Usuário)
@@ -46,51 +47,38 @@ CREATE TABLE pedidos (
         ON DELETE SET NULL
 );
 
-
 -- ========================================================
--- 2. INSERÇÃO DOS DADOS (DML) - PRODUTOS REAIS DA LOJA
+-- 2. INSERÇÃO DOS DADOS (DML) - PRODUTOS COMBINANDO COM O SEU SCRIPT.JS
 -- ========================================================
 
+-- Corrigido 'category' para 'categoria' e adicionado todos os produtos da sua lista do JS
 INSERT INTO produtos (nome, categoria, preco, imagem_url, descricao) VALUES
--- Processadores
-('Processador AMD Ryzen 5 5600X', 'Processador', 949.00, 'img/produtos/ryzen5.jpg', '6 núcleos e 12 threads, excelente para jogos e produtividade.'),
-('Processador Intel Core i5-12400F', 'Processador', 899.00, 'img/produtos/i5-12400f.jpg', 'Desempenho de última geração com ótimo custo-benefício.'),
-('Processador AMD Ryzen 7 5700X', 'Processador', 1299.00, 'img/produtos/ryzen7.jpg', '8 núcleos de alto desempenho para setups gamers avançados.'),
-('Processador Intel Core i7-13700K', 'Processador', 2499.00, 'img/produtos/i7-13700k.jpg', 'Poder bruto para renderização, streaming e jogos pesados.'),
+-- Peças e Hardware (Categoria: 'pecas')
+('AMD Ryzen 7 7800X3D', 'pecas', 2499.00, 'img/produtos/ryzen7.jpg', 'O rei absoluto dos jogos competitivos atualmente.'),
+('Air cooler premium ou AIO 240 mm', 'pecas', 450.00, 'img/produtos/cooler.jpg', 'Refrigeração de alta performance para manter os frames estáveis.'),
+('ASRock B650M Pro RS', 'pecas', 1100.00, 'img/produtos/b650m.jpg', 'Placa-mãe robusta com VRM frio, ideal para Ryzen 7000.'),
+('NVIDIA GeForce RTX 5070 ou AMD Radeon RX 9070 XT', 'pecas', 4999.00, 'img/produtos/rtx5070.jpg', 'Próxima geração de desempenho gráfico para altíssimas taxas de atualização.'),
+('32 GB DDR5 6000 MHz CL30', 'pecas', 850.00, 'img/produtos/ram32gb.jpg', 'Kit de memórias otimizado para a plataforma AM5 com baixa latência.'),
+('SSD 1 TB NVMe PCIe 4.0', 'pecas', 450.00, 'img/produtos/ssd1tb.jpg', 'Velocidade máxima de carregamento para o Windows e jogos competitivos.'),
+('750 W 80+ Gold', 'pecas', 600.00, 'img/produtos/fonte750w.jpg', 'Eficiência e segurança energética premium para o setup.'),
+('Gabinete com bom airflow', 'pecas', 350.00, 'img/produtos/gabinete.jpg', 'Frente em mesh para garantir que suas peças trabalhem frias.'),
 
--- Placas de Vídeo
-('Placa de Vídeo RTX 4060 Galax', 'Placa de Vídeo', 2199.00, 'img/produtos/rtx4060.jpg', 'Tecnologia DLSS 3 e Ray Tracing para a nova geração.'),
-('Placa de Vídeo RX 6600 AMD Radeon', 'Placa de Vídeo', 1499.00, 'img/produtos/rx6600.jpg', 'O melhor custo-benefício para jogar em resolução Full HD.'),
-('Placa de Vídeo RTX 4070 Ti MSI', 'Placa de Vídeo', 5499.00, 'img/produtos/rtx4070ti.jpg', 'Desempenho extremo para rodar tudo no Ultra em 4K.'),
-('Placa de Vídeo RX 7700 XT PowerColor', 'Placa de Vídeo', 3199.00, 'img/produtos/rx7700xt.jpg', 'Nova arquitetura RDNA 3 com excelente estabilidade de FPS.'),
-
--- Memórias RAM
-('Memória RAM Kingston Fury Beast 8GB 3200MHz', 'Memória RAM', 189.00, 'img/produtos/ram8gb.jpg', 'Alta velocidade e dissipador térmico elegante para o seu PC.'),
-('Memória RAM Corsair Vengeance RGB Pro 16GB 3200MHz', 'Memória RAM', 399.00, 'img/produtos/ram16gb.jpg', 'Estilo RGB customizável e máxima performance de leitura.'),
-('Kit Memória RAM XPG Spectrix 32GB (2x16GB) 3600MHz', 'Memória RAM', 749.00, 'img/produtos/ram32gb.jpg', 'Ideal para multitarefas pesadas e edição de vídeo.'),
-
--- Armazenamento (SSD)
-('SSD Kingston NV2 1TB NVMe M.2', 'Armazenamento', 389.00, 'img/produtos/ssd1tb.jpg', 'Velocidades de leitura impressionantes de até 3500MB/s.'),
-('SSD Crucial P3 500GB NVMe M.2', 'Armazenamento', 249.00, 'img/produtos/ssd500gb.jpg', 'Carregamento instantâneo do sistema operacional e jogos.'),
-('SSD Sata III SanDisk Plus 480GB', 'Armazenamento', 219.00, 'img/produtos/ssdsata.jpg', 'Upgrade perfeito para ressuscitar notebooks e PCs antigos.'),
-
--- Fontes de Alimentação
-('Fonte Corsair CV650 650W 80 Plus Bronze', 'Fonte', 369.00, 'img/produtos/fonte650w.jpg', 'Energia estável e certificada para placas de vídeo modernas.'),
-('Fonte MSI Mag A650BN 650W 80 Plus Bronze', 'Fonte', 329.00, 'img/produtos/fontemsi.jpg', 'Circuito de proteção robusto e alta eficiência energética.'),
-('Fonte XPG Core Reactor 850W 80 Plus Gold Modular', 'Fonte', 699.00, 'img/produtos/fonte850w.jpg', 'Cabeamento modular para um gerenciamento de cabos perfeito.'),
-
--- Placas-Mãe
-('Placa-Mãe ASUS TUF Gaming B550M-Plus', 'Placa-Mãe', 899.00, 'img/produtos/b550m.jpg', 'Suporte total para processadores AMD Ryzen e VRM robusto.'),
-('Placa-Mãe Gigabyte B760M AORUS ELITE', 'Placa-Mãe', 1199.00, 'img/produtos/b760m.jpg', 'Pronta para processadores Intel de 12ª e 13ª geração com DDR5.'),
-('Placa-Mãe ASRock A520M-HVS', 'Placa-Mãe', 429.00, 'img/produtos/a520m.jpg', 'A opção ideal e econômica para setups de entrada.');
-
+-- Periféricos Premium (Categoria: 'perifericos')
+('Teclado Wooting 80HE', 'perifericos', 1800.00, 'img/produtos/wooting.jpg', 'Teclado analógico com Rapid Trigger, o melhor do mundo para FPS.'),
+('Mouse Logitech G Pro X Superlight 2', 'perifericos', 900.00, 'img/produtos/superlight2.jpg', 'Sensor HERO 2 de altíssima precisão e peso ultra leve de 60g.'),
+('FX Hayate Otsu v2 XL', 'perifericos', 350.00, 'img/produtos/mousepad.jpg', 'Mousepad premium feito para deslize rápido e paradas precisas.'),
+('Audeze Maxwell Wireless Gaming', 'perifericos', 2300.00, 'img/produtos/audeze.jpg', 'Áudio planar magnético de estúdio para localização perfeita de passos.'),
+('BenQ ZOWIE XL2586X+', 'perifericos', 5999.00, 'img/produtos/zowie.jpg', 'Monitor profissional de esports com tecnologia DyAc 2.'),
+('Pulsar ES Arm Sleeve', 'perifericos', 120.00, 'img/produtos/sleeve.jpg', 'Manguito de alta qualidade para consistência no deslize do braço.');
 
 -- ========================================================
--- 3. INSERÇÃO DOS DADOS - CONTEÚDO ACADEMY / COACHING
+-- 3. INSERÇÃO DOS DADOS - CATEGORIAS DE JOGOS COMPETITIVOS
 -- ========================================================
 
-INSERT INTO aulas_coach (titulo, duracao, professor, descricao) VALUES
-('Configuração Avançada de Windows para Jogos', '45 min', 'Coach Pedro', 'Aprenda a desativar processos inúteis e otimizar o sistema para ganhar FPS.'),
-('Análise de Gargalo (Bottleneck) de Hardware', '60 min', 'Coach Erik', 'Como identificar se seu processador está limitando sua placa de vídeo.'),
-('Undervolt de GPU: Menos Temperatura, Mesmo Desempenho', '30 min', 'Coach Murilo', 'Guia prático para reduzir o consumo de energia e o calor da sua placa de vídeo.'),
-('Introdução ao Overclock de Memória RAM', '50 min', 'Coach Lucas', 'Entenda como ativar o XMP/DOCP de forma segura na Bios da placa-mãe.');
+INSERT INTO aulas_coach (titulo, descricao) VALUES 
+('Fortnite - Blackoutz', 'Aprenda mecânicas avançadas de construção, highground retakes e rotas de rotação competitiva com um dos maiores nomes do Fortnite brasileiro.'),
+('Counter Strike 2 - Fallen', 'Aprenda controle de mapa, posicionamento de Awper, setups de granadas (smokes/flashes) e mentalidade de capitão com o Professor.'),
+('League of Legends - Faker', 'Domine o controle de wave na Mid Lane, visão de mapa macro, gerenciamento de recursos e tomadas de decisão que mudam o rumo da partida com o Rei.'),
+('Rainbow Six Siege - Neskwga', 'Estratégias de ataque e defesa estruturadas, posicionamento de mira (crosshair placement) e comunicação avançada de equipe em alto nível.'),
+('Valorant - FRTT', 'Otimização de utilitários de agentes, estratégias avançadas de clutch, leitura de economia e movimentação tática com o fRoD brasileiro.'),
+('Call of Duty: Warzone - TonyBoy', 'Movimentação avançada (slide cancel), gerenciamento de inventário sob pressão, escolha dos melhores loadouts do meta e rotações para o endgame.');

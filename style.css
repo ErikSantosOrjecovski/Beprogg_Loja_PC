@@ -1,27 +1,66 @@
+/* ==========================================
+   🎨 CONFIGURAÇÕES GERAIS E RESETS
+   ========================================== */
 body {
     margin: 0;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background: #0b1426;
     color: white;
 }
 
-/* HEADER */
+main {
+    padding: 20px;
+}
+
+/* ==========================================
+   📋 CONTROLE DE CONTEÚDO E ABAS (CORRIGIDO)
+   ========================================== */
+.conteudo {
+    display: none !important; /* Força sumir por padrão */
+    text-align: center;
+}
+
+/* Mostra apenas quando a div contiver as DUAS classes juntas */
+.conteudo.ativo {
+    display: block !important; /* Força aparecer apenas a aba ativa */
+}
+/* ==========================================
+   🔝 HEADER E AUTENTICAÇÃO
+   ========================================== */
 header {
     display: flex;
     justify-content: center;
     padding: 10px 0;
     background: #0d1b2a;
+    position: relative;
 }
 
 .logo {
+    cursor: pointer;
     display: flex;
-    gap: 10px;
+    justify-content: center;
     align-items: center;
+    gap: 10px;
 }
 
-.logo-img{
-    height: 70px;
-    cursor: pointer;
+.logo h1 {
+    color: #00d4ff;
+}
+
+.logo-img {
+    height: 120px;
+    width: auto;
+    object-fit: contain;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
+    transition: all 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px #00cfff) 
+            drop-shadow(0 0 25px #0099ff) 
+            drop-shadow(0 0 40px #0066ff);
 }
 
 .icone {
@@ -29,13 +68,32 @@ header {
     padding: 10px;
     border-radius: 6px;
     color: #000;
+    width: auto;
+    height: auto;
 }
 
-.logo h1 {
-    color: #00d4ff;
+.auth-area {
+    position: absolute;
+    right: 25px;
+    top: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #1a2332;
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
 }
 
-/* MENU */
+.auth-area button {
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+
+/* ==========================================
+   🗺️ MENU DE NAVEGAÇÃO
+   ========================================== */
 .menu {
     display: flex;
     justify-content: center;
@@ -48,6 +106,7 @@ header {
     padding: 10px 15px;
     border-radius: 8px;
     cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .aba:hover {
@@ -55,22 +114,9 @@ header {
     color: black;
 }
 
-/* CONTEÚDO */
-main {
-    padding: 20px;
-}
-
-.conteudo {
-    display: none;
-    text-align: center;
-}
-
-.ativo {
-    display: block;
-}
-
-/* 🔥 ESPAÇAMENTO FORTE (AGORA SIM) */
-
+/* ==========================================
+   🏠 SEÇÃO INICIAL E FOOTER
+   ========================================== */
 #inicio h2 {
     margin-bottom: 50px;
 }
@@ -91,7 +137,6 @@ main {
     margin-top: 120px;
 }
 
-/* FOOTER CAIXA PRETA */
 footer {
     background: black;
     color: white;
@@ -99,7 +144,9 @@ footer {
     text-align: center;
 }
 
-/* CARDS */
+/* ==========================================
+   📦 CARDS E BOTÕES PADRÃO
+   ========================================== */
 .card {
     background: #1a2332;
     padding: 15px;
@@ -108,32 +155,28 @@ footer {
     max-width: 300px;
 }
 
-/* BOTÕES */
 button {
     background: #00d4ff;
+    color: black;
     border: none;
-    padding: 8px;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: bold;
     cursor: pointer;
+    transition: transform 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
 }
 
 .btn-cadastro {
     margin-top: 10px;
 }
 
-#robot-emoji {
-    animation: pensar 1s infinite alternate;
-}
-
-@keyframes pensar {
-    0% { transform: scale(1); opacity: 0.7; }
-    100% { transform: scale(1.2); opacity: 1; }
-}
-
-/* 🤖 ROBÔ MELHORADO */
-/* ============================
+/* ==========================================
    🤖 ROBÔ BUILDIX ANIMADO
-============================ */
-
+   ========================================== */
 #robot {
     margin-top: 25px;
     text-align: center;
@@ -153,407 +196,11 @@ button {
     animation: textoBuildix 1.4s infinite;
 }
 
-/* ============================
-   🤖 ROBÔ BUILDIX ANIMADO
-============================ */
-
-#robot {
-    margin-top: 25px;
-    text-align: center;
-}
-
-#robot-emoji {
-    font-size: 80px;
-    display: inline-block;
-    animation: roboBuildix 1.3s infinite ease-in-out;
-}
-
-#robot-text {
-    margin-top: 10px;
-    font-size: 18px;
-    color: #00d4ff;
-    font-weight: bold;
-    animation: textoBuildix 1.4s infinite;
-}
-
-/* 🤖 Movimento do robô */
 @keyframes roboBuildix {
-
     0% {
         transform: translateX(-18px) rotate(-6deg) scale(1);
         opacity: 0.7;
     }
-
     50% {
         transform: translateX(18px) rotate(6deg) scale(1.12);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateX(-18px) rotate(-6deg) scale(1);
-        opacity: 0.7;
-    }
-}
-
-/* ✨ Texto piscando */
-@keyframes textoBuildix {
-
-    0%, 100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.45;
-    }
-}
-
-/* Logo clicável sem deformar */
-.logo {
-    cursor: pointer;
-}
-
-.logo .icone {
-    width: auto;
-    height: auto;
-}
-
-/* ============================
-   🛒 LOJA EM GRADE
-============================ */
-
-#loja {
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-#loja .card {
-    display: inline-block;
-    width: 260px;
-    min-height: 150px;
-    vertical-align: top;
-    margin: 15px;
-}
-
-#loja h2,
-#loja h3 {
-    width: 100%;
-    text-align: center;
-}
-
-#loja hr {
-    border: none;
-    border-top: 1px solid #00d4ff;
-    margin: 30px auto;
-    width: 80%;
-}
-
-#loja button {
-    margin-top: 10px;
-}
-
-/* ============================
-   💳 PAGAMENTO LADO A LADO
-============================ */
-
-#pagamento {
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-#pagamento .card {
-    display: inline-block;
-    width: 420px;
-    min-height: 330px;
-    vertical-align: top;
-    margin: 20px;
-}
-
-#pagamento input,
-#pagamento select {
-    width: 90%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    margin-top: 5px;
-}
-
-#pagamento button {
-    margin-top: 10px;
-}
-
-#mensagem-pedido {
-    margin-top: 15px;
-    font-weight: bold;
-}
-
-/* ============================
-   👤 ÁREA DO USUÁRIO LOGADO
-============================ */
-
-header {
-    position: relative;
-}
-
-.auth-area {
-    position: absolute;
-    right: 25px;
-    top: 25px;
-
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    background: #1a2332;
-    padding: 8px 12px;
-    border-radius: 10px;
-
-    color: white;
-    font-size: 14px;
-}
-
-.auth-area button {
-    padding: 6px 10px;
-    border-radius: 6px;
-}
-
-/* ============================
-   LOGO BEPRO.GG INTEGRADA
-============================ */
-
-.logo {
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.logo-img {
-    height: 120px;
-    width: auto;
-
-    filter:
-        drop-shadow(0 0 8px #00cfff)
-        drop-shadow(0 0 15px #0099ff)
-        
-    object-fit: contain;
-    mix-blend-mode: screen;
-    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
-    transition: all .3s ease;
-}
-
-.logo-img:hover {
-    transform: scale(1.05);
-    filter:
-     drop-shadow(0 0 12px #00cfff)
-     drop-shadow(0 0 25px #0099ff)
-     drop-shadow(0 0 40px #0066ff);
-     
-}
-
-/* ============================
-   GRID DE PRODUTOS
-============================ */
-
-.grade-produtos {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 22px;
-    max-width: 1200px;
-    margin: 25px auto 45px auto;
-}
-
-.grade-produtos .card {
-    width: 100%;
-    max-width: none;
-    min-height: 150px;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Tablet */
-@media (max-width: 1000px) {
-    .grade-produtos {
-        grid-template-columns: repeat(2, 1fr);
-        max-width: 700px;
-    }
-}
-
-/* Celular */
-@media (max-width: 600px) {
-    .grade-produtos {
-        grid-template-columns: 1fr;
-        max-width: 320px;
-    }
-}
-
-/* ============================
-   GRID FINAL DA LOJA
-============================ */
-
-#loja .grade-produtos {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    max-width: 1250px;
-    margin: 30px auto 55px auto;
-}
-
-#loja .grade-produtos .card {
-    max-width: none !important;
-    width: 100%;
-    min-height: 150px;
-    margin: 0 !important;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-#loja hr {
-    max-width: 1150px;
-    margin: 45px auto;
-    border: none;
-    border-top: 2px solid #00d4ff;
-}
-
-/* Tablet */
-@media (max-width: 1100px) {
-    #loja .grade-produtos {
-        grid-template-columns: repeat(2, 1fr);
-        max-width: 750px;
-    }
-}
-
-/* Celular */
-@media (max-width: 600px) {
-    #loja .grade-produtos {
-        grid-template-columns: 1fr;
-        max-width: 320px;
-    }
-}
-
-/* ============================
-   AJUSTE FINAL DO GRID DA LOJA
-============================ */
-
-#loja .grade-produtos {
-    display: grid;
-    grid-template-columns: repeat(4, 220px);
-    justify-content: center;
-    gap: 28px;
-    margin: 35px auto 60px auto;
-}
-
-#loja .grade-produtos .card {
-    width: 220px !important;
-    min-height: 150px;
-    margin: 0 !important;
-    border-radius: 10px;
-}
-
-@media (max-width: 1000px) {
-    #loja .grade-produtos {
-        grid-template-columns: repeat(2, 220px);
-    }
-}
-
-@media (max-width: 600px) {
-    #loja .grade-produtos {
-        grid-template-columns: 220px;
-    }
-}
-
-/* FORÇAR ESPAÇAMENTO ENTRE CARDS DA LOJA */
-
-#loja .grade-produtos {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: stretch !important;
-    flex-wrap: wrap !important;
-    gap: 28px !important;
-
-    max-width: 1100px !important;
-    margin: 35px auto 60px auto !important;
-}
-
-#loja .grade-produtos .card {
-    width: 220px !important;
-    max-width: 220px !important;
-    min-width: 220px !important;
-
-    height: 150px !important;
-    min-height: 150px !important;
-
-    margin: 0 !important;
-    padding: 25px !important;
-
-    border-radius: 12px !important;
-}
-
-/* ============================
-   GRID DA LOJA - 2 POR LINHA FINAL
-============================ */
-
-#loja .grade-produtos {
-    display: grid !important;
-    grid-template-columns: repeat(2, 320px) !important;
-    justify-content: center !important;
-    column-gap: 35px !important;
-    row-gap: 30px !important;
-
-    max-width: 650px !important;
-    margin: 35px auto 60px auto !important;
-}
-
-#loja .grade-produtos .card {
-    width: 320px !important;
-    max-width: 320px !important;
-    min-width: 320px !important;
-
-    min-height: 150px !important;
-    margin: 0 !important;
-    padding: 25px !important;
-    border-radius: 12px !important;
-
-    background-color: #1b2533 !important;
-    box-sizing: border-box !important;
-}
-
-@media (max-width: 600px) {
-    #loja .grade-produtos {
-        grid-template-columns: 260px !important;
-    }
-}
-
-/* ============================
-   IMAGENS DOS PRODUTOS - PEDRO
-============================ */
-
-.produto-img {
-    width: 100%;
-    height: 180px;
-    object-fit: contain;
-    margin-bottom: 10px;
-    transition: 0.3s ease;
-}
-
-.produto-img:hover {
-    transform: scale(1.05);
-}
-
-/* Ajuste dos cards da loja para comportar imagem */
-#loja .grade-produtos .card {
-    min-height: 330px !important;
-    height: auto !important;
-}
-
-/* Evita imagem gigante no celular */
-@media (max-width: 600px) {
-    .produto-img {
-        height: 150px;
-    }
-}
+        opacity

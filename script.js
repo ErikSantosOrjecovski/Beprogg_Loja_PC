@@ -2,57 +2,31 @@
 // 🔹 CONTROLE DE ABAS
 // ============================
 function trocarAba(id) {
-    document.querySelectorAll(".conteudo")
-        .forEach(sec => sec.classList.remove("ativo"));
-
+    document.querySelectorAll(".conteudo").forEach(sec => sec.classList.remove("ativo"));
     document.getElementById(id).classList.add("ativo");
 
     atualizarCarrinhoUI();
     atualizarResumoPagamento();
 
-    if (id === "pedidos") {
-        carregarPedidos();
-    }
-
-    if (id === "coach") {
-        carregarCursos();
-    }
-
-    if (id === "loja") {
-    carregarProdutos();
-}
+    if (id === "pedidos") carregarPedidos();
+    if (id === "coach") carregarCursos();
+    if (id === "loja") carregarProdutos();
 }
 
 // ============================
-// 🛒 CARRINHO
+// 🛒 CARRINHO DE COMPRAS
 // ============================
 let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
 function adicionarAoCarrinho(nome, preco = null) {
     const item = {
         nome,
-        preco: preco !== null ? Number(preco) : gerarPrecoFake(nome)
+        preco: preco !== null ? Number(preco) : 100
     };
-
     carrinho.push(item);
     salvarCarrinho();
     atualizarCarrinhoUI();
     atualizarResumoPagamento();
-}
-
-function gerarPrecoFake(nome) {
-    const precos = {
-        "RTX 4060": 2500,
-        "RTX 3060": 1800,
-        "Ryzen 5 5600": 800,
-        "Intel i5 12400F": 900,
-        "Teclado RGB": 250,
-        "Mouse Gamer": 150,
-        "Headset": 300,
-        "Mousepad": 80
-    };
-
-    return precos[nome] || 100;
 }
 
 function atualizarCarrinhoUI() {
@@ -60,7 +34,6 @@ function atualizarCarrinhoUI() {
     const total = document.getElementById("total-carrinho");
 
     if (!lista || !total) return;
-
     lista.innerHTML = "";
     let soma = 0;
 
@@ -72,16 +45,13 @@ function atualizarCarrinhoUI() {
 
     carrinho.forEach((item, index) => {
         soma += item.preco;
-
         lista.innerHTML += `
             <div class="card">
                 <h3>${item.nome}</h3>
                 <p>R$ ${item.preco}</p>
                 <button onclick="removerItem(${index})">Remover</button>
-            </div>
-        `;
+            </div>`;
     });
-
     total.innerText = "Total: R$ " + soma;
 }
 
@@ -96,724 +66,407 @@ function salvarCarrinho() {
     localStorage.setItem("carrinho", JSON.stringify(carrinho));
 }
 
-// ============================
-// 🤖 BUILDIX MATCH + IA
-// ============================
+// ==========================================
+// 🤖 BEPRO IA MATCH (STORE EDITION)
+// ==========================================
 async function gerarRecomendacao() {
-
-    const orcamento = document.getElementById("orcamento").value;
     const jogo = document.getElementById("jogo").value;
-    const uso = document.getElementById("uso").value;
-
     const resultado = document.getElementById("resultado-buildix");
     const robot = document.getElementById("robot");
     const robotText = document.getElementById("robot-text");
     const respostaIA = document.getElementById("resposta-ia");
 
-    if (!orcamento || !jogo || !uso) {
-        resultado.innerHTML = "⚠️ Preencha todas as opções!";
+    if (!jogo) {
+        if (resultado) resultado.innerHTML = "⚠️ Por favor, selecione um jogo competitivo!";
         if (respostaIA) respostaIA.innerHTML = "";
         return;
     }
 
-    resultado.innerHTML = "";
+    if (resultado) resultado.innerHTML = "";
     if (respostaIA) respostaIA.innerHTML = "";
 
     if (robot && robotText) {
         robot.style.display = "block";
-        robotText.innerText = "🤖 Analisando seu perfil gamer...";
+        robotText.innerText = "🤖 Computando ecossistema profissional da Academy...";
     }
 
-    let perfil = "";
-    let pc = "";
-    let desempenho = "";
-    let explicacao = "";
-
-    if (uso === "fps") {
-        perfil = "Competitivo";
-        pc = "Ryzen 5 5600 + RTX 4060";
-        desempenho = "Foco em FPS alto, baixa latência e estabilidade.";
-        explicacao = "Ideal para jogadores competitivos que querem partidas rápidas, lisas e sem travamentos.";
-    }
-
-    if (uso === "grafico") {
-        perfil = "Qualidade Gráfica";
-        pc = "Ryzen 7 + RTX 4070";
-        desempenho = "Foco em gráficos no Ultra com FPS estável.";
-        explicacao = "Ideal para jogadores que querem aproveitar jogos bonitos, detalhados e sem engasgos.";
-    }
+    // Tabela de preços estáticos para os produtos recomendados pelo backend
+    const tabelaPrecos = {
+        "AMD Ryzen 7 7800X3D": 2499,
+        "Air cooler premium ou AIO 240 mm": 450,
+        "ASRock B650M Pro RS": 1100,
+        "NVIDIA GeForce RTX 5070 ou AMD Radeon RX 9070 XT": 4999,
+        "32 GB DDR5 6000 MHz CL30": 850,
+        "SSD 1 TB NVMe PCIe 4.0": 450,
+        "750 W 80+ Gold": 600,
+        "Gabinete com bom airflow": 350,
+        "Wooting 80HE": 1800,
+        "Logitech G Pro X Superlight 2 Superstrike": 900,
+        "Logitech G Pro X Superlight 2": 800,
+        "Razer Viper V3 Pro": 850,
+        "Razer Viper V4 Pro": 950,
+        "Razer Huntsman V3 Pro TKL": 1200,
+        "Logitech G Pro X TKL Rapid": 1000,
+        "FX Hayate Otsu v2 XL": 350,
+        "Artisan FX Hayate Otsu Soft": 400,
+        "Mousepad Artisan FX Zero Xxl": 450,
+        "Artisan Ninja FX Zero Mid": 400,
+        "Logitech G640 Large": 150,
+        "Lethal Gaming Gear Saturn Pro": 300,
+        "Audeze Maxwell Wireless Gaming": 2300,
+        "SteelSeries Arctis Nova Pro Wireless": 2100,
+        "HyperX Cloud III Wireless": 950,
+        "Logitech G Pro X 2 LIGHTSPEED": 1400,
+        "BenQ ZOWIE XL2586X+": 5999,
+        "LG UltraGear 27GR75FG (360Hz IPS)": 3800,
+        "ASUS ROG Swift PG27AQDM": 4500,
+        "Pulsar ES Arm Sleeve": 120,
+        "SteelSeries Gaming Sleeve": 100,
+        "Skypad Sora Arm Sleeve": 150,
+        "Base Labs Gaming Sleeve": 80
+    };
 
     setTimeout(async () => {
-
-        resultado.innerHTML = `
-            <h3>🎯 Perfil: ${perfil}</h3>
-            <p><strong>💻 PC recomendado:</strong> ${pc}</p>
-            <p><strong>⚡ Desempenho:</strong> ${desempenho}</p>
-            <p><strong>🤖 Explicação:</strong> ${explicacao}</p>
-        `;
-
         try {
             const response = await fetch("http://localhost:3000/recomendar", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ uso, jogo })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ jogo })
             });
 
             const data = await response.json();
+            const textoBruto = data.resposta;
+
+            let pecasHTML = "";
+            let perifericosHTML = "";
+
+            const linhas = textoBruto.split("\n");
+            let categoriaAtual = "";
+
+            linhas.forEach(linha => {
+                const linhaLimpa = linha.replace("• ", "").trim();
+                
+                if (linhaLimpa.includes("Configuração Ideal Competitiva")) {
+                    categoriaAtual = "pecas";
+                    return;
+                }
+                if (linhaLimpa.includes("Periféricos Ideais para o Jogo")) {
+                    categoriaAtual = "perifericos";
+                    return;
+                }
+
+                if (linhaLimpa.includes(":") && (categoriaAtual === "pecas" || categoriaAtual === "perifericos")) {
+                    const partes = linhaLimpa.split(":");
+                    const componenteTipo = partes[0].trim();
+                    const modeloNome = partes[1].trim();
+                    
+                    const precoItem = tabelaPrecos[modeloNome] || 250;
+
+                    const itemCard = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #111823; padding: 12px; margin-bottom: 8px; border-radius: 6px; border: 1px solid #2d3748;">
+                            <div style="text-align: left;">
+                                <strong style="color: #00d4ff; font-size: 0.9rem;">${componenteTipo}:</strong>
+                                <span style="color: white; font-size: 0.95rem; display: block; margin: 2px 0;">${modeloNome}</span>
+                                <span style="color: #48bb78; font-size: 0.9rem; font-weight: bold;">R$ ${precoItem}</span>
+                            </div>
+                            <button onclick="adicionarAoCarrinho('${modeloNome}', ${precoItem})" style="padding: 6px 12px; background: #00d4ff; color: black; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 0.85rem; transition: background 0.2s;">
+                                + Carrinho
+                            </button>
+                        </div>
+                    `;
+
+                    if (categoriaAtual === "pecas") pecasHTML += itemCard;
+                    if (categoriaAtual === "perifericos") perifericosHTML += itemCard;
+                }
+            });
 
             if (respostaIA) {
                 respostaIA.innerHTML = `
-                    <h3>🤖 IA Buildix recomenda:</h3>
-                    <p>${data.resposta}</p>
-                `;
+                    <div class="card-academy" style="background: #1a2332; padding: 25px; border-radius: 12px; margin-top: 20px; max-width: 900px; margin-left: auto; margin-right: auto; border: 1px solid #00d4ff;">
+                        <h3 style="color: white; margin-top: 0; text-align: center; border-bottom: 1px solid #00d4ff; padding-bottom: 10px;">🤖 Setup Recomendado pela IA Store</h3>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                            <div>
+                                <h4 style="color: #00d4ff; margin-bottom: 12px; font-size: 1.1rem; text-align: left;">💻 Peças do Hardware</h4>
+                                ${pecasHTML || "<p style='color: gray; text-align: left;'>Nenhuma peça mapeada.</p>"}
+                            </div>
+                            
+                            <div>
+                                <h4 style="color: #00d4ff; margin-bottom: 12px; font-size: 1.1rem; text-align: left;">🎮 Periféricos Ideais</h4>
+                                ${perifericosHTML || "<p style='color: gray; text-align: left;'>Nenhum periférico mapeado.</p>"}
+                            </div>
+                        </div>
+                    </div>`;
             }
-
         } catch (error) {
+            console.error(error);
             if (respostaIA) {
-                respostaIA.innerHTML = "⚠️ IA não respondeu. Verifique se o backend está rodando.";
+                respostaIA.innerHTML = "⚠️ Erro ao processar as recomendações de compra da Store.";
             }
         }
-
-        if (robot) {
-            robot.style.display = "none";
-        }
-
-    }, 1500);
+        if (robot) robot.style.display = "none";
+    }, 1000);
 }
 
 // ============================
-// 👤 LOGIN / CADASTRO
+// 👤 AUTENTICAÇÃO (LOGIN/CADASTRO)
 // ============================
 function fazerCadastro(event) {
-
     event.preventDefault();
-
     const nome = document.getElementById("nome").value.trim();
     const email = document.getElementById("email").value.trim();
     const senha = document.getElementById("senha").value.trim();
     const msg = document.getElementById("msg-cadastro");
 
-    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const senhaForte = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-
     if (!nome || !email || !senha) {
         msg.innerText = "❗ Preencha todos os campos!";
-        msg.style.color = "red";
-        return;
-    }
-
-    if (!emailValido.test(email)) {
-        msg.innerText = "❗ Insira um email válido!";
-        msg.style.color = "red";
-        return;
-    }
-
-    if (!senhaForte.test(senha)) {
-        msg.innerText = "❗ Sua senha deve ter 8 caracteres, número, maiúscula e minúscula!";
-        msg.style.color = "red";
         return;
     }
 
     const usuario = { nome, email, senha };
-
     localStorage.setItem("usuario", JSON.stringify(usuario));
     localStorage.setItem("usuarioLogado", "true");
 
-    msg.innerText = "✅ Conta criada com sucesso! Você já está logado.";
-    msg.style.color = "green";
-
-    document.getElementById("nome").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("senha").value = "";
-
+    msg.innerText = "✅ Conta criada! Logando...";
     atualizarStatusLogin();
-
-    setTimeout(() => {
-        trocarAba("inicio");
-    }, 1500);
+    setTimeout(() => trocarAba("inicio"), 1500);
 }
 
 function fazerLogin() {
-
     const email = document.getElementById("login-email").value.trim();
     const senha = document.getElementById("login-senha").value.trim();
     const msg = document.getElementById("msg-login");
+    const usuarioSalvo = JSON.parse(localStorage.getItem("usuario"));
 
+    if (usuarioSalvo && usuarioSalvo.email === email && usuarioSalvo.senha === senha) {
+        localStorage.setItem("usuarioLogado", "true");
+        msg.innerText = "✅ Login realizado com sucesso!";
+        atualizarStatusLogin();
+        setTimeout(() => trocarAba("inicio"), 1500);
+    } else {
+        msg.innerText = "❌ Credenciais inválidas!";
+    }
+}
+
+// ============================
+// 💳 MÓDULO FINALIZAÇÃO PAGAMENTO
+// ============================
+function atualizarResumoPagamento() {
+    const resumo = document.getElementById("resumo-pagamento");
+    if (!resumo) return;
+    resumo.innerHTML = "";
+    let soma = 0;
+    carrinho.forEach(item => {
+        soma += item.preco;
+        resumo.innerHTML += `<p>${item.nome} - R$ ${item.preco}</p>`;
+    });
+    resumo.innerHTML += `<h4>Total: R$ ${soma}</h4>`;
+}
+
+async function finalizarPedido() {
+    const logado = localStorage.getItem("usuarioLogado") === "true";
+    if (!logado) {
+        alert("Você precisa estar logado para finalizar o pedido!");
+        return;
+    }
+
+    const cliente = document.getElementById("nome-cliente").value;
+    const telefone = document.getElementById("telefone").value;
+    const endereco = document.getElementById("endereco").value;
+    const pagamento = document.getElementById("forma-pagamento").value;
     const usuario = JSON.parse(localStorage.getItem("usuario"));
 
-    if (!email || !senha) {
-        msg.innerText = "❗ Preencha email e senha!";
-        msg.style.color = "red";
+    if (!cliente || !telefone || !endereco || !pagamento || carrinho.length === 0) {
+        document.getElementById("mensagem-pedido").innerText = "⚠️ Preencha os dados e coloque itens no carrinho!";
         return;
     }
 
-    if (!usuario) {
-        msg.innerText = "❗ Nenhuma conta cadastrada. Crie uma conta primeiro.";
-        msg.style.color = "red";
-        return;
+    const dadosPedido = { cliente, telefone, endereco, pagamento, usuario, itens: carrinho };
+
+    try {
+        const response = await fetch("http://localhost:3000/pedido", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dadosPedido)
+        });
+        const data = await response.json();
+        document.getElementById("mensagem-pedido").innerText = data.mensagem;
+        carrinho = [];
+        salvarCarrinho();
+        atualizarCarrinhoUI();
+    } catch {
+        document.getElementById("mensagem-pedido").innerText = "❌ Erro ao enviar pedido.";
     }
+}
 
-    if (email !== usuario.email || senha !== usuario.senha) {
-        msg.innerText = "❗ Email ou senha incorretos!";
-        msg.style.color = "red";
-        return;
+// ==========================================
+// 📦 INTEGRAÇÃO DE LISTAGENS DO BACKEND
+// ==========================================
+async function carregarPedidos() {
+    const lista = document.getElementById("lista-pedidos");
+    if (!lista) return;
+    lista.innerHTML = "<p>Carregando histórico...</p>";
+    try {
+        const response = await fetch("http://localhost:3000/pedidos");
+        const pedidos = await response.json();
+        lista.innerHTML = pedidos.length === 0 ? "<p>Nenhum pedido encontrado.</p>" : "";
+        pedidos.forEach(p => {
+            lista.innerHTML += `
+                <div class="card" style="border-left: 5px solid green;">
+                    <h4>Cliente: ${p.cliente} | Total: R$ ${p.total || 0}</h4>
+                    <p>Data: ${p.data} | Status: <strong>${p.status}</strong></p>
+                </div>`;
+        });
+    } catch {
+        lista.innerHTML = "<p>Erro ao carregar pedidos.</p>";
     }
+}
 
-    localStorage.setItem("usuarioLogado", "true");
+// ==========================================
+// 🛒 CARREGAMENTO FILTRADO DA LOJA (PEÇAS E PERIFÉRICOS)
+// ==========================================
+async function carregarProdutos() {
+    const listaPecas = document.getElementById("lista-pecas");
+    const listaPerifericos = document.getElementById("lista-perifericos");
+    
+    if (!listaPecas || !listaPerifericos) return;
+    
+    listaPecas.innerHTML = "<p style='color: gray;'>Carregando peças...</p>";
+    listaPerifericos.innerHTML = "<p style='color: gray;'>Carregando periféricos...</p>";
+    
+    // Lista de termos para identificar periféricos automaticamente
+    const termosPerifericos = [
+        "mouse", "teclado", "headset", "fone", "monitor", "mousepad", "sleeve", "manguito", 
+        "wooting", "logitech", "razer", "artisan", "zowie", "hyperx", "audiotechnica", "astros"
+    ];
 
-    msg.innerText = "✅ Login realizado com sucesso!";
-    msg.style.color = "green";
+    try {
+        const response = await fetch("http://localhost:3000/produtos");
+        const produtos = await response.json();
+        
+        listaPecas.innerHTML = "";
+        listaPerifericos.innerHTML = "";
+        
+        if (produtos.length === 0) {
+            listaPecas.innerHTML = "<p style='color: gray;'>Nenhum produto disponível.</p>";
+            listaPerifericos.innerHTML = "<p style='color: gray;'>Nenhum produto disponível.</p>";
+            return;
+        }
 
-    document.getElementById("login-email").value = "";
-    document.getElementById("login-senha").value = "";
+        produtos.forEach(p => {
+            const nomeMinusculo = p.nome.toLowerCase();
+            const ehPeriferico = termosPerifericos.some(termo => nomeMinusculo.includes(termo));
 
-    atualizarStatusLogin();
+            const produtoCard = `
+                <div class="card" style="text-align: left; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #2d3748; background: #1a2332; border-radius: 8px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: white;">${p.nome}</h3>
+                        <p style="color: #48bb78; font-weight: bold; font-size: 1.1rem; margin: 0 0 15px 0;">R$ ${p.preco}</p>
+                    </div>
+                    <button onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})" style="width: 100%; cursor: pointer; background: #00d4ff; color: black; font-weight: bold; padding: 10px; border: none; border-radius: 4px;">
+                        Adicionar ao Carrinho
+                    </button>
+                </div>
+            `;
 
-    setTimeout(() => {
-        trocarAba("inicio");
-    }, 1500);
+            if (ehPeriferico) {
+                listaPerifericos.innerHTML += produtoCard;
+            } else {
+                listaPecas.innerHTML += produtoCard;
+            }
+        });
+
+        if (listaPecas.innerHTML === "") {
+            listaPecas.innerHTML = "<p style='color: gray;'>Nenhuma peça no catálogo.</p>";
+        }
+        if (listaPerifericos.innerHTML === "") {
+            listaPerifericos.innerHTML = "<p style='color: gray;'>Nenhum periférico no catálogo.</p>";
+        }
+
+    } catch (error) {
+        console.error("Erro ao carregar os itens do catálogo:", error);
+        listaPecas.innerHTML = "<p style='color: red;'>Erro ao carregar catálogo.</p>";
+        listaPerifericos.innerHTML = "<p style='color: red;'>Erro ao carregar catálogo.</p>";
+    }
+}
+
+// ==========================================
+// 🎮 FILTRO CATEGORIZADO DE PRO PLAYERS
+// ==========================================
+async function carregarCursos() {
+    const lista = document.getElementById("lista-cursos");
+    if (!lista) return;
+    lista.innerHTML = "<p>Carregando aulas da Academy...</p>";
+    try {
+        const response = await fetch("http://localhost:3000/cursos");
+        const jazidaCursos = await response.json();
+        
+        lista.className = "grade-produtos";
+        lista.innerHTML = "";
+        
+        if (jazidaCursos.length === 0) {
+            lista.innerHTML = "<p>Nenhum treinamento disponível no momento.</p>";
+            return;
+        }
+
+        jazidaCursos.forEach(c => {
+            const tituloCompleto = c.titulo || c.nome || "";
+            let jogoCompetitivo = "Coach";
+            let proPlayer = "Disponível";
+
+            if (tituloCompleto.includes(" - ")) {
+                const partes = tituloCompleto.split(" - ");
+                jogoCompetitivo = partes[0].trim();
+                proPlayer = partes[1].trim();
+            } else {
+                jogoCompetitivo = tituloCompleto;
+            }
+
+            lista.innerHTML += `
+                <div class="card" style="text-align: left; align-items: flex-start; justify-content: flex-start; padding: 25px; min-height: 240px !important;">
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #00d4ff; font-weight: bold; margin-bottom: 5px;">${jogoCompetitivo}</span>
+                    <h3 style="margin: 0 0 12px 0; font-size: 1.25rem; color: white;">👑 Pro Player: ${proPlayer}</h3>
+                    <p style="font-size: 14px; line-height: 1.5; color: #a0aec0; margin: 0 0 15px 0;">${c.descricao}</p>
+                    <button style="margin-top: auto; width: 100%; cursor: pointer;">Garantir Vaga na Aula</button>
+                </div>`;
+        });
+    } catch (error) {
+        lista.innerHTML = "<p>Erro ao buscar conteúdo do Coach de Pro Players.</p>";
+    }
 }
 
 function sairConta() {
     localStorage.removeItem("usuarioLogado");
-
     atualizarStatusLogin();
-    trocarAba("login");
+    trocarAba("inicio");
 }
 
 function abrirCadastro() {
-    const box = document.getElementById("cadastro-box");
-    const botao = document.getElementById("btn-abrir-cadastro");
-
-    box.style.display = "block";
-    botao.style.display = "none";
+    document.getElementById("cadastro-box").style.display = "block";
 }
 
 function atualizarStatusLogin() {
-
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
-
-    const authArea = document.getElementById("auth-area");
-    const authUser = document.getElementById("auth-user");
+    const logado = localStorage.getItem("usuarioLogado") === "true";
+    const userArea = document.getElementById("auth-area");
+    const userName = document.getElementById("auth-user");
     const menuLogin = document.getElementById("menu-login");
     const menuPedidos = document.getElementById("menu-pedidos");
 
-    if (!authArea || !authUser || !menuLogin) return;
-
-    if (usuario && usuarioLogado === "true") {
-        authArea.style.display = "flex";
-        authUser.innerText = "👤 Logado como: " + usuario.nome;
-        menuLogin.style.display = "none";
+    if (logado) {
+        const usuario = JSON.parse(localStorage.getItem("usuario"));
+        if (userName) userName.innerText = `Olá, ${usuario?.nome || "User"}`;
+        if (userArea) userArea.style.display = "flex";
+        if (menuLogin) menuLogin.style.display = "none";
         if (menuPedidos) menuPedidos.style.display = "block";
     } else {
-        authArea.style.display = "none";
-        authUser.innerText = "";
-        menuLogin.style.display = "block";
+        if (userArea) userArea.style.display = "none";
+        if (menuLogin) menuLogin.style.display = "block";
         if (menuPedidos) menuPedidos.style.display = "none";
     }
 }
 
-// ============================
-// 💳 PAGAMENTO
-// ============================
-function atualizarResumoPagamento() {
-
-    const resumo = document.getElementById("resumo-pagamento");
-
-    if (!resumo) return;
-
-    resumo.innerHTML = "";
-
-    if (carrinho.length === 0) {
-        resumo.innerHTML = "<p>Nenhum item no carrinho.</p>";
-        return;
-    }
-
-    let total = 0;
-
-    carrinho.forEach(item => {
-        total += item.preco;
-
-        resumo.innerHTML += `
-            <p>${item.nome} - R$ ${item.preco}</p>
-        `;
-    });
-
-    resumo.innerHTML += `
-        <hr>
-        <h3>Total: R$ ${total}</h3>
-    `;
-}
-
-async function finalizarPedido() {
-
-    const nome = document.getElementById("nome-cliente").value.trim();
-    const telefone = document.getElementById("telefone").value.trim();
-    const endereco = document.getElementById("endereco").value.trim();
-    const pagamento = document.getElementById("forma-pagamento").value;
-    const mensagem = document.getElementById("mensagem-pedido");
-
-    const usuarioCadastrado = JSON.parse(localStorage.getItem("usuario"));
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
-
-    if (!usuarioCadastrado || usuarioLogado !== "true") {
-        mensagem.innerText = "⚠️ Para finalizar a compra, você precisa criar uma conta ou fazer login.";
-        mensagem.style.color = "red";
-
-        setTimeout(() => {
-            trocarAba("login");
-        }, 1800);
-
-        return;
-    }
-
-    const telefoneValido = /^\(?\d{2}\)?\s?9?\d{4}-\d{4}$/;
-
-    if (!nome || !telefone || !endereco || !pagamento) {
-        mensagem.innerText = "❗ Preencha todos os campos!";
-        mensagem.style.color = "red";
-        return;
-    }
-
-    if (nome.length < 3) {
-        mensagem.innerText = "❗ Digite um nome válido!";
-        mensagem.style.color = "red";
-        return;
-    }
-
-    if (!telefoneValido.test(telefone)) {
-        mensagem.innerText = "❗ Digite um telefone válido com DDD e tracinho. Ex: (41) 99999-9999";
-        mensagem.style.color = "red";
-        return;
-    }
-
-    if (endereco.length < 5) {
-        mensagem.innerText = "❗ Digite um endereço válido!";
-        mensagem.style.color = "red";
-        return;
-    }
-
-    if (carrinho.length === 0) {
-        mensagem.innerText = "❗ Seu carrinho está vazio!";
-        mensagem.style.color = "red";
-        return;
-    }
-
-    const pedido = {
-        cliente: nome,
-        telefone,
-        endereco,
-        pagamento,
-        usuario: usuarioCadastrado,
-        itens: carrinho,
-        data: new Date().toLocaleString("pt-BR")
-    };
-
-    mensagem.innerText = "⏳ Processando pedido...";
-    mensagem.style.color = "#00d4ff";
-
-    setTimeout(async () => {
-
-        try {
-            const response = await fetch("http://localhost:3000/pedido", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(pedido)
-            });
-
-            const data = await response.json();
-
-            mensagem.innerText = data.mensagem || "✅ Pedido realizado com sucesso!";
-            mensagem.style.color = "green";
-
-            carrinho = [];
-            salvarCarrinho();
-            atualizarCarrinhoUI();
-            atualizarResumoPagamento();
-
-            document.getElementById("nome-cliente").value = "";
-            document.getElementById("telefone").value = "";
-            document.getElementById("endereco").value = "";
-            document.getElementById("forma-pagamento").value = "";
-
-        } catch (error) {
-            mensagem.innerText = "⚠️ Não foi possível finalizar o pedido. Verifique se o backend está rodando.";
-            mensagem.style.color = "red";
-        }
-
-    }, 1800);
-}
-
-// ============================
-// 📦 MEUS PEDIDOS
-// ============================
-async function carregarPedidos() {
-
-    const lista = document.getElementById("lista-pedidos");
-
-    if (!lista) {
-        console.log("Elemento lista-pedidos não encontrado.");
-        return;
-    }
-
-    lista.innerHTML = "<p>⏳ Carregando seus pedidos...</p>";
-
-    try {
-
-        const response = await fetch("http://localhost:3000/pedidos");
-        const pedidos = await response.json();
-
-        if (!pedidos || pedidos.length === 0) {
-            lista.innerHTML = "<p>Nenhum pedido encontrado.</p>";
-            return;
-        }
-
-        const usuario = JSON.parse(localStorage.getItem("usuario"));
-
-        if (!usuario) {
-            lista.innerHTML = "<p>⚠️ Faça login para ver seus pedidos.</p>";
-            return;
-        }
-
-        const pedidosDoUsuario = pedidos.filter(pedido => {
-            return pedido.usuario && pedido.usuario.email === usuario.email;
-        });
-
-        if (pedidosDoUsuario.length === 0) {
-            lista.innerHTML = "<p>Você ainda não realizou nenhum pedido com esta conta.</p>";
-            return;
-        }
-
-        lista.innerHTML = "";
-
-        pedidosDoUsuario.reverse().forEach((pedido, index) => {
-
-            let itensHTML = "";
-            let total = 0;
-
-            pedido.itens.forEach(item => {
-                total += item.preco;
-                itensHTML += `<li>${item.nome} - R$ ${item.preco}</li>`;
-            });
-
-            lista.innerHTML += `
-                <div class="card">
-                    <h3>📦 Pedido #${pedidosDoUsuario.length - index}</h3>
-
-                    <p><strong>Cliente:</strong> ${pedido.cliente}</p>
-                    <p><strong>Data:</strong> ${pedido.data}</p>
-                    <p><strong>Pagamento:</strong> ${pedido.pagamento}</p>
-
-                    <p><strong>Itens:</strong></p>
-                    <ul>
-                        ${itensHTML}
-                    </ul>
-
-                    <h3>Total: R$ ${total}</h3>
-                    <p><strong>Status:</strong> Pedido confirmado ✅</p>
-                </div>
-            `;
-        });
-
-    } catch (erro) {
-
-        console.log(erro);
-
-        lista.innerHTML =
-            "<p>⚠️ Não foi possível carregar os pedidos. Verifique se o backend está rodando.</p>";
-
-    }
-}
-
-// ============================
-// 🚀 INICIALIZAÇÃO
-// ============================
 window.onload = () => {
     atualizarCarrinhoUI();
     atualizarResumoPagamento();
     atualizarStatusLogin();
 };
-
-// ============================
-// 🧩 COMPATIBILIDADE DE HARDWARE
-// ============================
-function verificarCompatibilidade() {
-
-    const cpu = document.getElementById("cpu").value;
-    const placaMae = document.getElementById("placa-mae").value;
-    const gpu = document.getElementById("gpu").value;
-    const ram = document.getElementById("ram").value;
-    const fonte = document.getElementById("fonte").value;
-
-    const resultado = document.getElementById("resultado-compatibilidade");
-
-    function adicionarBuildAoCarrinho() {
-
-    const cpu = document.getElementById("cpu").value;
-    const placaMae = document.getElementById("placa-mae").value;
-    const gpu = document.getElementById("gpu").value;
-    const ram = document.getElementById("ram").value;
-    const fonte = document.getElementById("fonte").value;
-
-    carrinho = [];
-
-    const nomes = {
-        amd: "Ryzen 5 5600",
-        intel: "Intel i5 12400F",
-        rtx4060: "RTX 4060",
-        rtx3060: "RTX 3060",
-        ddr4: "16GB DDR4",
-        ddr5: "32GB DDR5",
-        "500": "Fonte 500W",
-        "550": "Fonte 550W",
-        "650": "Fonte 650W"
-    };
-
-    carrinho.push({ nome: nomes[cpu], preco: gerarPrecoFake(nomes[cpu]) });
-    carrinho.push({ nome: placaMae === "amd" ? "Placa-mãe B550" : "Placa-mãe B660", preco: placaMae === "amd" ? 700 : 900 });
-    carrinho.push({ nome: nomes[gpu], preco: gerarPrecoFake(nomes[gpu]) });
-    carrinho.push({ nome: nomes[ram], preco: ram === "ddr4" ? 350 : 600 });
-    carrinho.push({ nome: nomes[fonte], preco: fonte === "500" ? 250 : fonte === "550" ? 320 : 450 });
-
-    salvarCarrinho();
-    atualizarCarrinhoUI();
-    atualizarResumoPagamento();
-
-    document.getElementById("resultado-compatibilidade").innerHTML =
-        "✅ Build completa adicionada ao carrinho com sucesso!";
-}
-
-    if (!cpu || !placaMae || !gpu || !ram || !fonte) {
-        resultado.innerHTML = "⚠️ Preencha todos os campos antes de verificar a compatibilidade.";
-        resultado.style.color = "orange";
-        return;
-    }
-
-    if (cpu !== placaMae) {
-        resultado.innerHTML = "❌ Incompatibilidade detectada! Processador e placa-mãe utilizam plataformas diferentes.";
-        resultado.style.color = "red";
-        return;
-    }
-
-    if (placaMae === "amd" && ram !== "ddr4") {
-        resultado.innerHTML = "❌ A placa-mãe B550 suporta apenas memória DDR4.";
-        resultado.style.color = "red";
-        return;
-    }
-
-    if (placaMae === "intel" && ram !== "ddr5") {
-        resultado.innerHTML = "❌ A placa-mãe B660 suporta apenas memória DDR5.";
-        resultado.style.color = "red";
-        return;
-    }
-
-    if (gpu === "rtx3060" && Number(fonte) < 550) {
-        resultado.innerHTML = "❌ A RTX 3060 precisa de uma fonte de pelo menos 550W.";
-        resultado.style.color = "red";
-        return;
-    }
-
-    if (gpu === "rtx4060" && Number(fonte) < 650) {
-        resultado.innerHTML = "❌ A RTX 4060 precisa de uma fonte de pelo menos 650W.";
-        resultado.style.color = "red";
-        return;
-    }
-
-    resultado.style.color = "lightgreen";
-    resultado.innerHTML = `
-        ✅ Peças compatíveis! Sua configuração pode ser montada com segurança.<br><br>
-        <button onclick="adicionarBuildAoCarrinho()">🛒 Adicionar Build ao Carrinho</button>
-    `;
-}
-
-// ============================
-// 🛒 ADICIONAR BUILD AO CARRINHO
-// ============================
-function adicionarBuildAoCarrinho() {
-
-    const cpu = document.getElementById("cpu").value;
-    const placaMae = document.getElementById("placa-mae").value;
-    const gpu = document.getElementById("gpu").value;
-    const ram = document.getElementById("ram").value;
-    const fonte = document.getElementById("fonte").value;
-
-    carrinho = [];
-
-    const nomes = {
-        amd: "Ryzen 5 5600",
-        intel: "Intel i5 12400F",
-        rtx4060: "RTX 4060",
-        rtx3060: "RTX 3060",
-        ddr4: "16GB DDR4",
-        ddr5: "32GB DDR5",
-        "500": "Fonte 500W",
-        "550": "Fonte 550W",
-        "650": "Fonte 650W"
-    };
-
-    carrinho.push({ nome: nomes[cpu], preco: gerarPrecoFake(nomes[cpu]) });
-    carrinho.push({ nome: placaMae === "amd" ? "Placa-mãe B550" : "Placa-mãe B660", preco: placaMae === "amd" ? 700 : 900 });
-    carrinho.push({ nome: nomes[gpu], preco: gerarPrecoFake(nomes[gpu]) });
-    carrinho.push({ nome: nomes[ram], preco: ram === "ddr4" ? 350 : 600 });
-    carrinho.push({ nome: nomes[fonte], preco: fonte === "500" ? 250 : fonte === "550" ? 320 : 450 });
-
-    salvarCarrinho();
-    atualizarCarrinhoUI();
-    atualizarResumoPagamento();
-
-    document.getElementById("resultado-compatibilidade").innerHTML =
-        "✅ Build completa adicionada ao carrinho com sucesso!";
-}
-
-// ============================
-// 🛒 CARREGAR PRODUTOS DO BANCO
-// ============================
-
-function buscarImagemProduto(nome) {
-    const imagens = {
-        "Processador AMD Ryzen 5 5600X": "imagens/andryzen5-5560.jpg",
-        "Processador AMD Ryzen 7 5700X": "imagens/amdryzen7-5700x.jpg",
-        "Processador Intel Core i5-12400F": "imagens/intelcore-i5.jpg",
-        "Processador Intel Core i7-13700K": "imagens/intelcore-i7.jpg",
-
-        "Placa de Vídeo RTX 4060 Galax": "imagens/rtx4060.jpg",
-        "Placa de Vídeo RTX 4070 Ti MSI": "imagens/rtx4070.jpg",
-        "Placa de Vídeo RX 6600 AMD Radeon": "imagens/rx7600.jpg",
-        "Placa de Vídeo RX 7700 XT PowerColor": "imagens/rx7600.jpg",
-
-        "Memória RAM Kingston Fury Beast 8GB 3200MHz": "imagens/ram16gb-ddr4.jpg",
-        "Memória RAM Corsair Vengeance RGB Pro 16GB 3200MHz": "imagens/ram16gb-ddr4.jpg",
-        "Kit Memória RAM XPG Spectrix 32GB (2x16GB) 3600MHz": "imagens/ram32gb-ddr5.jpg",
-
-        "Fonte Corsair CV650 650W 80 Plus Bronze": "imagens/fonte650w.jpg",
-        "Fonte MSI Mag A650BN 650W 80 Plus Bronze": "imagens/fonte650w.jpg",
-        "Fonte XPG Core Reactor 850W 80 Plus Gold Modular": "imagens/fonte850w.jpg",
-
-        "Placa-Mãe ASUS TUF Gaming B550M-Plus": "imagens/placamaeb550.jpg",
-        "Placa-Mãe Gigabyte B760M AORUS ELITE": "imagens/placamaeb660.jpg",
-        "Placa-Mãe ASRock A520M-HVS": "imagens/placamaeb550.jpg",
-
-        "SSD Kingston NV2 1TB NVMe M.2": "imagens/logo-bepro.png.jpeg",
-        "SSD Crucial P3 500GB NVMe M.2": "imagens/logo-bepro.png.jpeg",
-        "SSD Sata III SanDisk Plus 480GB": "imagens/logo-bepro.png.jpeg"
-    };
-
-    return imagens[nome] || "imagens/logo-bepro.png.jpeg";
-}
-
-async function carregarProdutos() {
-    const lista = document.getElementById("lista-produtos");
-
-    if (!lista) return;
-
-    lista.innerHTML = "<p>🛒 Carregando produtos...</p>";
-
-    try {
-        const response = await fetch("http://localhost:3000/produtos");
-        const produtos = await response.json();
-
-        if (!produtos || produtos.length === 0) {
-            lista.innerHTML = "<p>Nenhum produto encontrado.</p>";
-            return;
-        }
-
-        const categorias = {};
-
-        produtos.forEach(produto => {
-            if (!categorias[produto.categoria]) {
-                categorias[produto.categoria] = [];
-            }
-
-            categorias[produto.categoria].push(produto);
-        });
-
-        lista.innerHTML = "";
-
-        Object.keys(categorias).forEach(categoria => {
-            lista.innerHTML += `<h3>📌 ${categoria}</h3>`;
-            lista.innerHTML += `<div class="grade-produtos">`;
-
-            categorias[categoria].forEach(produto => {
-                lista.innerHTML += `
-                    <div class="card">
-                    <img src="${buscarImagemProduto(produto.nome)}" alt="${produto.nome}" class="produto-img">
-                        <h3>${produto.nome}</h3>
-                        <p>${produto.descricao}</p>
-                        <h3>R$ ${Number(produto.preco).toFixed(2)}</h3>
-                        <button onclick="adicionarAoCarrinho('${produto.nome}', ${produto.preco})">
-                            Adicionar
-                        </button>
-                    </div>
-                `;
-            });
-
-            lista.innerHTML += `</div><hr>`;
-        });
-
-    } catch (error) {
-        lista.innerHTML = "<p>❌ Erro ao carregar produtos do banco.</p>";
-    }
-}
-
-// ============================
-// 🎓 CARREGAR CURSOS DO BANCO
-// ============================
-async function carregarCursos() {
-    const lista = document.getElementById("lista-cursos");
-
-    if (!lista) return;
-
-    lista.innerHTML = "<p>📚 Carregando cursos...</p>";
-
-    try {
-        const response = await fetch("http://localhost:3000/cursos");
-        const cursos = await response.json();
-
-        lista.innerHTML = "";
-
-        cursos.forEach((curso) => {
-            lista.innerHTML += `
-                <div class="card">
-                    <h3>🎓 ${curso.titulo}</h3>
-                    <p>${curso.descricao}</p>
-                    <p><strong>Duração:</strong> ${curso.duracao}</p>
-                    <p><strong>Professor:</strong> ${curso.professor}</p>
-                    <button onclick="mostrarDetalhesCurso('${curso.titulo}', '${curso.descricao}', '${curso.duracao}', '${curso.professor}')">
-                        Ver detalhes
-                    </button>
-                </div>
-            `;
-        });
-
-    } catch (error) {
-        lista.innerHTML = "<p>❌ Erro ao carregar cursos do banco.</p>";
-    }
-}
-
-function mostrarDetalhesCurso(titulo, descricao, duracao, professor) {
-    const mensagem = `
-📚 ${titulo}
-
-📝 Descrição:
-${descricao}
-
-⏱️ Duração:
-${duracao}
-
-👨‍🏫 Professor:
-${professor}
-
-✅ Aula disponível na Bepro.gg
-🎮 Conteúdo voltado para melhoria de desempenho gamer.
-`;
-
-    alert(mensagem);
-}
-window.addEventListener("load", () => {
-    carregarCursos();
-});
