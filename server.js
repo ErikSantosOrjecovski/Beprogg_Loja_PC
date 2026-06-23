@@ -222,6 +222,9 @@ app.get("/produtos", (req, res) => {
     });
 });
 
+// ==========================================
+// 🚀 INICIALIZAÇÃO DO SERVIDOR
+// ==========================================
 app.listen(3000, () => {
-    console.log("Servidor rodando em http://localhost:3000");
+    console.log("Servidor rodando com sucesso em http://localhost:3000");
 });

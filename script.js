@@ -1,6 +1,6 @@
-// ============================
+// ==========================================
 // 🔹 CONTROLE DE ABAS
-// ============================
+// ==========================================
 function trocarAba(id) {
     document.querySelectorAll(".conteudo").forEach(sec => sec.classList.remove("ativo"));
     document.getElementById(id).classList.add("ativo");
@@ -13,9 +13,9 @@ function trocarAba(id) {
     if (id === "loja") carregarProdutos();
 }
 
-// ============================
+// ==========================================
 // 🛒 CARRINHO DE COMPRAS
-// ============================
+// ==========================================
 let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
 function adicionarAoCarrinho(nome, preco = null) {
@@ -67,6 +67,54 @@ function salvarCarrinho() {
 }
 
 // ==========================================
+// 🎓 SELETOR DE PERFIL (INTERAÇÃO FIGMA)
+// ==========================================
+function toggleDropdownPerfil() {
+    const dropdown = document.getElementById('perfil-dropdown');
+    if (!dropdown) return;
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+function selecionarPerfil(nomePerfil, classeIcone) {
+    // 1. Atualiza o texto do botão principal
+    const displayTexto = document.getElementById('perfil-selected' || 'perfil-selecionado');
+    if (displayTexto) displayTexto.innerText = nomePerfil;
+    
+    // 2. Atualiza o ícone do botão principal mantendo a cor do design
+    const iconePrincipal = document.querySelector('.perfil-botao .icon-perfil');
+    if (iconePrincipal) {
+        iconePrincipal.className = `fa-solid ${classeIcone} icon-perfil`;
+    }
+    
+    // 3. Remove a classe 'ativo' de todos os itens do dropdown
+    const itens = document.querySelectorAll('.perfil-item');
+    itens.forEach(item => item.classList.remove('ativo'));
+    
+    // 4. Adiciona a classe 'ativo' ao item selecionado
+    itens.forEach(item => {
+        if (item.innerText.includes(nomePerfil)) {
+            item.classList.add('ativo');
+        }
+    });
+    
+    // 5. Fecha o dropdown após a seleção
+    const dropdown = document.getElementById('perfil-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
+    
+    console.log("Filtro de Perfil alterado para: " + nomePerfil);
+}
+
+// Fechar o dropdown se o usuário clicar fora dele
+window.addEventListener('click', function(event) {
+    const container = document.querySelector('.perfil-container');
+    const dropdown = document.getElementById('perfil-dropdown');
+    
+    if (container && dropdown && !container.contains(event.target)) {
+        dropdown.style.display = 'none';
+    }
+});
+
+// ==========================================
 // 🤖 BEPRO IA MATCH (STORE EDITION)
 // ==========================================
 async function gerarRecomendacao() {
@@ -90,7 +138,6 @@ async function gerarRecomendacao() {
         robotText.innerText = "🤖 Computando ecossistema profissional da Academy...";
     }
 
-    // Tabela de preços estáticos para os produtos recomendados pelo backend
     const tabelaPrecos = {
         "AMD Ryzen 7 7800X3D": 2499,
         "Air cooler premium ou AIO 240 mm": 450,
@@ -144,19 +191,20 @@ async function gerarRecomendacao() {
             let categoriaAtual = "";
 
             linhas.forEach(linha => {
-                const linhaLimpa = linha.replace("• ", "").trim();
+                const linhaLimpa = line => line.replace("• ", "").trim();
+                const formattedLine = linhaLimpa(linha);
                 
-                if (linhaLimpa.includes("Configuração Ideal Competitiva")) {
+                if (formattedLine.includes("Configuração Ideal Competitiva")) {
                     categoriaAtual = "pecas";
                     return;
                 }
-                if (linhaLimpa.includes("Periféricos Ideais para o Jogo")) {
+                if (formattedLine.includes("Periféricos Ideais para o Jogo")) {
                     categoriaAtual = "perifericos";
                     return;
                 }
 
-                if (linhaLimpa.includes(":") && (categoriaAtual === "pecas" || categoriaAtual === "perifericos")) {
-                    const partes = linhaLimpa.split(":");
+                if (formattedLine.includes(":") && (categoriaAtual === "pecas" || categoriaAtual === "perifericos")) {
+                    const partes = formattedLine.split(":");
                     const componenteTipo = partes[0].trim();
                     const modeloNome = partes[1].trim();
                     
@@ -208,9 +256,9 @@ async function gerarRecomendacao() {
     }, 1000);
 }
 
-// ============================
+// ==========================================
 // 👤 AUTENTICAÇÃO (LOGIN/CADASTRO)
-// ============================
+// ==========================================
 function fazerCadastro(event) {
     event.preventDefault();
     const nome = document.getElementById("nome").value.trim();
@@ -248,9 +296,9 @@ function fazerLogin() {
     }
 }
 
-// ============================
+// ==========================================
 // 💳 MÓDULO FINALIZAÇÃO PAGAMENTO
-// ============================
+// ==========================================
 function atualizarResumoPagamento() {
     const resumo = document.getElementById("resumo-pagamento");
     if (!resumo) return;
@@ -274,13 +322,13 @@ async function finalizarPedido() {
     const telefone = document.getElementById("telefone").value;
     const endereco = document.getElementById("endereco").value;
     const pagamento = document.getElementById("forma-pagamento").value;
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
 
     if (!cliente || !telefone || !endereco || !pagamento || carrinho.length === 0) {
         document.getElementById("mensagem-pedido").innerText = "⚠️ Preencha os dados e coloque itens no carrinho!";
         return;
     }
 
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
     const dadosPedido = { cliente, telefone, endereco, pagamento, usuario, itens: carrinho };
 
     try {
@@ -288,7 +336,7 @@ async function finalizarPedido() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dadosPedido)
-        });
+            });
         const data = await response.json();
         document.getElementById("mensagem-pedido").innerText = data.mensagem;
         carrinho = [];
@@ -334,7 +382,6 @@ async function carregarProdutos() {
     listaPecas.innerHTML = "<p style='color: gray;'>Carregando peças...</p>";
     listaPerifericos.innerHTML = "<p style='color: gray;'>Carregando periféricos...</p>";
     
-    // Lista de termos para identificar periféricos automaticamente
     const termosPerifericos = [
         "mouse", "teclado", "headset", "fone", "monitor", "mousepad", "sleeve", "manguito", 
         "wooting", "logitech", "razer", "artisan", "zowie", "hyperx", "audiotechnica", "astros"
@@ -401,7 +448,7 @@ async function carregarCursos() {
         const response = await fetch("http://localhost:3000/cursos");
         const jazidaCursos = await response.json();
         
-        lista.className = "grade-produtos";
+        lista.className = "produtos-grid"; // Sincronizado com a classe do index unificado
         lista.innerHTML = "";
         
         if (jazidaCursos.length === 0) {
