@@ -13,17 +13,17 @@ main {
 }
 
 /* ==========================================
-   📋 CONTROLE DE CONTEÚDO E ABAS (CORRIGIDO)
+   📋 CONTROLE DE CONTEÚDO E ABAS
    ========================================== */
 .conteudo {
-    display: none !important; /* Força sumir por padrão */
+    display: none !important;
     text-align: center;
 }
 
-/* Mostra apenas quando a div contiver as DUAS classes juntas */
 .conteudo.ativo {
-    display: block !important; /* Força aparecer apenas a aba ativa */
+    display: block !important;
 }
+
 /* ==========================================
    🔝 HEADER E AUTENTICAÇÃO
    ========================================== */
@@ -63,15 +63,6 @@ header {
             drop-shadow(0 0 40px #0066ff);
 }
 
-.icone {
-    background: #00d4ff;
-    padding: 10px;
-    border-radius: 6px;
-    color: #000;
-    width: auto;
-    height: auto;
-}
-
 .auth-area {
     position: absolute;
     right: 25px;
@@ -92,57 +83,64 @@ header {
 }
 
 /* ==========================================
-   🗺️ MENU DE NAVEGAÇÃO
+   🗺️ BARRA DE NAVEGAÇÃO PRINCIPAL
    ========================================== */
 .menu {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    padding: 15px;
+    align-items: center;
+    gap: 20px;
+    background: #0d1b2a;
+    padding: 15px 25px;
+    border-bottom: 1px solid #1a2332;
 }
 
 .aba {
-    background: #1a2332;
-    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    padding: 10px 16px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease;
+    color: #a0aec0;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.menu-icone {
+    width: 24px;
+    height: 24px;
+    stroke-width: 1.5;
+    transition: transform 0.25s ease;
+}
+
+.aba span {
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.8px;
 }
 
 .aba:hover {
-    background: #00d4ff;
-    color: black;
+    background: transparent;
+    color: #00d4ff;
+    filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.5));
+}
+
+.aba:hover .menu-icone {
+    transform: translateY(-3px);
 }
 
 /* ==========================================
    🏠 SEÇÃO INICIAL E FOOTER
    ========================================== */
-#inicio h2 {
-    margin-bottom: 50px;
-}
-
-#inicio p {
-    margin-bottom: 60px;
-}
-
-#inicio .avaliacoes {
-    margin-top: 100px;
-}
-
-#inicio .avaliacoes p {
-    margin: 25px 0;
-}
-
-#inicio footer {
-    margin-top: 120px;
-}
-
-footer {
-    background: black;
-    color: white;
-    padding: 15px;
-    text-align: center;
-}
+#inicio h2 { margin-bottom: 50px; }
+#inicio p { margin-bottom: 60px; }
+#inicio .avaliacoes { margin-top: 100px; }
+#inicio .avaliacoes p { margin: 25px 0; }
+#inicio footer { margin-top: 120px; }
+footer { background: black; color: white; padding: 15px; text-align: center; }
 
 /* ==========================================
    📦 CARDS E BOTÕES PADRÃO
@@ -166,41 +164,242 @@ button {
     transition: transform 0.2s;
 }
 
-button:hover {
-    transform: scale(1.05);
-}
-
-.btn-cadastro {
-    margin-top: 10px;
-}
+button:hover { transform: scale(1.05); }
 
 /* ==========================================
    🤖 ROBÔ BUILDIX ANIMADO
    ========================================== */
-#robot {
+#robot { margin-top: 25px; text-align: center; }
+#robot-emoji { font-size: 80px; display: inline-block; animation: roboBuildix 1.3s infinite ease-in-out; }
+#robot-text { margin-top: 10px; font-size: 18px; color: #00d4ff; font-weight: bold; animation: textoBuildix 1.4s infinite; }
+@keyframes roboBuildix {
+    0% { transform: translateX(-18px) rotate(-6deg) scale(1); opacity: 0.7; }
+    50% { transform: translateX(18px) rotate(6deg) scale(1.12); opacity: 1; }
+    100% { transform: translateX(-18px) rotate(-6deg) scale(1); opacity: 0.7; }
+}
+
+/* ==========================================
+   🛍️ BARRA DE CATEGORIAS INTERNA DA LOJA
+   ========================================== */
+.barra-categorias {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    background: #0d1b2a;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 1160px;
+    margin: 0 auto 40px auto;
+    border: 1px solid #1a2332;
+}
+
+.categoria-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: #a0aec0;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.categoria-icone {
+    width: 32px;
+    height: 32px;
+    stroke-width: 1.5;
+    transition: transform 0.25s ease;
+}
+
+.categoria-item span { font-size: 11px; font-weight: bold; letter-spacing: 1.2px; }
+.categoria-item:hover { color: #00d4ff; filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.6)); }
+.categoria-item:hover .categoria-icone { transform: translateY(-4px); }
+
+
+/* ==========================================
+   🔒 🆕 SEÇÃO DE LOGIN E CADASTRO COMPLEXO (PREMIUM)
+   ========================================== */
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+    width: 100%;
+}
+
+.auth-container {
+    background: #0d1b2a;
+    border: 1px solid #1a2332;
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 550px; /* Expandido para acomodar o grid de cadastro */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-top-icon {
+    width: 42px;
+    height: 42px;
+    color: #00d4ff;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
+}
+
+.auth-header h3 {
+    font-size: 24px;
+    margin: 0 0 8px 0;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.auth-header p {
+    font-size: 13px;
+    color: #a0aec0;
+    margin: 0;
+}
+
+/* Estrutura de grid para os inputs ficarem lado a lado de forma complexa */
+.auth-grid-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Em telas muito finas, o grid vira uma única coluna */
+@media (max-width: 500px) {
+    .auth-grid-fields { grid-template-columns: 1fr; }
+}
+
+.auth-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+/* Estilização avançada das labels */
+.auth-form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #a0aec0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.auth-form-group label i {
+    width: 14px;
+    height: 14px;
+    color: #00d4ff;
+}
+
+/* Inputs Premium com bordas neon dinâmicas */
+.auth-form-group input {
+    background: #16222f;
+    border: 1px solid #223143;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.auth-form-group input::placeholder {
+    color: #4a5568;
+}
+
+/* Efeito de foco neon azul */
+.auth-form-group input:focus {
+    border-color: #00d4ff;
+    background: #121d2a;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.25);
+}
+
+/* Checkbox dos termos */
+.auth-checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0 30px 0;
+    user-select: none;
+}
+
+.auth-checkbox-group input[type="checkbox"] {
+    accent-color: #00d4ff;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.auth-checkbox-group label {
+    font-size: 12px;
+    color: #718096;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+/* Botão de envio robusto */
+.btn-auth-submit {
+    width: 100%;
+    background: #00d4ff;
+    color: #000000;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.25s ease;
+}
+
+.btn-auth-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+}
+
+/* Switcher para alternar entre os modos */
+.auth-switch-mode {
     margin-top: 25px;
     text-align: center;
+    font-size: 13px;
+    color: #718096;
+    border-top: 1px solid #1a2332;
+    padding-top: 20px;
 }
 
-#robot-emoji {
-    font-size: 80px;
-    display: inline-block;
-    animation: roboBuildix 1.3s infinite ease-in-out;
-}
-
-#robot-text {
-    margin-top: 10px;
-    font-size: 18px;
+.auth-switch-mode button {
+    background: transparent;
+    border: none;
     color: #00d4ff;
     font-weight: bold;
-    animation: textoBuildix 1.4s infinite;
+    padding: 0;
+    margin-left: 5px;
+    cursor: pointer;
+    text-decoration: underline;
 }
 
-@keyframes roboBuildix {
-    0% {
-        transform: translateX(-18px) rotate(-6deg) scale(1);
-        opacity: 0.7;
-    }
-    50% {
-        transform: translateX(18px) rotate(6deg) scale(1.12);
-        opacity
+.auth-switch-mode button:hover {
+    color: #00bcd4;
+    transform: none;
+}
+
+.auth-message {
+    font-size: 13px;
+    margin-top: 12px;
+    text-align: center;
+    font-weight: 500;
+}

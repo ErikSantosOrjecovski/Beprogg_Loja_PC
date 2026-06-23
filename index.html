@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bepro.gg</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -9,11 +10,7 @@
 
 <header>
     <div class="logo" onclick="trocarAba('inicio')">
-        <img
-            src="imagens/logo-bepro.png.jpeg"
-            alt="Bepro.gg"
-            class="logo-img"
-        >
+        <img src="imagens/logo-bepro.png.jpeg" alt="Bepro.gg" class="logo-img">
     </div>
 
     <div id="auth-area" class="auth-area" style="display:none;">
@@ -23,12 +20,30 @@
 </header>
 
 <section class="menu">
-    <div class="aba" onclick="trocarAba('monte')">Bepro.gg Match 🤖</div>
-    <div class="aba" onclick="trocarAba('loja')">Loja 🛒</div>
-    <div class="aba" onclick="trocarAba('pagamento')">Pagamento 💳</div>
-    <div class="aba" onclick="trocarAba('coach')">Coach/Aulas 🎮</div>
-    <div id="menu-pedidos" class="aba" onclick="trocarAba('pedidos')" style="display:none;">Meus Pedidos 📦</div>
-    <div id="menu-login" class="aba" onclick="trocarAba('login')">Login/Cadastro</div>
+    <div class="aba" onclick="trocarAba('monte')">
+        <i data-lucide="bot" class="menu-icone"></i>
+        <span>Bepro.gg Match</span>
+    </div>
+    <div class="aba" onclick="trocarAba('loja')">
+        <i data-lucide="shopping-cart" class="menu-icone"></i>
+        <span>Loja</span>
+    </div>
+    <div class="aba" onclick="trocarAba('pagamento')">
+        <i data-lucide="credit-card" class="menu-icone"></i>
+        <span>Pagamento</span>
+    </div>
+    <div class="aba" onclick="trocarAba('coach')">
+        <i data-lucide="gamepad-2" class="menu-icone"></i>
+        <span>Coach/Aulas</span>
+    </div>
+    <div id="menu-pedidos" class="aba" onclick="trocarAba('pedidos')" style="display:none;">
+        <i data-lucide="package" class="menu-icone"></i>
+        <span>Meus Pedidos</span>
+    </div>
+    <div id="menu-login" class="aba" onclick="trocarAba('login')">
+        <i data-lucide="user" class="menu-icone"></i>
+        <span>Login/Cadastro</span>
+    </div>
 </section>
 
 <main>
@@ -83,22 +98,46 @@
 <section id="loja" class="conteudo">
     <h2 style="text-align: center; color: white; margin-bottom: 30px;">🛒 Store - Catálogo Completo</h2>
     
+    <div class="barra-categorias">
+        <div class="categoria-item" onclick="filtrarCategoria('promocao')">
+            <i data-lucide="tag" class="categoria-icone"></i>
+            <span>PROMOÇÃO</span>
+        </div>
+        <div class="categoria-item" onclick="filtrarCategoria('hardware')">
+            <i data-lucide="cpu" class="categoria-icone"></i>
+            <span>HARDWARE</span>
+        </div>
+        <div class="categoria-item" onclick="filtrarCategoria('teclados')">
+            <i data-lucide="keyboard" class="categoria-icone"></i>
+            <span>TECLADOS</span>
+        </div>
+        <div class="categoria-item" onclick="filtrarCategoria('mouses')">
+            <i data-lucide="mouse" class="categoria-icone"></i>
+            <span>MOUSES</span>
+        </div>
+        <div class="categoria-item" onclick="filtrarCategoria('monitores')">
+            <i data-lucide="monitor" class="categoria-icone"></i>
+            <span>MONITORES</span>
+        </div>
+        <div class="categoria-item" onclick="filtrarCategoria('refrigeracao')">
+            <i data-lucide="snowflake" class="categoria-icone"></i>
+            <span>COOLERS</span>
+        </div>
+    </div>
+
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-        
         <div>
             <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">
                 💻 Peças e Hardware
             </h3>
             <div id="lista-pecas" class="grade-produtos" style="display: flex; flex-direction: column; gap: 15px;"></div>
         </div>
-
         <div>
             <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">
                 🎮 Periféricos Premium
             </h3>
             <div id="lista-perifericos" class="grade-produtos" style="display: flex; flex-direction: column; gap: 15px;"></div>
         </div>
-
     </div>
 
     <h3 style="margin-top: 40px;">🛒 Produtos disponíveis</h3>
@@ -115,7 +154,6 @@
 
 <section id="pagamento" class="conteudo">
     <h2>💳 Finalizar Compra</h2>
-
     <div class="card">
         <h3>📦 Dados para entrega</h3>
         <input id="nome-cliente" type="text" placeholder="Seu nome"><br><br>
@@ -132,7 +170,6 @@
         <button onclick="finalizarPedido()">Finalizar Pedido</button>
         <p id="mensagem-pedido"></p>
     </div>
-
     <div class="card">
         <h3>🛒 Resumo do Pedido</h3>
         <div id="resumo-pagamento"></div>
@@ -144,48 +181,120 @@
     <p style="max-width: 600px; margin: 0 auto 35px auto; color: #a0aec0; line-height: 1.5;">
         Eleve seu nível técnico aprendendo macro, micro, posicionamento e mecânicas com os maiores pro players reconhecidos do cenário mundial.
     </p>
-
     <div id="lista-cursos"></div>
 </section>
 
 <section id="pedidos" class="conteudo">
     <h2>📦 Meus Pedidos</h2>
-    <p>Acompanhe aqui o histórico das suas compras realizadas na Buildix.</p>
     <div id="lista-pedidos"></div>
 </section>
 
 <section id="login" class="conteudo">
-    <h2>Login / Cadastro</h2>
+    <div class="auth-wrapper">
+        
+        <div id="login-box" class="auth-container">
+            <div class="auth-header">
+                <i data-lucide="lock" class="auth-top-icon"></i>
+                <h3>Login</h3>
+                <p>Insira suas credenciais para entrar na sua conta.</p>
+            </div>
+            
+            <div class="auth-form-group">
+                <label><i data-lucide="mail"></i> E-mail Corporativo ou Pessoal</label>
+                <input id="login-email" type="email" placeholder="exemplo@bepro.gg">
+            </div>
+            
+            <div class="auth-form-group">
+                <label><i data-lucide="key-round"></i> Código de Acesso / Senha</label>
+                <input id="login-senha" type="password" placeholder="••••••••">
+            </div>
 
-    <div id="login-box">
-        <h3>Entrar na conta</h3>
-        <input id="login-email" type="email" placeholder="Email"><br><br>
-        <input id="login-senha" type="password" placeholder="Senha"><br><br>
+            <button class="btn-auth-submit" onclick="fazerLogin()">Entrar na Conta</button>
+            <p id="msg-login" class="auth-message"></p>
+            
+            <div class="auth-switch-mode">
+                <span>Novo na plataforma?</span>
+                <button onclick="alternarModoAuth('cadastro')">Crie sua conta agora</button>
+            </div>
+        </div>
 
-        <button onclick="fazerLogin()">Entrar</button>
-        <p id="msg-login"></p>
-    </div>
+        <div id="cadastro-box" class="auth-container" style="display:none;">
+            <div class="auth-header">
+                <i data-lucide="user-plus" class="auth-top-icon"></i>
+                <h3>Criar Cadastro</h3>
+                <p>Complete as etapas obrigatórias de verificação abaixo.</p>
+            </div>
+            
+            <form onsubmit="fazerCadastro(event)">
+                <div class="auth-grid-fields">
+                    <div class="auth-form-group">
+                        <label><i data-lucide="user"></i> Nome Completo</label>
+                        <input id="nome" type="text" placeholder="Seu nome" required>
+                    </div>
 
-    <div class="cadastro">
-        <p>Não tem uma conta?</p>
-        <button id="btn-abrir-cadastro" onclick="abrirCadastro()">Cadastrar</button>
-    </div>
+                    <div class="auth-form-group">
+                        <label><i data-lucide="hash"></i> CPF (Inscrição)</label>
+                        <input id="cpf" type="text" placeholder="000.000.000-00" required>
+                    </div>
+                    
+                    <div class="auth-form-group">
+                        <label><i data-lucide="mail"></i> Endereço de E-mail</label>
+                        <input id="email" type="email" placeholder="nome@provedor.com" required>
+                    </div>
 
-    <div id="cadastro-box" style="display:none; margin-top:20px;">
-        <form onsubmit="fazerCadastro(event)">
-            <h3>Criar conta</h3>
-            <input id="nome" type="text" placeholder="Nome"><br><br>
-            <input id="email" type="email" placeholder="Email"><br><br>
-            <input id="senha" type="password" placeholder="Senha"><br><br>
+                    <div class="auth-form-group">
+                        <label><i data-lucide="phone"></i> Telefone / WhatsApp</label>
+                        <input id="cadastro-tel" type="text" placeholder="(00) 00000-0000" required>
+                    </div>
+                    
+                    <div class="auth-form-group">
+                        <label><i data-lucide="key"></i> Digite uma Senha</label>
+                        <input id="senha" type="password" placeholder="Mínimo 6 caracteres" required>
+                    </div>
 
-            <button type="submit">Cadastrar</button>
-        </form>
-        <p id="msg-cadastro"></p>
+                    <div class="auth-form-group">
+                        <label><i data-lucide="check-square"></i> Confirmar Senha</label>
+                        <input id="confirma-senha" type="password" placeholder="Repita a senha" required>
+                    </div>
+                </div>
+
+                <div class="auth-checkbox-group">
+                    <input type="checkbox" id="termos" required>
+                    <label for="termos">Declaro que li e concordo com as Diretrizes da Comunidade e Termos de Serviço da Bepro.gg.</label>
+                </div>
+
+                <button type="submit" class="btn-auth-submit">Finalizar Registro Regulamentar</button>
+            </form>
+            <p id="msg-cadastro" class="auth-message"></p>
+            
+            <div class="auth-switch-mode">
+                <span>Já possui registro ativo?</span>
+                <button onclick="alternarModoAuth('login')">Acessar conta existente</button>
+            </div>
+        </div>
+
     </div>
 </section>
 
 </main>
 
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    lucide.createIcons();
+    
+    // Função auxiliar para alternar os cards de forma limpa na tela
+    function alternarModoAuth(modo) {
+        const loginBox = document.getElementById('login-box');
+        const cadastroBox = document.getElementById('cadastro-box');
+        if(modo === 'cadastro') {
+            loginBox.style.display = 'none';
+            cadastroBox.style.display = 'block';
+        } else {
+            loginBox.style.display = 'block';
+            cadastroBox.style.display = 'none';
+        }
+    }
+</script>
 <script src="script.js"></script>
 </body>
 </html>
