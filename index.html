@@ -32,189 +32,284 @@
 </header>
 
 <section class="menu">
-    <div class="aba" onclick="trocarAba('monte')">Bepro.gg Match 🤖</div>
-    <div class="aba" onclick="trocarAba('loja')">Loja 🛒</div>
-    <div class="aba" onclick="trocarAba('pagamento')">Pagamento 💳</div>
-    <div class="aba" onclick="trocarAba('coach')">Coach/Aulas 🎮</div>
-    <div id="menu-pedidos" class="aba" onclick="trocarAba('pedidos')" style="display:none;">Meus Pedidos 📦</div>
-    <div id="menu-login" class="aba" onclick="trocarAba('login')">Login/Cadastro</div>
+    <div class="aba" onclick="trocarAba('monte')">
+        <i data-lucide="bot" class="menu-icone"></i>
+        <span>Bepro.gg Match</span>
+    </div>
+    <div class="aba" onclick="trocarAba('loja')">
+        <i data-lucide="shopping-cart" class="menu-icone"></i>
+        <span>Loja</span>
+    </div>
+    <div class="aba" onclick="trocarAba('pagamento')">
+        <i data-lucide="credit-card" class="menu-icone"></i>
+        <span>Pagamento</span>
+    </div>
+    <div class="aba" onclick="trocarAba('coach')">
+        <i data-lucide="gamepad-2" class="menu-icone"></i>
+        <span>Coach/Aulas</span>
+    </div>
+    <div id="menu-pedidos" class="aba" onclick="trocarAba('pedidos')" style="display:none;">
+        <i data-lucide="package" class="menu-icone"></i>
+        <span>Meus Pedidos</span>
+    </div>
+    <div id="menu-login" class="aba" onclick="trocarAba('login')">
+        <i data-lucide="user" class="menu-icone"></i>
+        <span>Login/Cadastro</span>
+    </div>
 </section>
 
 <main>
-
-<section id="inicio" class="conteudo ativo">
-    <div class="inicio-centro">
-        <h2>Bem-Vindo(a) à Bepro.gg!</h2>
-        <p>Sua plataforma inteligente para montar e escolher o PC ideal!</p>
-
-        <div class="avaliacoes">
-            <h3>Avaliações dos Clientes</h3>
-            <p>“Ótima experiência! Montei meu PC fácil!” ⭐⭐⭐⭐⭐</p>
-            <p>“Interface bonita e prática.” ⭐⭐⭐⭐</p>
-        </div>
-    </div>
-
-    <footer>
-        <p>© 2026 Bepro.gg</p>
-    </footer>
-</section>
-
-<section id="monte" class="conteudo">
-    <h2>Análise Inteligente Bepro.gg Academy</h2>
-    <p>Selecione o seu foco competitivo para montarmos o setup ideal com periféricos profissionais.</p>
-
-    <div class="formulario-ia">
-        <label for="jogo" style="font-weight: bold; display: block; margin-bottom: 10px;">Qual jogo competitivo deseja?</label>
-        <select id="jogo" style="background: #111a2e; color: white; border: 1px solid #1f293d; padding: 10px; border-radius: 6px; width: 100%; max-width: 300px;">
-            <option value="" disabled selected>Selecione o jogo...</option>
-            <option value="fortnite">Fortnite</option>
-            <option value="valorant">Valorant</option>
-            <option value="cs2">Counter Strike 2</option>
-            <option value="r6">Rainbow Six Siege</option>
-            <option value="lol">League of Legends</option>
-            <option value="warzone">Call of Duty: Warzone</option>
-        </select>
-        <br><br>
-
-        <button onclick="gerarRecomendacao()">Analisar Setup Ideal</button>
-    </div>
-
-    <div id="resultado-buildix"></div>
-
-    <div id="robot" style="display:none; text-align:center; margin-top:20px;">
-        <div id="robot-emoji">🤖</div>
-        <p id="robot-text">Computando ecossistema de hardware competitivo para a Academy...</p>
-    </div>
-
-    <div id="resposta-ia" style="margin-top:20px;"></div>
-</section>
-
-<section id="loja" class="conteudo">
-    <div style="max-width: 1200px; margin: 0 auto 30px auto; display: flow-root; padding: 0 20px;">
-        <h2 class="section-title" style="float: left; margin: 0;">Store - Catálogo Completo</h2>
-        
-        <div class="perfil-container">
-            <div class="perfil-botao" onclick="toggleDropdownPerfil()">
-                <i class="fa-solid fa-graduation-cap icon-perfil"></i>
-                <span>Perfil: <strong id="perfil-selecionado">Estudante / Home Office</strong></span>
-                <i class="fa-solid fa-chevron-down arrow-perfil"></i>
-            </div>
-            
-            <div id="perfil-dropdown" class="perfil-dropdown">
-                <div class="perfil-item ativo" onclick="selecionarPerfil('Estudante / Home Office', 'fa-graduation-cap')">
-                    <span><i class="fa-solid fa-graduation-cap"></i> Estudante / Home Office</span>
-                    <i class="fa-solid fa-check check-perfil"></i>
-                </div>
-                <div class="perfil-item" onclick="selecionarPerfil('Profissional / Workstation', 'fa-briefcase')">
-                    <span><i class="fa-solid fa-briefcase"></i> Profissional / Workstation</span>
-                    <i class="fa-solid fa-check check-perfil"></i>
-                </div>
-                <div class="perfil-item" onclick="selecionarPerfil('Gamer Intermediário', 'fa-gamepad')">
-                    <span><i class="fa-solid fa-gamepad"></i> Gamer Intermediário</span>
-                    <i class="fa-solid fa-check check-perfil"></i>
-                </div>
-                <div class="perfil-item" onclick="selecionarPerfil('Entusiasta / Avançado', 'fa-bolt')">
-                    <span><i class="fa-solid fa-bolt"></i> Entusiasta / Avançado</span>
-                    <i class="fa-solid fa-check check-perfil"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-        <div id="lista-pecas" class="produtos-grid"></div>
-        <div id="lista-perifericos" class="produtos-grid"></div>
-        <div id="lista-produtos" class="produtos-grid"></div>
-    </div>
-
-    <hr style="border: 1px solid #1f293d; margin: 40px 0;">
-
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: left;">
-        <h3 class="section-title">🛒 Seu Carrinho</h3>
-        <div id="lista-carrinho" class="produtos-grid"></div>
-        <h3 id="total-carrinho" style="color: #00d4ff; text-align: left; font-family: 'Rajdhani', sans-serif; font-size: 24px; margin-top: 20px;"></h3>
-
-        <button onclick="trocarAba('pagamento')" style="margin: 20px 0 40px 0; max-width: 250px;">Ir para Pagamento 💳</button>
-    </div>
-</section>
-
-<section id="pagamento" class="conteudo">
-    <h2 class="section-title">💳 Finalizar Compra</h2>
-
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto;">
-        <div class="card">
-            <h3>📦 Dados para entrega</h3>
-            <input id="nome-cliente" type="text" placeholder="Seu nome" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
-            <input id="telefone" type="text" placeholder="Telefone" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
-            <input id="endereco" type="text" placeholder="Endereço" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
-
-            <select id="forma-pagamento" style="width: 96%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 20px;">
-                <option value="">Forma de pagamento</option>
-                <option value="PIX">PIX</option>
-                <option value="Cartão">Cartão</option>
-                <option value="Boleto">Boleto</option>
+    <section id="monte" class="conteudo">
+        <h2>Análise Inteligente Bepro.gg Academy</h2>
+        <div class="formulario-ia">
+            <label for="jogo" style="font-weight: bold; display: block; margin-bottom: 10px;">Qual jogo competitivo deseja?</label>
+            <select id="jogo" style="background: #111a2e; color: white; border: 1px solid #1f293d; padding: 10px; border-radius: 6px; width: 100%; max-width: 300px;">
+                <option value="" disabled selected>Selecione o jogo...</option>
+                <option value="fortnite">Fortnite</option>
+                <option value="valorant">Valorant</option>
             </select>
+        </div>
+    </section>
 
-            <button onclick="finalizarPedido()">Finalizar Pedido</button>
-            <p id="mensagem-pedido" style="margin-top: 15px; color: #00d4ff; font-weight: bold;"></p>
+    <section id="loja" class="conteudo">
+        <div style="max-width: 1200px; margin: 0 auto 30px auto; display: flow-root; padding: 0 20px;">
+            <h2 class="section-title" style="float: left; margin: 0;">Store - Catálogo Completo</h2>
+            
+            <div class="perfil-container">
+                <div class="perfil-botao" onclick="toggleDropdownPerfil()">
+                    <i class="fa-solid fa-graduation-cap icon-perfil"></i>
+                    <span>Perfil: <strong id="perfil-selecionado">Estudante / Home Office</strong></span>
+                    <i class="fa-solid fa-chevron-down arrow-perfil"></i>
+                </div>
+                
+                <div id="perfil-dropdown" class="perfil-dropdown">
+                    <div class="perfil-item ativo" onclick="selecionarPerfil('Estudante / Home Office', 'fa-graduation-cap')">
+                        <span><i class="fa-solid fa-graduation-cap"></i> Estudante / Home Office</span>
+                        <i class="fa-solid fa-check check-perfil"></i>
+                    </div>
+                    <div class="perfil-item" onclick="selecionarPerfil('Profissional / Workstation', 'fa-briefcase')">
+                        <span><i class="fa-solid fa-briefcase"></i> Profissional / Workstation</span>
+                        <i class="fa-solid fa-check check-perfil"></i>
+                    </div>
+                    <div class="perfil-item" onclick="selecionarPerfil('Gamer Intermediário', 'fa-gamepad')">
+                        <span><i class="fa-solid fa-gamepad"></i> Gamer Intermediário</span>
+                        <i class="fa-solid fa-check check-perfil"></i>
+                    </div>
+                    <div class="perfil-item" onclick="selecionarPerfil('Entusiasta / Avançado', 'fa-bolt')">
+                        <span><i class="fa-solid fa-bolt"></i> Entusiasta / Avançado</span>
+                        <i class="fa-solid fa-check check-perfil"></i>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="card">
-            <h3>🛒 Resumo do Pedido</h3>
-            <div id="resumo-pagamento"></div>
-        </div>
-    </div>
-</section>
-
-<section id="coach" class="conteudo">
-    <h2 class="section-title">🎮 Coach Gamer Bepro.gg Academy</h2>
-    <p style="text-align: left; max-width: 800px; margin-bottom: 35px; color: #94a3b8; line-height: 1.6;">
-        Eleve seu nível técnico aprendendo macro, micro, posicionamento e mecânicas com os maiores pro players reconhecidos do cenário mundial.
-    </p>
-
-    <div id="lista-cursos" class="produtos-grid"></div>
-</section>
-
-<section id="pedidos" class="conteudo">
-    <h2 class="section-title">📦 Meus Pedidos</h2>
-    <p style="text-align: left; color: #94a3b8; margin-bottom: 20px;">Acompanhe aqui o histórico das suas compras realizadas na Bepro.gg.</p>
-    <div id="lista-pedidos" class="produtos-grid"></div>
-</section>
-
-<section id="login" class="conteudo">
-    <h2 class="section-title" style="text-align: center;">Login / Cadastro</h2>
-
-    <div style="display: flex; flex-direction: column; align-items: center; gap: 25px; max-width: 400px; margin: 0 auto;">
-        <div id="login-box" class="card" style="width: 100%;">
-            <h3>Entrar na conta</h3>
-            <input id="login-email" type="email" placeholder="Email" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
-            <input id="login-senha" type="password" placeholder="Senha" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 20px;">
-
-            <button onclick="fazerLogin()">Entrar</button>
-            <p id="msg-login" style="margin-top: 10px; color: #ff4d4d;"></p>
+        <div class="barra-categorias">
+            <div class="categoria-item" onclick="filtrarCategoria('promocao')">
+                <i data-lucide="tag" class="categoria-icone"></i>
+                <span>PROMOÇÃO</span>
+            </div>
+            <div class="categoria-item" onclick="filtrarCategoria('hardware')">
+                <i data-lucide="cpu" class="categoria-icone"></i>
+                <span>HARDWARE</span>
+            </div>
+            <div class="categoria-item" onclick="filtrarCategoria('teclados')">
+                <i data-lucide="keyboard" class="categoria-icone"></i>
+                <span>TECLADOS</span>
+            </div>
+            <div class="categoria-item" onclick="filtrarCategoria('mouses')">
+                <i data-lucide="mouse" class="categoria-icone"></i>
+                <span>MOUSES</span>
+            </div>
+            <div class="categoria-item" onclick="filtrarCategoria('monitores')">
+                <i data-lucide="monitor" class="categoria-icone"></i>
+                <span>MONITORES</span>
+            </div>
+            <div class="categoria-item" onclick="filtrarCategoria('refrigeracao')">
+                <i data-lucide="snowflake" class="categoria-icone"></i>
+                <span>COOLERS</span>
+            </div>
         </div>
 
-        <div class="cadastro" style="text-align: center;">
-            <p style="color: #94a3b8;">Não tem uma conta?</p>
-            <button id="btn-abrir-cadastro" onclick="abrirCadastro()" style="background: transparent; border: 1px solid #00d4ff; color: #00d4ff;">Cadastrar-se</button>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <div>
+                <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">
+                    💻 Peças e Hardware
+                </h3>
+                <div id="lista-pecas" class="produtos-grid" style="display: flex; flex-direction: column; gap: 15px;"></div>
+            </div>
+            <div>
+                <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">
+                    🎮 Periféricos Premium
+                </h3>
+                <div id="lista-perifericos" class="produtos-grid" style="display: flex; flex-direction: column; gap: 15px;"></div>
+            </div>
         </div>
 
-        <div id="cadastro-box" class="card" style="display:none; width: 100%;">
-            <form onsubmit="fazerCadastro(event)">
-                <h3>Criar conta</h3>
-                <input id="nome" type="text" placeholder="Nome" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
-                <input id="email" type="email" placeholder="Email" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
-                <input id="senha" type="password" placeholder="Senha" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 20px;">
-
-                <button type="submit">Cadastrar</button>
-            </form>
-            <p id="msg-cadastro" style="margin-top: 10px; color: #00d4ff;"></p>
+        <div style="max-width: 1200px; margin: 40px auto 0 auto; padding: 0 20px;">
+            <h3>🛒 Produtos disponíveis</h3>
+            <div id="lista-produtos" class="produtos-grid"></div>
         </div>
-    </div>
-</section>
 
+        <hr style="border: 1px solid #1f293d; margin: 40px 0;">
+
+        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: left;">
+            <h3 class="section-title">🛒 Seu Carrinho</h3>
+            <div id="lista-carrinho" class="produtos-grid"></div>
+            <h3 id="total-carrinho" style="color: #00d4ff; text-align: left; font-family: 'Rajdhani', sans-serif; font-size: 24px; margin-top: 20px;"></h3>
+            <button onclick="trocarAba('pagamento')" style="margin: 20px 0 40px 0; max-width: 250px;">Ir para Pagamento 💳</button>
+        </div>
+    </section>
+
+    <section id="pagamento" class="conteudo">
+        <h2 class="section-title">💳 Finalizar Compra</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto;">
+            <div class="card">
+                <h3>📦 Dados para entrega</h3>
+                <input id="nome-cliente" type="text" placeholder="Seu nome" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
+                <input id="telefone" type="text" placeholder="Telefone" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
+                <input id="endereco" type="text" placeholder="Endereço" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
+
+                <select id="forma-pagamento" style="width: 96%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 20px;">
+                    <option value="">Forma de pagamento</option>
+                    <option value="PIX">PIX</option>
+                    <option value="Cartão">Cartão</option>
+                    <option value="Boleto">Boleto</option>
+                </select>
+
+                <button onclick="finalizarPedido()">Finalizar Pedido</button>
+                <p id="mensagem-pedido" style="margin-top: 15px; color: #00d4ff; font-weight: bold;"></p>
+            </div>
+
+            <div class="card">
+                <h3>🛒 Resumo do Pedido</h3>
+                <div id="resumo-pagamento"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="coach" class="conteudo">
+        <h2 class="section-title">🎮 Coach Gamer Bepro.gg Academy</h2>
+        <p style="text-align: left; max-width: 800px; margin: 0 auto 35px auto; color: #94a3b8; line-height: 1.6;">
+            Eleve seu nível técnico aprendendo macro, micro, posicionamento e mecânicas com os maiores pro players reconhecidos do cenário mundial.
+        </p>
+        <div id="lista-cursos" class="produtos-grid"></div>
+    </section>
+
+    <section id="pedidos" class="conteudo">
+        <h2 class="section-title">📦 Meus Pedidos</h2>
+        <p style="text-align: left; color: #94a3b8; margin-bottom: 20px;">Acompanhe aqui o histórico das suas compras realizadas na Bepro.gg.</p>
+        <div id="lista-pedidos" class="produtos-grid"></div>
+    </section>
+
+    <section id="login" class="conteudo">
+        <h2 class="section-title" style="text-align: center;">Login / Cadastro</h2>
+        
+        <div class="auth-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 25px; max-width: 500px; margin: 0 auto;">
+            
+            <div id="login-box" class="auth-container card" style="width: 100%;">
+                <div class="auth-header">
+                    <i data-lucide="lock" class="auth-top-icon"></i>
+                    <h3>Login</h3>
+                    <p>Insira suas credenciais para entrar na sua conta.</p>
+                </div>
+                
+                <div class="auth-form-group">
+                    <label><i data-lucide="mail"></i> E-mail Corporativo ou Pessoal</label>
+                    <input id="login-email" type="email" placeholder="exemplo@bepro.gg" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
+                </div>
+                
+                <div class="auth-form-group">
+                    <label><i data-lucide="key-round"></i> Código de Acesso / Senha</label>
+                    <input id="login-senha" type="password" placeholder="••••••••" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 20px;">
+                </div>
+
+                <button class="btn-auth-submit" onclick="fazerLogin()">Entrar na Conta</button>
+                <p id="msg-login" class="auth-message" style="margin-top: 10px; color: #ff4d4d;"></p>
+                
+                <div class="auth-switch-mode" style="margin-top: 15px; text-align: center;">
+                    <span style="color: #94a3b8;">Novo na plataforma?</span>
+                    <button onclick="alternarModoAuth('cadastro')" style="background: transparent; border: none; color: #00d4ff; cursor: pointer; text-decoration: underline;">Crie sua conta agora</button>
+                </div>
+            </div>
+
+            <div id="cadastro-box" class="auth-container card" style="display:none; width: 100%;">
+                <div class="auth-header">
+                    <i data-lucide="user-plus" class="auth-top-icon"></i>
+                    <h3>Criar Cadastro</h3>
+                    <p>Complete as etapas obrigatórias de verificação abaixo.</p>
+                </div>
+                
+                <form onsubmit="fazerCadastro(event)">
+                    <div class="auth-grid-fields" style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="auth-form-group">
+                            <label><i data-lucide="user"></i> Nome Completo</label>
+                            <input id="nome" type="text" placeholder="Seu nome" required style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px;">
+                        </div>
+
+                        <div class="auth-form-group">
+                            <label><i data-lucide="hash"></i> CPF (Inscrição)</label>
+                            <input id="cpf" type="text" placeholder="000.000.000-00" required style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px;">
+                        </div>
+                        
+                        <div class="auth-form-group">
+                            <label><i data-lucide="mail"></i> Endereço de E-mail</label>
+                            <input id="email" type="email" placeholder="nome@provedor.com" required style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px;">
+                        </div>
+
+                        <div class="auth-form-group">
+                            <label><i data-lucide="phone"></i> Telefone / WhatsApp</label>
+                            <input id="cadastro-tel" type="text" placeholder="(00) 00000-0000" required style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px;">
+                        </div>
+                        
+                        <div class="auth-form-group">
+                            <label><i data-lucide="key"></i> Digite uma Senha</label>
+                            <input id="senha" type="password" placeholder="Mínimo 6 caracteres" required style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px;">
+                        </div>
+
+                        <div class="auth-form-group">
+                            <label><i data-lucide="check-square"></i> Confirmar Senha</label>
+                            <input id="confirma-senha" type="password" placeholder="Repita a senha" required style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px;">
+                        </div>
+                    </div>
+
+                    <div class="auth-checkbox-group" style="margin: 15px 0; text-align: left;">
+                        <input type="checkbox" id="termos" required>
+                        <label for="termos" style="color: #94a3b8; font-size: 13px;">Declaro que li e concordo com as Diretrizes da Comunidade e Termos de Serviço da Bepro.gg.</label>
+                    </div>
+
+                    <button type="submit" class="btn-auth-submit">Finalizar Registro Regulamentar</button>
+                </form>
+                <p id="msg-cadastro" class="auth-message" style="margin-top: 10px; color: #00d4ff;"></p>
+                
+                <div class="auth-switch-mode" style="margin-top: 15px; text-align: center;">
+                    <span style="color: #94a3b8;">Já possui registro ativo?</span>
+                    <button onclick="alternarModoAuth('login')" style="background: transparent; border: none; color: #00d4ff; cursor: pointer; text-decoration: underline;">Acessar conta existente</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
 </main>
 
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    // Inicializa os ícones do Lucide
+    lucide.createIcons();
+    
+    // Função auxiliar para alternar os cards de login e cadastro
+    function alternarModoAuth(modo) {
+        const loginBox = document.getElementById('login-box');
+        const cadastroBox = document.getElementById('cadastro-box');
+        if(modo === 'cadastro') {
+            loginBox.style.display = 'none';
+            cadastroBox.style.display = 'block';
+        } else {
+            loginBox.style.display = 'block';
+            cadastroBox.style.display = 'none';
+        }
+    }
+</script>
 <script src="script.js"></script>
 </body>
 </html>
