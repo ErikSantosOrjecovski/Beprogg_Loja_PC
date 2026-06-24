@@ -36,22 +36,27 @@
         <i data-lucide="bot" class="menu-icone"></i>
         <span>Bepro.gg Match</span>
     </div>
+
     <div class="aba" onclick="trocarAba('loja')">
         <i data-lucide="shopping-cart" class="menu-icone"></i>
         <span>Loja</span>
     </div>
+
     <div class="aba" onclick="trocarAba('pagamento')">
         <i data-lucide="credit-card" class="menu-icone"></i>
         <span>Pagamento</span>
     </div>
+
     <div class="aba" onclick="trocarAba('coach')">
         <i data-lucide="gamepad-2" class="menu-icone"></i>
         <span>Coach/Aulas</span>
     </div>
+
     <div id="menu-pedidos" class="aba" onclick="trocarAba('pedidos')" style="display:none;">
         <i data-lucide="package" class="menu-icone"></i>
         <span>Meus Pedidos</span>
     </div>
+
     <div id="menu-login" class="aba" onclick="trocarAba('login')">
         <i data-lucide="user" class="menu-icone"></i>
         <span>Login/Cadastro</span>
@@ -60,73 +65,85 @@
 
 <main>
 
-<section id="inicio" class="conteudo ativo">
-    <div class="inicio-centro">
-        <h2>Bem-Vindo(a) à Bepro.gg!</h2>
-        <p>Sua plataforma inteligente para montar, escolher e melhorar seu setup gamer.</p>
+    <section id="inicio" class="conteudo ativo">
+        <div class="inicio-centro">
+            <h2>Bem-Vindo(a) à Bepro.gg!</h2>
+            <p>Sua plataforma inteligente para montar, escolher e melhorar seu setup gamer.</p>
 
-        <div class="avaliacoes">
-            <h3>Avaliações dos Clientes</h3>
-            <p>“Ótima experiência! Montei meu PC fácil!” ⭐⭐⭐⭐⭐</p>
-            <p>“Interface bonita e prática.” ⭐⭐⭐⭐</p>
+            <div class="avaliacoes">
+                <h3>Avaliações dos Clientes</h3>
+                <p>“Ótima experiência! Montei meu PC fácil!” ⭐⭐⭐⭐⭐</p>
+                <p>“Interface bonita e prática.” ⭐⭐⭐⭐</p>
+            </div>
         </div>
-    </div>
 
-    <footer>
-        © 2026 Bepro.gg - Todos os direitos reservados.
-    </footer>
-</section>
+        <footer>
+            © 2026 Bepro.gg - Todos os direitos reservados.
+        </footer>
+    </section>
 
     <section id="monte" class="conteudo">
-    <h2>Análise Inteligente Bepro.gg Academy</h2>
-    <p style="color:#94a3b8;">Selecione o jogo competitivo para montarmos o setup ideal com periféricos profissionais.</p>
+        <h2>Análise Inteligente Bepro.gg Academy</h2>
 
-    <div class="formulario-ia">
-        <label for="jogo">Qual jogo competitivo deseja?</label>
+        <p class="texto-intro">
+            Selecione o jogo competitivo para montarmos o setup ideal com periféricos profissionais.
+        </p>
 
-        <select id="jogo">
-            <option value="" disabled selected>Selecione o jogo...</option>
-            <option value="fortnite">Fortnite</option>
-            <option value="valorant">Valorant</option>
-            <option value="cs2">Counter Strike 2</option>
-            <option value="lol">League of Legends</option>
-            <option value="rainbow">Rainbow Six Siege</option>
-            <option value="cod">Call of Duty: Warzone</option>
-        </select>
+        <div class="formulario-ia">
+            <label for="jogo">Qual jogo competitivo deseja?</label>
 
-        <br><br>
+            <select id="jogo">
+                <option value="" disabled selected>Selecione o jogo...</option>
+                <option value="fortnite">Fortnite</option>
+                <option value="valorant">Valorant</option>
+                <option value="cs2">Counter Strike 2</option>
+                <option value="lol">League of Legends</option>
+                <option value="rainbow">Rainbow Six Siege</option>
+                <option value="warzone">Call of Duty: Warzone</option>
+            </select>
 
-        <button onclick="analisarSetup()">Analisar Setup Ideal</button>
-    </div>
+            <button onclick="analisarSetup()">Analisar Setup Ideal</button>
+        </div>
 
-    <div id="resultado-setup" class="setup-recomendado"></div>
-</section>
+        <div id="robot">
+            <div id="robot-emoji">🤖</div>
+            <div id="robot-text">Buildix analisando seu setup...</div>
+        </div>
+
+        <div id="resultado-setup"></div>
+    </section>
 
     <section id="loja" class="conteudo">
-        <div style="max-width: 1200px; margin: 0 auto 30px auto; display: flow-root; padding: 0 20px;">
-            <h2 class="section-title" style="float: left; margin: 0;">Store - Catálogo Completo</h2>
+        <div class="loja-topo">
+            <h2 class="section-title">Store - Catálogo Completo</h2>
+        </div>
 
         <div class="barra-categorias">
             <div class="categoria-item" onclick="filtrarCategoria('promocao')">
                 <i data-lucide="tag" class="categoria-icone"></i>
                 <span>PROMOÇÃO</span>
             </div>
+
             <div class="categoria-item" onclick="filtrarCategoria('hardware')">
                 <i data-lucide="cpu" class="categoria-icone"></i>
                 <span>HARDWARE</span>
             </div>
+
             <div class="categoria-item" onclick="filtrarCategoria('teclados')">
                 <i data-lucide="keyboard" class="categoria-icone"></i>
                 <span>TECLADOS</span>
             </div>
+
             <div class="categoria-item" onclick="filtrarCategoria('mouses')">
                 <i data-lucide="mouse" class="categoria-icone"></i>
                 <span>MOUSES</span>
             </div>
+
             <div class="categoria-item" onclick="filtrarCategoria('monitores')">
                 <i data-lucide="monitor" class="categoria-icone"></i>
                 <span>MONITORES</span>
             </div>
+
             <div class="categoria-item" onclick="filtrarCategoria('refrigeracao')">
                 <i data-lucide="snowflake" class="categoria-icone"></i>
                 <span>COOLERS</span>
@@ -138,13 +155,14 @@
                 <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">
                     💻 Peças e Hardware
                 </h3>
-                <div id="lista-pecas" class="produtos-grid" style="display: flex; flex-direction: column; gap: 15px;"></div>
+                <div id="lista-pecas" class="produtos-grid"></div>
             </div>
+
             <div>
                 <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">
                     🎮 Periféricos Premium
                 </h3>
-                <div id="lista-perifericos" class="produtos-grid" style="display: flex; flex-direction: column; gap: 15px;"></div>
+                <div id="lista-perifericos" class="produtos-grid"></div>
             </div>
         </div>
 
@@ -169,6 +187,7 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto;">
             <div class="card">
                 <h3>📦 Dados para entrega</h3>
+
                 <input id="nome-cliente" type="text" placeholder="Seu nome" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
                 <input id="telefone" type="text" placeholder="Telefone" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
                 <input id="endereco" type="text" placeholder="Endereço" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
@@ -196,12 +215,16 @@
         <p style="text-align: left; max-width: 800px; margin: 0 auto 35px auto; color: #94a3b8; line-height: 1.6;">
             Eleve seu nível técnico aprendendo macro, micro, posicionamento e mecânicas com os maiores pro players reconhecidos do cenário mundial.
         </p>
+
         <div id="lista-cursos" class="produtos-grid"></div>
     </section>
 
     <section id="pedidos" class="conteudo">
         <h2 class="section-title">📦 Meus Pedidos</h2>
-        <p style="text-align: left; color: #94a3b8; margin-bottom: 20px;">Acompanhe aqui o histórico das suas compras realizadas na Bepro.gg.</p>
+        <p style="text-align: left; color: #94a3b8; margin-bottom: 20px;">
+            Acompanhe aqui o histórico das suas compras realizadas na Bepro.gg.
+        </p>
+
         <div id="lista-pedidos" class="produtos-grid"></div>
     </section>
 
@@ -283,6 +306,7 @@
 
                     <button type="submit" class="btn-auth-submit">Finalizar Registro Regulamentar</button>
                 </form>
+
                 <p id="msg-cadastro" class="auth-message" style="margin-top: 10px; color: #00d4ff;"></p>
                 
                 <div class="auth-switch-mode" style="margin-top: 15px; text-align: center;">
@@ -293,18 +317,18 @@
 
         </div>
     </section>
+
 </main>
 
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
-    // Inicializa os ícones do Lucide
     lucide.createIcons();
     
-    // Função auxiliar para alternar os cards de login e cadastro
     function alternarModoAuth(modo) {
         const loginBox = document.getElementById('login-box');
         const cadastroBox = document.getElementById('cadastro-box');
-        if(modo === 'cadastro') {
+
+        if (modo === 'cadastro') {
             loginBox.style.display = 'none';
             cadastroBox.style.display = 'block';
         } else {
@@ -313,6 +337,7 @@
         }
     }
 </script>
+
 <script src="script.js"></script>
 </body>
 </html>

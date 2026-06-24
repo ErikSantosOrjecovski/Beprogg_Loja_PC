@@ -528,40 +528,37 @@ function analisarSetup() {
     }
 
     const setups = {
-        fortnite: {
-            titulo: "Setup recomendado para Fortnite",
-            itens: ["RTX 4060", "Ryzen 5 5600X", "Mouse leve", "Monitor 144Hz"]
-        },
-        valorant: {
-            titulo: "Setup recomendado para Valorant",
-            itens: ["Intel Core i5", "16GB RAM", "Mouse preciso", "Monitor 240Hz"]
-        },
-        cs2: {
-            titulo: "Setup recomendado para Counter Strike 2",
-            itens: ["Ryzen 7 5700X", "RTX 4060", "Teclado mecânico", "Headset competitivo"]
-        },
-        lol: {
-            titulo: "Setup recomendado para League of Legends",
-            itens: ["Ryzen 5 5600X", "16GB RAM", "SSD NVMe", "Monitor Full HD"]
-        },
-        rainbow: {
-            titulo: "Setup recomendado para Rainbow Six Siege",
-            itens: ["Intel Core i7", "RTX 4070", "Headset 7.1", "Monitor 165Hz"]
-        },
-        cod: {
-            titulo: "Setup recomendado para Call of Duty: Warzone",
-            itens: ["Ryzen 7 7800X3D", "RTX 4070", "32GB RAM", "SSD NVMe 1TB"]
-        }
+        fortnite: ["AMD Ryzen 7 7800X3D", "RTX 4060", "32 GB DDR5 6000 MHz", "Teclado Wooting 80HE"],
+        valorant: ["Intel Core i5-12400F", "RTX 3060", "Mouse Logitech G Pro X Superlight 2", "BenQ ZOWIE XL2586X+"],
+        cs2: ["Ryzen 7 5700X", "RTX 4060", "Teclado mecânico", "Headset competitivo"],
+        lol: ["Ryzen 5 5600X", "RTX 3060", "Mouse gamer preciso", "Monitor 144Hz"],
+        rainbow: ["Intel Core i7-13700K", "RTX 4070", "Headset surround", "Mouse Logitech G Pro X Superlight 2"],
+        warzone: ["AMD Ryzen 7 7800X3D", "RTX 5070", "32 GB DDR5", "SSD NVMe 1TB"]
     };
 
-    const setup = setups[jogo];
+    const nomesJogos = {
+        fortnite: "Fortnite",
+        valorant: "Valorant",
+        cs2: "Counter Strike 2",
+        lol: "League of Legends",
+        rainbow: "Rainbow Six Siege",
+        warzone: "Call of Duty: Warzone"
+    };
+
+    let itens = setups[jogo];
 
     resultado.innerHTML = `
-        <div class="card" style="max-width: 500px;">
-            <h3>${setup.titulo}</h3>
-            <ul style="text-align: left;">
-                ${setup.itens.map(item => `<li>${item}</li>`).join("")}
-            </ul>
+        <div class="setup-card">
+            <h3>Setup recomendado pela Buildix IA para ${nomesJogos[jogo]}</h3>
+            <div class="setup-table">
+                ${itens.map(item => `
+                    <div class="setup-item">
+                        <strong>${item}</strong>
+                        <p>Peça recomendada para melhor desempenho competitivo.</p>
+                        <button onclick="adicionarAoCarrinho('${item}', 100)">Adicionar ao Carrinho</button>
+                    </div>
+                `).join("")}
+            </div>
         </div>
     `;
 }

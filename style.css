@@ -967,3 +967,199 @@ footer {
     margin-top: 25px;
     text-align: center;
 }
+
+/* ===== CORREÇÃO BEPRO.GG MATCH ===== */
+
+.texto-intro {
+    max-width: 700px;
+    margin: 0 auto 25px auto;
+    color: #a0aec0;
+    line-height: 1.6;
+}
+
+.formulario-ia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.formulario-ia label {
+    font-weight: bold;
+}
+
+.formulario-ia select {
+    width: 300px;
+    max-width: 90%;
+    background: #111a2e;
+    color: white;
+    border: 1px solid #1f293d;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+#robot {
+    margin: 30px auto;
+    text-align: center;
+}
+
+#robot-emoji {
+    font-size: 75px;
+    display: inline-block;
+    animation: roboBuildix 1.3s infinite ease-in-out;
+}
+
+#robot-text {
+    margin-top: 10px;
+    font-size: 17px;
+    color: #00d4ff;
+    font-weight: bold;
+}
+
+@keyframes roboBuildix {
+    0% {
+        transform: translateX(-18px) rotate(-6deg) scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: translateX(18px) rotate(6deg) scale(1.12);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-18px) rotate(-6deg) scale(1);
+        opacity: 0.7;
+    }
+}
+
+#resultado-setup {
+    max-width: 750px;
+    margin: 25px auto;
+}
+
+.setup-card {
+    background: #1a2332;
+    border: 1px solid #26364d;
+    border-radius: 14px;
+    padding: 25px;
+    text-align: left;
+}
+
+.setup-card h3 {
+    text-align: center;
+    color: white;
+}
+
+.setup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.setup-box {
+    background: #101928;
+    border: 1px solid #26364d;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.setup-box strong {
+    color: #00d4ff;
+}
+
+/* ===== CORREÇÃO DA LOJA ===== */
+
+#loja > div[style*="grid-template-columns"] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 35px !important;
+    align-items: start !important;
+}
+
+.produtos-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(220px, 1fr)) !important;
+    gap: 24px !important;
+    align-items: stretch !important;
+}
+
+#lista-pecas .card,
+#lista-perifericos .card {
+    width: 100% !important;
+    min-height: 150px !important;
+    margin: 0 !important;
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+}
+
+#lista-pecas .card button,
+#lista-perifericos .card button {
+    width: 100% !important;
+    margin-top: 18px !important;
+}
+
+/* CORREÇÃO FINAL DA LOJA */
+
+.loja-topo {
+    max-width: 1200px;
+    margin: 0 auto 30px auto;
+    padding: 0 20px;
+    text-align: left;
+}
+
+.loja-topo .section-title {
+    margin: 0;
+    text-align: left;
+}
+
+.barra-categorias {
+    max-width: 1200px;
+    margin: 0 auto 45px auto !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+/* CORREÇÃO DO BEPRO MATCH */
+
+#monte {
+    padding-top: 40px;
+}
+
+#resultado-setup {
+    max-width: 850px;
+    margin: 30px auto;
+}
+
+.setup-card {
+    background: #101b2c;
+    border: 1px solid #00d4ff55;
+    border-radius: 14px;
+    padding: 25px;
+    text-align: center;
+}
+
+.setup-table {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.setup-item {
+    background: #1a2332;
+    border: 1px solid #26364d;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: left;
+}
+
+.setup-item strong {
+    color: #00d4ff;
+}
+
+.setup-item button {
+    width: 100%;
+    margin-top: 12px;
+}
