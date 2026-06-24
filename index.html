@@ -59,49 +59,52 @@
 </section>
 
 <main>
-    <section id="monte" class="conteudo">
-        <h2>Análise Inteligente Bepro.gg Academy</h2>
-        <div class="formulario-ia">
-            <label for="jogo" style="font-weight: bold; display: block; margin-bottom: 10px;">Qual jogo competitivo deseja?</label>
-            <select id="jogo" style="background: #111a2e; color: white; border: 1px solid #1f293d; padding: 10px; border-radius: 6px; width: 100%; max-width: 300px;">
-                <option value="" disabled selected>Selecione o jogo...</option>
-                <option value="fortnite">Fortnite</option>
-                <option value="valorant">Valorant</option>
-            </select>
+
+<section id="inicio" class="conteudo ativo">
+    <div class="inicio-centro">
+        <h2>Bem-Vindo(a) à Bepro.gg!</h2>
+        <p>Sua plataforma inteligente para montar, escolher e melhorar seu setup gamer.</p>
+
+        <div class="avaliacoes">
+            <h3>Avaliações dos Clientes</h3>
+            <p>“Ótima experiência! Montei meu PC fácil!” ⭐⭐⭐⭐⭐</p>
+            <p>“Interface bonita e prática.” ⭐⭐⭐⭐</p>
         </div>
-    </section>
+    </div>
+
+    <footer>
+        © 2026 Bepro.gg - Todos os direitos reservados.
+    </footer>
+</section>
+
+    <section id="monte" class="conteudo">
+    <h2>Análise Inteligente Bepro.gg Academy</h2>
+    <p style="color:#94a3b8;">Selecione o jogo competitivo para montarmos o setup ideal com periféricos profissionais.</p>
+
+    <div class="formulario-ia">
+        <label for="jogo">Qual jogo competitivo deseja?</label>
+
+        <select id="jogo">
+            <option value="" disabled selected>Selecione o jogo...</option>
+            <option value="fortnite">Fortnite</option>
+            <option value="valorant">Valorant</option>
+            <option value="cs2">Counter Strike 2</option>
+            <option value="lol">League of Legends</option>
+            <option value="rainbow">Rainbow Six Siege</option>
+            <option value="cod">Call of Duty: Warzone</option>
+        </select>
+
+        <br><br>
+
+        <button onclick="analisarSetup()">Analisar Setup Ideal</button>
+    </div>
+
+    <div id="resultado-setup" class="setup-recomendado"></div>
+</section>
 
     <section id="loja" class="conteudo">
         <div style="max-width: 1200px; margin: 0 auto 30px auto; display: flow-root; padding: 0 20px;">
             <h2 class="section-title" style="float: left; margin: 0;">Store - Catálogo Completo</h2>
-            
-            <div class="perfil-container">
-                <div class="perfil-botao" onclick="toggleDropdownPerfil()">
-                    <i class="fa-solid fa-graduation-cap icon-perfil"></i>
-                    <span>Perfil: <strong id="perfil-selecionado">Estudante / Home Office</strong></span>
-                    <i class="fa-solid fa-chevron-down arrow-perfil"></i>
-                </div>
-                
-                <div id="perfil-dropdown" class="perfil-dropdown">
-                    <div class="perfil-item ativo" onclick="selecionarPerfil('Estudante / Home Office', 'fa-graduation-cap')">
-                        <span><i class="fa-solid fa-graduation-cap"></i> Estudante / Home Office</span>
-                        <i class="fa-solid fa-check check-perfil"></i>
-                    </div>
-                    <div class="perfil-item" onclick="selecionarPerfil('Profissional / Workstation', 'fa-briefcase')">
-                        <span><i class="fa-solid fa-briefcase"></i> Profissional / Workstation</span>
-                        <i class="fa-solid fa-check check-perfil"></i>
-                    </div>
-                    <div class="perfil-item" onclick="selecionarPerfil('Gamer Intermediário', 'fa-gamepad')">
-                        <span><i class="fa-solid fa-gamepad"></i> Gamer Intermediário</span>
-                        <i class="fa-solid fa-check check-perfil"></i>
-                    </div>
-                    <div class="perfil-item" onclick="selecionarPerfil('Entusiasta / Avançado', 'fa-bolt')">
-                        <span><i class="fa-solid fa-bolt"></i> Entusiasta / Avançado</span>
-                        <i class="fa-solid fa-check check-perfil"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="barra-categorias">
             <div class="categoria-item" onclick="filtrarCategoria('promocao')">

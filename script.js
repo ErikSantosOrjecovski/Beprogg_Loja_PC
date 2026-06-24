@@ -517,3 +517,51 @@ window.onload = () => {
     atualizarResumoPagamento();
     atualizarStatusLogin();
 };
+
+function analisarSetup() {
+    const jogo = document.getElementById("jogo").value;
+    const resultado = document.getElementById("resultado-setup");
+
+    if (!jogo) {
+        resultado.innerHTML = "<p>Selecione um jogo primeiro.</p>";
+        return;
+    }
+
+    const setups = {
+        fortnite: {
+            titulo: "Setup recomendado para Fortnite",
+            itens: ["RTX 4060", "Ryzen 5 5600X", "Mouse leve", "Monitor 144Hz"]
+        },
+        valorant: {
+            titulo: "Setup recomendado para Valorant",
+            itens: ["Intel Core i5", "16GB RAM", "Mouse preciso", "Monitor 240Hz"]
+        },
+        cs2: {
+            titulo: "Setup recomendado para Counter Strike 2",
+            itens: ["Ryzen 7 5700X", "RTX 4060", "Teclado mecânico", "Headset competitivo"]
+        },
+        lol: {
+            titulo: "Setup recomendado para League of Legends",
+            itens: ["Ryzen 5 5600X", "16GB RAM", "SSD NVMe", "Monitor Full HD"]
+        },
+        rainbow: {
+            titulo: "Setup recomendado para Rainbow Six Siege",
+            itens: ["Intel Core i7", "RTX 4070", "Headset 7.1", "Monitor 165Hz"]
+        },
+        cod: {
+            titulo: "Setup recomendado para Call of Duty: Warzone",
+            itens: ["Ryzen 7 7800X3D", "RTX 4070", "32GB RAM", "SSD NVMe 1TB"]
+        }
+    };
+
+    const setup = setups[jogo];
+
+    resultado.innerHTML = `
+        <div class="card" style="max-width: 500px;">
+            <h3>${setup.titulo}</h3>
+            <ul style="text-align: left;">
+                ${setup.itens.map(item => `<li>${item}</li>`).join("")}
+            </ul>
+        </div>
+    `;
+}

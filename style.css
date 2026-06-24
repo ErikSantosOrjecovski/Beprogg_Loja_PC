@@ -65,11 +65,11 @@ header {
 }
 
 .logo-img {
-    height: 55px;
+    height: 75px;
     width: auto;
     object-fit: contain;
     mix-blend-mode: screen;
-    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
+    filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
     transition: all 0.3s ease;
 }
 
@@ -905,4 +905,65 @@ footer {
     font-weight: 500;
     font-size: 14px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.inicio-centro {
+    max-width: 900px;
+    margin: 70px auto 0 auto;
+    text-align: center;
+}
+
+.inicio-centro h2 {
+    font-size: 34px;
+    color: #ffffff;
+}
+
+.inicio-centro p {
+    color: #94a3b8;
+    font-size: 18px;
+}
+
+.avaliacoes {
+    margin-top: 70px;
+}
+
+.formulario-ia {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.formulario-ia label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.formulario-ia select {
+    background: #111a2e;
+    color: white;
+    border: 1px solid #1f293d;
+    padding: 10px;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.setup-recomendado {
+    margin-top: 30px;
+}
+
+#pedidos {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#pedidos p {
+    text-align: center !important;
+    color: #94a3b8;
+}
+
+#lista-pedidos {
+    margin-top: 25px;
+    text-align: center;
 }
