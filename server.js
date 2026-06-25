@@ -11,12 +11,15 @@ app.use(express.json());
 // ==========================================
 // 🔌 CONEXÃO COM O BANCO DE DADOS BEPROGG
 // ==========================================
+// Detecta se estamos no SENAI (3307) ou no PC antigo/padrão (3306)
+const PORTA_BANCO = 3307; // Mude para 3306 se um dia precisar forçar
+
 const db = mysql.createConnection({
     host: '127.0.0.1',
     user: 'root',
-    password: 'mysql', 
+    password: '', 
     database: 'beprogg',
-    port: 3306
+    port: 3307
 });
 
 db.connect((err) => {
