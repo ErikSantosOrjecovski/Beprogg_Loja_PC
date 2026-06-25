@@ -521,19 +521,127 @@ window.onload = () => {
 function analisarSetup() {
     const jogo = document.getElementById("jogo").value;
     const resultado = document.getElementById("resultado-setup");
+    const robot = document.getElementById("robot");
 
     if (!jogo) {
-        resultado.innerHTML = "<p>Selecione um jogo primeiro.</p>";
+        if (resultado) resultado.innerHTML = "<p>⚠️ Selecione um jogo primeiro.</p>";
         return;
     }
 
+    if (resultado) resultado.innerHTML = "";
+    if (robot) robot.style.display = "block";
+
+    // Tabela de preços unificada para bater com o seu carrinho corporativo
+    const tabelaPrecos = {
+        "AMD Ryzen 7 7800X3D (O Rei do FPS)": 2499,
+        "AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)": 2499,
+        "AMD Ryzen 7 7800X3D (Melhor engine sub-tick)": 2499,
+        "AMD Ryzen 7 7800X3D (Crucial para o mapa pesado do Warzone)": 2499,
+        "AMD Ryzen 5 7600X": 1400,
+        "Intel Core i7-14700K": 2800,
+        "NVIDIA GeForce RTX 4070 Super": 4399,
+        "NVIDIA GeForce RTX 4060 Ti": 2799,
+        "NVIDIA GeForce RTX 4070": 3999,
+        "NVIDIA GeForce RTX 3060 Ti": 2100,
+        "NVIDIA GeForce RTX 4070 Ti Super": 6100,
+        "NVIDIA GeForce RTX 4080 Super (Foco em alta resolução/Frames)": 8500,
+        "32 GB DDR5 6000 MHz CL30": 850,
+        "32 GB DDR5 6000 MHz": 800,
+        "16 GB DDR5 5600 MHz": 450,
+        "32 GB DDR5 6400 MHz CL32": 950,
+        "Wooting 80HE (Rapid Trigger Analógico)": 1800,
+        "Wooting 60HE+ ou Razer Huntsman V3 Pro TKL": 1450,
+        "Wooting 80HE (Desempenho de SOCD/Snap Tap)": 1800,
+        "Logitech G Pro X TKL Rapid": 1000,
+        "Razer Huntsman V3 Pro Mini": 1100,
+        "Wooting 80HE": 1800,
+        "Razer Viper V3 Pro (8000Hz Polling Rate)": 850,
+        "Logitech G Pro X Superlight 2 Dex": 950,
+        "Razer DeathAdder V3 Pro ou Logitech G Pro X Superlight 2": 850,
+        "Razer Viper V3 Pro (Leveza para cliques rápidos/APM)": 850,
+        "Logitech G Pro X Superlight 2": 800,
+        "Razer Viper V3 Pro": 850,
+        "Artisan FX Hayate Otsu XL": 400,
+        "Artisan FX Zero Soft XL (Controle perfeito de flicada)": 450,
+        "Lethal Gaming Gear Saturn Pro XL": 350,
+        "Logitech G640 Large": 150,
+        "Artisan Ninja FX Zero Mid": 400,
+        "SkyPAD Glass 3.0 XL (Rastreamento infinito de tracking)": 750,
+        "Audeze Maxwell Wireless": 2300,
+        "HyperX Cloud III Wireless": 950,
+        "SteelSeries Arctis Nova Pro Wireless": 2100,
+        "Logitech G Pro X 2 LIGHTSPEED": 1400,
+        "Beyerdynamic DT 990 Pro + Amp (Áudio de estúdio para pixels)": 1900,
+        "Audeze Maxwell (Melhor palco sonoro para passos distantes)": 2300,
+        "ASUS ROG Swift 360Hz OLED": 5500,
+        "BenQ ZOWIE XL2586X+ (540Hz DyAc 2 - O padrão dos Majors)": 5999,
+        "BenQ ZOWIE XL2566K (360Hz DyAc+)": 4200,
+        "LG UltraGear 27\" OLED 240Hz (Cores e tempo de resposta absurdo)": 4500,
+        "LG UltraGear 360Hz IPS": 3200,
+        "ASUS ROG Swift PG27AQDM (1440p OLED 240Hz)": 4500
+    };
+
     const setups = {
-        fortnite: ["AMD Ryzen 7 7800X3D", "RTX 4060", "32 GB DDR5 6000 MHz", "Teclado Wooting 80HE"],
-        valorant: ["Intel Core i5-12400F", "RTX 3060", "Mouse Logitech G Pro X Superlight 2", "BenQ ZOWIE XL2586X+"],
-        cs2: ["Ryzen 7 5700X", "RTX 4060", "Teclado mecânico", "Headset competitivo"],
-        lol: ["Ryzen 5 5600X", "RTX 3060", "Mouse gamer preciso", "Monitor 144Hz"],
-        rainbow: ["Intel Core i7-13700K", "RTX 4070", "Headset surround", "Mouse Logitech G Pro X Superlight 2"],
-        warzone: ["AMD Ryzen 7 7800X3D", "RTX 5070", "32 GB DDR5", "SSD NVMe 1TB"]
+        fortnite: [
+            "Processador: AMD Ryzen 7 7800X3D (O Rei do FPS)",
+            "Placa de Vídeo: NVIDIA GeForce RTX 4070 Super",
+            "Memória RAM: 32 GB DDR5 6000 MHz CL30",
+            "Teclado: Wooting 80HE (Rapid Trigger Analógico)",
+            "Mouse: Razer Viper V3 Pro (8000Hz Polling Rate)",
+            "Mousepad: Artisan FX Hayate Otsu XL",
+            "Headset: Audeze Maxwell Wireless",
+            "Monitor: ASUS ROG Swift 360Hz OLED"
+        ],
+        valorant: [
+            "Processador: AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)",
+            "Placa de Vídeo: NVIDIA GeForce RTX 4060 Ti",
+            "Memória RAM: 32 GB DDR5 6000 MHz CL30",
+            "Teclado: Wooting 60HE+ ou Razer Huntsman V3 Pro TKL",
+            "Mouse: Logitech G Pro X Superlight 2 Dex",
+            "Mousepad: Artisan FX Zero Soft XL (Controle perfeito de flicada)",
+            "Headset: HyperX Cloud III Wireless",
+            "Monitor: BenQ ZOWIE XL2586X+ (540Hz DyAc 2)"
+        ],
+        cs2: [
+            "Processador: AMD Ryzen 7 7800X3D (Melhor engine sub-tick)",
+            "Placa de Vídeo: NVIDIA GeForce RTX 4070",
+            "Memória RAM: 32 GB DDR5 6000 MHz",
+            "Teclado: Wooting 80HE (Desempenho de SOCD/Snap Tap)",
+            "Mouse: Razer DeathAdder V3 Pro ou Logitech G Pro X Superlight 2",
+            "Mousepad: Lethal Gaming Gear Saturn Pro XL",
+            "Headset: SteelSeries Arctis Nova Pro Wireless",
+            "Monitor: BenQ ZOWIE XL2566K (360Hz DyAc+)"
+        ],
+        lol: [
+            "Processador: AMD Ryzen 5 7600X",
+            "Placa de Vídeo: NVIDIA GeForce RTX 3060 Ti",
+            "Memória RAM: 16 GB DDR5 5600 MHz",
+            "Teclado: Logitech G Pro X TKL Rapid",
+            "Mouse: Razer Viper V3 Pro (Leveza para cliques rápidos/APM)",
+            "Mousepad: Logitech G640 Large",
+            "Headset: Logitech G Pro X 2 LIGHTSPEED",
+            "Monitor: LG UltraGear 27\" OLED 240Hz (Cores e tempo de resposta absurdo)"
+        ],
+        rainbow: [
+            "Processador: Intel Core i7-14700K",
+            "Placa de Vídeo: NVIDIA GeForce RTX 4070 Ti Super",
+            "Memória RAM: 32 GB DDR5 6000 MHz",
+            "Teclado: Razer Huntsman V3 Pro Mini",
+            "Mouse: Logitech G Pro X Superlight 2",
+            "Mousepad: Artisan Ninja FX Zero Mid",
+            "Headset: Beyerdynamic DT 990 Pro + Amp (Áudio de estúdio para pixels)",
+            "Monitor: LG UltraGear 360Hz IPS"
+        ],
+        warzone: [
+            "Processador: AMD Ryzen 7 7800X3D (Crucial para o mapa pesado do Warzone)",
+            "Placa de Vídeo: NVIDIA GeForce RTX 4080 Super (Foco em alta resolução/Frames)",
+            "Memória RAM: 32 GB DDR5 6400 MHz CL32",
+            "Teclado: Wooting 80HE",
+            "Mouse: Razer Viper V3 Pro",
+            "Mousepad: SkyPAD Glass 3.0 XL (Rastreamento infinito de tracking)",
+            "Headset: Audeze Maxwell (Melhor palco sonoro para passos distantes)",
+            "Monitor: ASUS ROG Swift PG27AQDM (1440p OLED 240Hz)"
+        ]
     };
 
     const nomesJogos = {
@@ -547,18 +655,48 @@ function analisarSetup() {
 
     let itens = setups[jogo];
 
-    resultado.innerHTML = `
-        <div class="setup-card">
-            <h3>Setup recomendado pela Buildix IA para ${nomesJogos[jogo]}</h3>
-            <div class="setup-table">
-                ${itens.map(item => `
-                    <div class="setup-item">
-                        <strong>${item}</strong>
-                        <p>Peça recomendada para melhor desempenho competitivo.</p>
-                        <button onclick="adicionarAoCarrinho('${item}', 100)">Adicionar ao Carrinho</button>
+    setTimeout(() => {
+        if (robot) robot.style.display = "none";
+
+        if (resultado) {
+            // Gerando os cards dinamicamente com aspas controladas
+            let htmlCards = "";
+            
+            itens.forEach(item => {
+                const partes = item.split(":");
+                const categoria = partes[0].trim();
+                const modelo = partes[1].trim();
+                
+                // Puxa o valor real da tabela, se não achar define 150 por garantia
+                const precoReal = tabelaPrecos[modelo] || 150;
+                
+                // Escapa aspas para não quebrar a string do onclick
+                const modeloEscapado = modelo.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+
+                htmlCards += `
+                    <div class="setup-item" style="background: #111823; padding: 15px; border-radius: 8px; border: 1px solid #1f293d; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <span style="color: #00d4ff; font-size: 12px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 4px;">${categoria}</span>
+                            <strong style="color: white; font-size: 15px; display: block; line-height: 1.4; margin-bottom: 4px;">${modelo}</strong>
+                            <span style="color: #48bb78; font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">R$ ${precoReal}</span>
+                        </div>
+                        <button onclick="adicionarAoCarrinho('${modeloEscapado}', ${precoReal})" style="width: 100%; margin-top: 10px; padding: 8px; font-size: 13px; background: #00d4ff; color: black; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
+                            + Carrinho
+                        </button>
                     </div>
-                `).join("")}
-            </div>
-        </div>
-    `;
+                `;
+            });
+
+            resultado.innerHTML = `
+                <div class="setup-card" style="margin-top: 20px;">
+                    <h3 style="color: #00d4ff; font-family: 'Rajdhani', sans-serif; font-size: 24px; text-transform: uppercase; margin-bottom: 20px;">
+                        🤖 Ecossistema Elite Recomendado para ${nomesJogos[jogo]}
+                    </h3>
+                    <div class="setup-table" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; text-align: left;">
+                        ${htmlCards}
+                    </div>
+                </div>
+            `;
+        }
+    }, 1500);
 }

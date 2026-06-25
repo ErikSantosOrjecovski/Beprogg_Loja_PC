@@ -186,7 +186,7 @@ header {
     margin-top: 85px; /* Compensa a altura do header fixo */
 }
 
-.aba {
+.aba, #menu-login, #menu-pedidos {
     display: flex;
     flex-direction: column;
     align-items: center;
