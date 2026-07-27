@@ -14,9 +14,9 @@ app.use(express.json());
 const db = mysql.createConnection({
     host: '127.0.0.1',
     user: 'root',
-    password: '',       // <--- Deixe as aspas totalmente vazias!
+    password: 'root',       // <--- Deixe as aspas totalmente vazias!
     database: 'beprogg', // <--- Garanta que este é o nome exato do banco criado no phpMyAdmin
-    port: 3307          // <--- Porta correta do seu XAMPP
+    port: 3306          // <--- Porta correta do seu XAMPP
 });
 
 db.connect((err) => {

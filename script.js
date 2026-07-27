@@ -9,7 +9,7 @@ function trocarAba(id) {
     atualizarResumoPagamento();
 
     if (id === "pedidos") carregarPedidos();
-    if (id === "coach") carregarCursos();
+    // if (id === "coach") carregarCursos(); // Comentado para carregar o carrossel local sem sobrescrever
     if (id === "loja") carregarProdutos();
 }
 
@@ -76,35 +76,29 @@ function toggleDropdownPerfil() {
 }
 
 function selecionarPerfil(nomePerfil, classeIcone) {
-    // 1. Atualiza o texto do botão principal
     const displayTexto = document.getElementById('perfil-selected' || 'perfil-selecionado');
     if (displayTexto) displayTexto.innerText = nomePerfil;
     
-    // 2. Atualiza o ícone do botão principal mantendo a cor do design
     const iconePrincipal = document.querySelector('.perfil-botao .icon-perfil');
     if (iconePrincipal) {
         iconePrincipal.className = `fa-solid ${classeIcone} icon-perfil`;
     }
     
-    // 3. Remove a classe 'ativo' de todos os itens do dropdown
     const itens = document.querySelectorAll('.perfil-item');
     itens.forEach(item => item.classList.remove('ativo'));
     
-    // 4. Adiciona a classe 'ativo' ao item selecionado
     itens.forEach(item => {
         if (item.innerText.includes(nomePerfil)) {
             item.classList.add('ativo');
         }
     });
     
-    // 5. Fecha o dropdown após a seleção
     const dropdown = document.getElementById('perfil-dropdown');
     if (dropdown) dropdown.style.display = 'none';
     
     console.log("Filtro de Perfil alterado para: " + nomePerfil);
 }
 
-// Fechar o dropdown se o usuário clicar fora dele
 window.addEventListener('click', function(event) {
     const container = document.querySelector('.perfil-container');
     const dropdown = document.getElementById('perfil-dropdown');
@@ -138,40 +132,97 @@ async function gerarRecomendacao() {
         robotText.innerText = "🤖 Computando ecossistema profissional da Academy...";
     }
 
-    const tabelaPrecos = {
-        "AMD Ryzen 7 7800X3D": 2499,
-        "Air cooler premium ou AIO 240 mm": 450,
-        "ASRock B650M Pro RS": 1100,
-        "NVIDIA GeForce RTX 5070 ou AMD Radeon RX 9070 XT": 4999,
-        "32 GB DDR5 6000 MHz CL30": 850,
-        "SSD 1 TB NVMe PCIe 4.0": 450,
-        "750 W 80+ Gold": 600,
-        "Gabinete com bom airflow": 350,
-        "Wooting 80HE": 1800,
-        "Logitech G Pro X Superlight 2 Superstrike": 900,
-        "Logitech G Pro X Superlight 2": 800,
-        "Razer Viper V3 Pro": 850,
-        "Razer Viper V4 Pro": 950,
-        "Razer Huntsman V3 Pro TKL": 1200,
-        "Logitech G Pro X TKL Rapid": 1000,
-        "FX Hayate Otsu v2 XL": 350,
-        "Artisan FX Hayate Otsu Soft": 400,
-        "Mousepad Artisan FX Zero Xxl": 450,
-        "Artisan Ninja FX Zero Mid": 400,
-        "Logitech G640 Large": 150,
-        "Lethal Gaming Gear Saturn Pro": 300,
-        "Audeze Maxwell Wireless Gaming": 2300,
-        "SteelSeries Arctis Nova Pro Wireless": 2100,
-        "HyperX Cloud III Wireless": 950,
-        "Logitech G Pro X 2 LIGHTSPEED": 1400,
-        "BenQ ZOWIE XL2586X+": 5999,
-        "LG UltraGear 27GR75FG (360Hz IPS)": 3800,
-        "ASUS ROG Swift PG27AQDM": 4500,
-        "Pulsar ES Arm Sleeve": 120,
-        "SteelSeries Gaming Sleeve": 100,
-        "Skypad Sora Arm Sleeve": 150,
-        "Base Labs Gaming Sleeve": 80
-    };
+   const tabelaPrecos = {
+    // --- PROCESSADORES (CPUs Top de Linha) ---
+    "AMD Ryzen 7 7800X3D": 2899,
+    "AMD Ryzen 9 7950X3D": 4299,
+    "AMD Ryzen 7 9700X": 2599,
+    "Intel Core i7-14700K": 2799,
+    "Intel Core i9-14900K": 3999,
+
+    // --- REFRIGERAÇÃO & GABINETES ---
+    "Air Cooler DeepCool AK620 Digital": 480,
+    "Water Cooler Lian Li Galahad II Trinity 360mm": 1199,
+    "Water Cooler Corsair iCUE Link H150i 360mm": 1499,
+    "Gabinete NZXT H9 Flow": 1150,
+    "Gabinete Lian Li O11 Dynamic EVO": 1299,
+    "Gabinete Montech King 95 Pro": 899,
+
+    // --- PLACAS MÃE ---
+    "ASRock B650M Pro RS": 1150,
+    "ASUS ROG Strix B650-A Gaming WiFi": 1899,
+    "MSI MAG B650 Tomahawk WiFi": 1699,
+    "ASUS ROG Strix Z790-E Gaming WiFi": 3200,
+    "Gigabyte Z790 AORUS Elite AX": 2499,
+
+    // --- PLACAS DE VÍDEO (NVIDIA) ---
+    "NVIDIA GeForce RTX 4060 Ti 8GB": 2699,
+    "NVIDIA GeForce RTX 4070 Super 12GB": 4399,
+    "NVIDIA GeForce RTX 4070 Ti Super 16GB": 5999,
+    "NVIDIA GeForce RTX 4080 Super 16GB": 7899,
+    "NVIDIA GeForce RTX 5070": 4999,
+    "NVIDIA GeForce RTX 5080": 8999,
+    "NVIDIA GeForce RTX 5090": 15999,
+
+    // --- PLACAS DE VÍDEO (AMD) ---
+    "AMD Radeon RX 6600 8GB": 1399,
+    "AMD Radeon RX 6750 XT 12GB": 2399,
+    "AMD Radeon RX 7600 8GB": 1799,
+    "AMD Radeon RX 7700 XT 12GB": 3199,
+    "AMD Radeon RX 7800 XT 16GB": 3999,
+    "AMD Radeon RX 7900 XTX 24GB": 7499,
+    "AMD Radeon RX 9070 XT": 4999,
+
+    // --- MEMÓRIA & ARMAZENAMENTO ---
+    "32 GB DDR5 6000 MHz CL30": 899,
+    "64 GB (2x32GB) DDR5 6000 MHz CL30": 1699,
+    "SSD 1 TB NVMe PCIe 4.0 (Kingston/XPG)": 499,
+    "SSD 2 TB Samsung 990 Pro NVMe PCIe 4.0": 1299,
+
+    // --- FONTES DE ALIMENTAÇÃO ---
+    "Fonte Corsair RM750x 750W 80+ Gold": 749,
+    "Fonte MSI MAG A850GL 850W 80+ Gold PCIe 5.0": 699,
+    "Fonte Corsair RM1000e 1000W 80+ Gold ATX 3.0": 1199,
+    "Fonte ROG Thor 1200W Platinum ATX 3.0": 2499,
+
+    // --- TECLADOS ---
+    "Wooting 80HE": 1999,
+    "Razer Huntsman V3 Pro TKL": 1299,
+    "Logitech G Pro X TKL Rapid": 1099,
+    "Corsair K70 MAX RGB Magnetic": 1399,
+
+    // --- MOUSES ---
+    "Logitech G Pro X Superlight 2": 899,
+    "Logitech G Pro X Superlight 2 Superstrike": 999,
+    "Razer Viper V3 Pro": 899,
+    "Razer Viper V4 Pro": 999,
+
+    // --- MOUSEPADS ---
+    "FX Hayate Otsu v2 XL": 349,
+    "Artisan FX Hayate Otsu Soft": 419,
+    "Mousepad Artisan FX Zero Xxl": 479,
+    "Artisan Ninja FX Zero Mid": 419,
+    "Logitech G640 Large": 149,
+    "Lethal Gaming Gear Saturn Pro": 329,
+
+    // --- HEADSETS ---
+    "HyperX Cloud III Wireless": 949,
+    "Logitech G Pro X 2 LIGHTSPEED": 1499,
+    "SteelSeries Arctis Nova Pro Wireless": 2199,
+    "Audeze Maxwell Wireless Gaming": 2499,
+
+    // --- MONITORES ---
+    "LG UltraGear 27GR75FG (360Hz IPS)": 3899,
+    "ASUS ROG Swift PG27AQDM (240Hz OLED)": 4699,
+    "BenQ ZOWIE XL2586X+ (540Hz)": 5999,
+    "Alienware AW2725DF (360Hz QD-OLED)": 4299,
+
+    // --- MANGAS (SLEEVES) ---
+    "Base Labs Gaming Sleeve": 79,
+    "SteelSeries Gaming Sleeve": 99,
+    "Pulsar ES Arm Sleeve": 119,
+    "Skypad Sora Arm Sleeve": 149
+};
 
     setTimeout(async () => {
         try {
@@ -336,7 +387,7 @@ async function finalizarPedido() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(dadosPedido)
-            });
+        });
         const data = await response.json();
         document.getElementById("mensagem-pedido").innerText = data.mensagem;
         carrinho = [];
@@ -370,71 +421,212 @@ async function carregarPedidos() {
     }
 }
 
+// Variable global para armazenar os produtos do banco
+let todosProdutos = [];
+
 // ==========================================
-// 🛒 CARREGAMENTO FILTRADO DA LOJA (PEÇAS E PERIFÉRICOS)
+// 🛒 1. CARREGAR PRODUTOS DO BACKEND
 // ==========================================
 async function carregarProdutos() {
-    const listaPecas = document.getElementById("lista-pecas");
-    const listaPerifericos = document.getElementById("lista-perifericos");
-    
-    if (!listaPecas || !listaPerifericos) return;
-    
-    listaPecas.innerHTML = "<p style='color: gray;'>Carregando peças...</p>";
-    listaPerifericos.innerHTML = "<p style='color: gray;'>Carregando periféricos...</p>";
-    
-    const termosPerifericos = [
-        "mouse", "teclado", "headset", "fone", "monitor", "mousepad", "sleeve", "manguito", 
-        "wooting", "logitech", "razer", "artisan", "zowie", "hyperx", "audiotechnica", "astros"
-    ];
+    const elContainer = document.getElementById("lista-produtos");
+    if (!elContainer) return;
+
+    elContainer.innerHTML = "<p style='color: gray;'>Carregando produtos...</p>";
 
     try {
         const response = await fetch("http://localhost:3000/produtos");
-        const produtos = await response.json();
-        
-        listaPecas.innerHTML = "";
-        listaPerifericos.innerHTML = "";
-        
-        if (produtos.length === 0) {
-            listaPecas.innerHTML = "<p style='color: gray;'>Nenhum produto disponível.</p>";
-            listaPerifericos.innerHTML = "<p style='color: gray;'>Nenhum produto disponível.</p>";
-            return;
-        }
+        todosProdutos = await response.json();
 
-        produtos.forEach(p => {
-            const nomeMinusculo = p.nome.toLowerCase();
-            const ehPeriferico = termosPerifericos.some(termo => nomeMinusculo.includes(termo));
+        // Inicialmente exibe todos os produtos
+        filtrarCategoria('todos');
+    } catch (error) {
+        console.error("Erro ao carregar produtos:", error);
+        elContainer.innerHTML = "<p style='color: red;'>Erro ao carregar os produtos do servidor.</p>";
+    }
+}
 
-            const produtoCard = `
-                <div class="card" style="text-align: left; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid #2d3748; background: #1a2332; border-radius: 8px;">
-                    <div>
-                        <h3 style="margin: 0 0 8px 0; font-size: 1.1rem; color: white;">${p.nome}</h3>
-                        <p style="color: #48bb78; font-weight: bold; font-size: 1.1rem; margin: 0 0 15px 0;">R$ ${p.preco}</p>
-                    </div>
-                    <button onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})" style="width: 100%; cursor: pointer; background: #00d4ff; color: black; font-weight: bold; padding: 10px; border: none; border-radius: 4px;">
+// ==========================================
+// 🎯 2. FILTRAR POR CATEGORIA AO CLICAR
+// ==========================================
+// Function auxiliar para encontrar a imagem correspondente ao produto
+function obterCaminhoImagem(nomeProduto) {
+    const nome = nomeProduto.toLowerCase();
+
+    // Mapeamento de imagens da pasta /imagens
+    if (nome.includes("ryzen 7 7800x3d") || nome.includes("5700x")) return "imagens/amdryzen7-5700x.jpg";
+    if (nome.includes("ryzen 5") || nome.includes("5560")) return "imagens/andryzen5-5560.jpg";
+    if (nome.includes("audeze") || nome.includes("maxwell")) return "imagens/Auzede Maxwell.jpg";
+    if (nome.includes("fonte 550w")) return "imagens/fonte550w.jpg";
+    if (nome.includes("fonte 650w")) return "imagens/fonte650w.jpg";
+    if (nome.includes("fonte 750w") || nome.includes("750 w")) return "imagens/fonte750w.jpg";
+    if (nome.includes("fonte 850w")) return "imagens/fonte850w.jpg";
+    if (nome.includes("i5") || nome.includes("intel core i5")) return "imagens/intelcore-i5.jpg";
+    if (nome.includes("i7") || nome.includes("intel core i7")) return "imagens/intelcore-i7.jpg";
+    if (nome.includes("b550")) return "imagens/placamaeb550.jpg";
+    if (nome.includes("b660") || nome.includes("b650")) return "imagens/placamaeb660.jpg";
+    if (nome.includes("x570")) return "imagens/placamaex570.jpg";
+    if (nome.includes("z690")) return "imagens/placamaez690.jpg";
+    if (nome.includes("ddr4") && nome.includes("16")) return "imagens/ram16gb-ddr4.jpg";
+    if (nome.includes("ddr5") && nome.includes("16")) return "imagens/ram16gb-ddr5.jpg";
+    if (nome.includes("ddr4") && nome.includes("32")) return "imagens/ram32gb-ddr4.jpg";
+    if (nome.includes("ddr5") || nome.includes("32 gb ddr5")) return "imagens/ram32gb-ddr5.jpg";
+    if (nome.includes("3060")) return "imagens/rtx3060.jpg";
+    if (nome.includes("4060")) return "imagens/rtx4060.jpg";
+    if (nome.includes("4070") || nome.includes("5070")) return "imagens/rtx4070.jpg";
+    if (nome.includes("7600") || nome.includes("9070")) return "imagens/rx7600.jpg";
+
+    // Imagem padrao caso não encontre uma exata
+    return "imagens/logo-bepro.png.jpeg";
+}
+
+// ==========================================
+// 🎯 FILTRAR E RENDERIZAR COM IMAGEM DEDICADA
+// ==========================================
+// ==========================================
+// 🖼️ FUNÇÃO PARA OBTER A IMAGEM DO PRODUTO (PNG)
+// ==========================================
+function obterCaminhoImagem(nomeProduto) {
+    const nome = nomeProduto.toLowerCase();
+
+    // Mapeia imagens PNG sem fundo
+    if (nome.includes("ryzen 7 7800x3d") || nome.includes("5700x")) return "imagens/amdryzen7-5700x.png";
+    if (nome.includes("ryzen 5") || nome.includes("5560")) return "imagens/andryzen5-5560.png";
+    if (nome.includes("audeze") || nome.includes("maxwell")) return "imagens/Auzede Maxwell.png";
+    if (nome.includes("fonte 550w")) return "imagens/fonte550w.png";
+    if (nome.includes("fonte 650w")) return "imagens/fonte650w.png";
+    if (nome.includes("fonte 750w") || nome.includes("750 w")) return "imagens/fonte750w.png";
+    if (nome.includes("fonte 850w")) return "imagens/fonte850w.png";
+    if (nome.includes("i5") || nome.includes("intel core i5")) return "imagens/intelcore-i5.png";
+    if (nome.includes("i7") || nome.includes("intel core i7")) return "imagens/intelcore-i7.png";
+    if (nome.includes("b550")) return "imagens/placamaeb550.png";
+    if (nome.includes("b660") || nome.includes("b650")) return "imagens/placamaeb660.png";
+    if (nome.includes("x570")) return "imagens/placamaex570.png";
+    if (nome.includes("z690")) return "imagens/placamaez690.png";
+    if (nome.includes("ddr4") && nome.includes("16")) return "imagens/ram16gb-ddr4.png";
+    if (nome.includes("ddr5") && nome.includes("16")) return "imagens/ram16gb-ddr5.png";
+    if (nome.includes("ddr4") && nome.includes("32")) return "imagens/ram32gb-ddr4.png";
+    if (nome.includes("ddr5") || nome.includes("32 gb ddr5")) return "imagens/ram32gb-ddr5.png";
+    if (nome.includes("3060")) return "imagens/rtx3060.png";
+    if (nome.includes("4060")) return "imagens/rtx4060.png";
+    if (nome.includes("4070") || nome.includes("5070")) return "imagens/rtx4070.png";
+    if (nome.includes("7600") || nome.includes("9070")) return "imagens/rx7600.png";
+
+    return "imagens/logo-bepro.png.jpeg";
+}
+
+// ==========================================
+// 🎯 FILTRAR CATEGORIAS E SUBCATEGORIAS
+// ==========================================
+function filtrarCategoria(categoria, elementoClicado) {
+    const elContainer = document.getElementById("lista-produtos");
+    const elTitulo = document.getElementById("titulo-categoria-atual");
+
+    if (!elContainer) return;
+
+    if (elementoClicado) {
+        document.querySelectorAll('.barra-categorias .categoria-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        elementoClicado.classList.add('active');
+    }
+
+    let produtosFiltrados = [];
+
+    if (categoria === 'todos') {
+        produtosFiltrados = todosProdutos;
+        if (elTitulo) elTitulo.innerText = "📦 Todos os Produtos";
+    } else if (categoria === 'teclados') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("teclado") || n.includes("wooting") || n.includes("huntsman");
+        });
+        if (elTitulo) elTitulo.innerText = "⌨️ Teclados";
+    } else if (categoria === 'mouses') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("mouse") || n.includes("superlight") || n.includes("sleeve") || n.includes("pad");
+        });
+        if (elTitulo) elTitulo.innerText = "🖱️ Mouses & Acessórios";
+    } else if (categoria === 'monitores') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("monitor") || n.includes("zowie") || n.includes("xl2586x");
+        });
+        if (elTitulo) elTitulo.innerText = "🖥️ Monitores";
+    } else if (categoria === 'headsets') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("headset") || n.includes("audeze") || n.includes("fone");
+        });
+        if (elTitulo) elTitulo.innerText = "🎧 Headsets & Áudio";
+    } else if (categoria === 'hardware') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("ryzen") || n.includes("rtx") || n.includes("radeon") || n.includes("asrock") || n.includes("ddr5") || n.includes("ssd") || n.includes("cooler") || n.includes("80+");
+        });
+        if (elTitulo) elTitulo.innerText = "⚙️ Hardware & Peças (Tudo)";
+    } 
+    // SUBCATEGORIAS DE HARDWARE
+    else if (categoria === 'gpu') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("rtx") || n.includes("rx") || n.includes("radeon") || n.includes("geforce") || n.includes("placa de video");
+        });
+        if (elTitulo) elTitulo.innerText = "🎮 Placas de Vídeo";
+    } else if (categoria === 'placa-mae') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("b550") || n.includes("b660") || n.includes("x570") || n.includes("z690") || n.includes("asrock") || n.includes("placa mãe") || n.includes("placa mae");
+        });
+        if (elTitulo) elTitulo.innerText = "🔌 Placas Mãe";
+    } else if (categoria === 'cpu') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("ryzen") || n.includes("intel") || n.includes("i5") || n.includes("i7") || n.includes("7800x3d");
+        });
+        if (elTitulo) elTitulo.innerText = "💻 Processadores";
+    } else if (categoria === 'ram') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("ddr4") || n.includes("ddr5") || n.includes("ram");
+        });
+        if (elTitulo) elTitulo.innerText = "⚡ Memória RAM";
+    } else if (categoria === 'fonte-armazenamento') {
+        produtosFiltrados = todosProdutos.filter(p => {
+            const n = p.nome.toLowerCase();
+            return n.includes("fonte") || n.includes("ssd") || n.includes("80+") || n.includes("nvme");
+        });
+        if (elTitulo) elTitulo.innerText = "🔋 Fontes & Armazenamento";
+    } else if (categoria === 'promocao') {
+        produtosFiltrados = todosProdutos.filter(p => p.preco < 1000);
+        if (elTitulo) elTitulo.innerText = "🏷️ Promoções em Destaque";
+    }
+
+    elContainer.innerHTML = "";
+
+    if (produtosFiltrados.length === 0) {
+        elContainer.innerHTML = "<p style='color: #64748b; font-size: 1.1rem; grid-column: 1 / -1;'>Nenhum produto encontrado nesta categoria.</p>";
+        return;
+    }
+
+    produtosFiltrados.forEach(p => {
+        const caminhoImg = obterCaminhoImagem(p.nome);
+
+        elContainer.innerHTML += `
+            <div class="card-produto-loja">
+                <div class="card-produto-img-box">
+                    <img src="${caminhoImg}" alt="${p.nome}" class="card-produto-img">
+                </div>
+                <div class="card-produto-detalhes">
+                    <h3 class="card-produto-titulo">${p.nome}</h3>
+                    <p class="card-produto-preco">R$ ${p.preco}</p>
+                    <button onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})" class="btn-card-comprar">
                         Adicionar ao Carrinho
                     </button>
                 </div>
-            `;
-
-            if (ehPeriferico) {
-                listaPerifericos.innerHTML += produtoCard;
-            } else {
-                listaPecas.innerHTML += produtoCard;
-            }
-        });
-
-        if (listaPecas.innerHTML === "") {
-            listaPecas.innerHTML = "<p style='color: gray;'>Nenhuma peça no catálogo.</p>";
-        }
-        if (listaPerifericos.innerHTML === "") {
-            listaPerifericos.innerHTML = "<p style='color: gray;'>Nenhum periférico no catálogo.</p>";
-        }
-
-    } catch (error) {
-        console.error("Erro ao carregar os itens do catálogo:", error);
-        listaPecas.innerHTML = "<p style='color: red;'>Erro ao carregar catálogo.</p>";
-        listaPerifericos.innerHTML = "<p style='color: red;'>Erro ao carregar catálogo.</p>";
-    }
+            </div>
+        `;
+    });
 }
 
 // ==========================================
@@ -448,7 +640,7 @@ async function carregarCursos() {
         const response = await fetch("http://localhost:3000/cursos");
         const jazidaCursos = await response.json();
         
-        lista.className = "produtos-grid"; // Sincronizado com a classe do index unificado
+        lista.className = "produtos-grid";
         lista.innerHTML = "";
         
         if (jazidaCursos.length === 0) {
@@ -531,7 +723,6 @@ function analisarSetup() {
     if (resultado) resultado.innerHTML = "";
     if (robot) robot.style.display = "block";
 
-    // Tabela de preços unificada para bater com o seu carrinho corporativo
     const tabelaPrecos = {
         "AMD Ryzen 7 7800X3D (O Rei do FPS)": 2499,
         "AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)": 2499,
@@ -659,7 +850,6 @@ function analisarSetup() {
         if (robot) robot.style.display = "none";
 
         if (resultado) {
-            // Gerando os cards dinamicamente com aspas controladas
             let htmlCards = "";
             
             itens.forEach(item => {
@@ -667,10 +857,7 @@ function analisarSetup() {
                 const categoria = partes[0].trim();
                 const modelo = partes[1].trim();
                 
-                // Puxa o valor real da tabela, se não achar define 150 por garantia
                 const precoReal = tabelaPrecos[modelo] || 150;
-                
-                // Escapa aspas para não quebrar a string do onclick
                 const modeloEscapado = modelo.replace(/"/g, '&quot;').replace(/'/g, "\\'");
 
                 htmlCards += `
@@ -699,4 +886,86 @@ function analisarSetup() {
             `;
         }
     }, 1500);
+}
+
+// ==========================================
+// 👑 CARROSSEL DE PRO PLAYERS (CARD ÚNICO)
+// ==========================================
+const playersData = [
+    {
+        nome: "👑 Pro Player: Blackoutz",
+        jogo: "FORTNITE",
+        imagem: "imagens/blackoutzx.jpg",
+        preco: "R$ 150,00",
+        descricao: "Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa com um dos maiores nomes do Fortnite brasileiro."
+    },
+    {
+        nome: "👑 Pro Player: Fallen",
+        jogo: "COUNTER STRIKE 2",
+        imagem: "imagens/Fallen.jpg",
+        preco: "R$ 200,00",
+        descricao: "Aprenda controle de mapa, posicionamento de AWP, setups de granadas e mentalidade de capitão com o Professor."
+    },
+    {
+        nome: "👑 Pro Player: Faker",
+        jogo: "LEAGUE OF LEGENDS",
+        imagem: "imagens/Faker.jpg",
+        preco: "R$ 300,00",
+        descricao: "Domine o controle de wave na Mid Lane, visão de mapa macro, gerenciamento de recursos e tomadas de decisão."
+    },
+    {
+        nome: "👑 Pro Player: Neskwga",
+        jogo: "RAINBOW SIX SIEGE",
+        imagem: "imagens/Neskwga.jpg",
+        preco: "R$ 180,00",
+        descricao: "Estratégias de ataque e defesa estruturadas, posicionamento de mira e comunicação avançada de equipe em alto nível."
+    },
+    {
+        nome: "👑 Pro Player: FRTT",
+        jogo: "imagens/VALORANT",
+        imagem: "imagens/FRTT.jpg",
+        preco: "R$ 160,00",
+        descricao: "Otimização de uso de utilitários de agentes, estratégias avançadas de clutch, leitura de economia e movimentação tática."
+    },
+    {
+        nome: "👑 Pro Player: TonyBoy",
+        jogo: "CALL OF DUTY: WARZONE",
+        imagem: "imagens/tonyBOy.jpg",
+        preco: "R$ 140,00",
+        descricao: "Movimentação avançada (slide cancel), gerenciamento de inventário sob pressão, escolha dos melhores loadouts e rotações."
+    }
+];
+
+let playerIndexAtual = 0;
+
+function mudarPlayer(direcao) {
+    const card = document.getElementById('card-player');
+    if (!card) return;
+
+    card.style.opacity = '0';
+    card.style.transform = 'scale(0.95)';
+
+    setTimeout(() => {
+        playerIndexAtual += direcao;
+
+        if (playerIndexAtual >= playersData.length) playerIndexAtual = 0;
+        if (playerIndexAtual < 0) playerIndexAtual = playersData.length - 1;
+
+        const player = playersData[playerIndexAtual];
+
+        const elNome = document.getElementById('player-nome');
+        const elJogo = document.getElementById('player-jogo');
+        const elImg = document.getElementById('player-img');
+        const elDesc = document.getElementById('player-desc');
+        const elPreco = document.getElementById('player-preco');
+
+        if (elNome) elNome.innerText = player.nome;
+        if (elJogo) elJogo.innerText = player.jogo;
+        if (elImg) elImg.src = player.imagem;
+        if (elDesc) elDesc.innerText = player.descricao;
+        if (elPreco) elPreco.innerText = player.preco;
+
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1)';
+    }, 200);
 }

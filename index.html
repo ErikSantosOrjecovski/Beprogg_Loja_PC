@@ -143,38 +143,64 @@
         <div id="resultado-setup"></div>
     </section>
 
-    <section id="loja" class="conteudo">
-        <div class="loja-topo"><h2 class="section-title">Store - Catálogo Completo</h2></div>
-        <div class="barra-categorias">
-            <div class="categoria-item" onclick="filtrarCategoria('promocao')"><i data-lucide="tag" class="categoria-icone"></i><span>PROMOÇÃO</span></div>
-            <div class="categoria-item" onclick="filtrarCategoria('hardware')"><i data-lucide="cpu" class="categoria-icone"></i><span>HARDWARE</span></div>
-            <div class="categoria-item" onclick="filtrarCategoria('teclados')"><i data-lucide="keyboard" class="categoria-icone"></i><span>TECLADOS</span></div>
-            <div class="categoria-item" onclick="filtrarCategoria('mouses')"><i data-lucide="mouse" class="categoria-icone"></i><span>MOUSES</span></div>
-            <div class="categoria-item" onclick="filtrarCategoria('monitores')"><i data-lucide="monitor" class="categoria-icone"></i><span>MONITORES</span></div>
-            <div class="categoria-item" onclick="filtrarCategoria('headsets')"><i data-lucide="headphones" class="categoria-icone"></i><span>HEADSETS</span></div>
+   <section id="loja" class="conteudo">
+    <div class="loja-topo">
+        <h2 class="section-title">Store - Catálogo Completo</h2>
+    </div>
+
+    <div class="barra-categorias">
+    <div class="categoria-item" onclick="filtrarCategoria('todos', this)">
+        <i data-lucide="grid" class="categoria-icone"></i><span>TODOS</span>
+    </div>
+
+    <div class="categoria-item" onclick="filtrarCategoria('promocao', this)">
+        <i data-lucide="tag" class="categoria-icone"></i><span>PROMOÇÃO</span>
+    </div>
+
+    <div class="categoria-item dropdown-parent" onclick="filtrarCategoria('hardware', this)">
+        <i data-lucide="cpu" class="categoria-icone"></i><span>HARDWARE ▾</span>
+        
+        <div class="subcategorias-menu">
+            <div onclick="event.stopPropagation(); filtrarCategoria('gpu', this.closest('.categoria-item'))">Placas de Vídeo</div>
+            <div onclick="event.stopPropagation(); filtrarCategoria('placa-mae', this.closest('.categoria-item'))">Placas Mãe</div>
+            <div onclick="event.stopPropagation(); filtrarCategoria('cpu', this.closest('.categoria-item'))">Processadores</div>
+            <div onclick="event.stopPropagation(); filtrarCategoria('ram', this.closest('.categoria-item'))">Memória RAM</div>
+            <div onclick="event.stopPropagation(); filtrarCategoria('fonte-armazenamento', this.closest('.categoria-item'))">Fontes & SSDs</div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-            <div>
-                <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">💻 Peças e Hardware</h3>
-                <div id="lista-pecas" class="produtos-grid"></div>
-            </div>
-            <div>
-                <h3 style="color: #00d4ff; border-bottom: 2px solid #00d4ff; padding-bottom: 10px; margin-bottom: 20px; text-align: left;">🎮 Periféricos Premium</h3>
-                <div id="lista-perifericos" class="produtos-grid"></div>
-            </div>
-        </div>
-        <div style="max-width: 1200px; margin: 40px auto 0 auto; padding: 0 20px;">
-            <h3>🛒 Produtos disponíveis</h3>
-            <div id="lista-produtos" class="produtos-grid"></div>
-        </div>
-        <hr style="border: 1px solid #1f293d; margin: 40px 0;">
-        <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: left;">
-            <h3 class="section-title">🛒 Seu Carrinho</h3>
-            <div id="lista-carrinho" class="produtos-grid"></div>
-            <h3 id="total-carrinho" style="color: #00d4ff; text-align: left; font-family: 'Rajdhani', sans-serif; font-size: 24px; margin-top: 20px;"></h3>
-            <button onclick="trocarAba('pagamento')" style="margin: 20px 0 40px 0; max-width: 250px;">Ir para Pagamento 💳</button>
-        </div>
-    </section>
+    </div>
+
+    <div class="categoria-item" onclick="filtrarCategoria('teclados', this)">
+        <i data-lucide="keyboard" class="categoria-icone"></i><span>TECLADOS</span>
+    </div>
+
+    <div class="categoria-item" onclick="filtrarCategoria('mouses', this)">
+        <i data-lucide="mouse" class="categoria-icone"></i><span>MOUSES</span>
+    </div>
+
+    <div class="categoria-item" onclick="filtrarCategoria('monitores', this)">
+        <i data-lucide="monitor" class="categoria-icone"></i><span>MONITORES</span>
+    </div>
+
+    <div class="categoria-item" onclick="filtrarCategoria('headsets', this)">
+        <i data-lucide="headphones" class="categoria-icone"></i><span>HEADSETS</span>
+    </div>
+</div>
+
+    <div style="max-width: 1200px; margin: 20px auto 0 auto; padding: 0 20px;">
+        <h3 id="titulo-categoria-atual" style="color: #00d4ff; text-align: left; border-bottom: 2px solid #1f293d; padding-bottom: 10px; text-transform: uppercase;">📦 Todos os Produtos</h3>
+        
+        <div id="lista-produtos" class="produtos-grid" style="margin-top: 25px;"></div>
+    </div>
+
+    <hr style="border: 1px solid #1f293d; margin: 40px 0;">
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: left;">
+        <h3 class="section-title">🛒 Seu Carrinho</h3>
+        <div id="lista-carrinho" class="produtos-grid"></div>
+        <h3 id="total-carrinho" style="color: #00d4ff; text-align: left; font-family: 'Rajdhani', sans-serif; font-size: 24px; margin-top: 20px;">Total: R$ 0,00</h3>
+        <button onclick="trocarAba('pagamento')" style="margin: 20px 0 40px 0; max-width: 250px;">Ir para Pagamento 💳</button>
+    </div>
+</section>
 
     <section id="pagamento" class="conteudo">
         <h2 class="section-title">💳 Finalizar Compra</h2>
@@ -201,11 +227,36 @@
     </section>
 
     <section id="coach" class="conteudo">
-        <h2 class="section-title">🎮 Coach Gamer Bepro.gg Academy</h2>
-        <p style="text-align: left; max-width: 800px; margin: 0 auto 35px auto; color: #94a3b8; line-height: 1.6;">Eleve seu nível técnico aprendendo macro, micro, posicionamento e mecânicas com os maiores pro players reconhecidos do cenário mundial.</p>
-        <div id="lista-cursos" class="produtos-grid"></div>
-    </section>
+    <h2 class="titulo-secao">Aulas com Pro Players</h2>
+    <p class="subtitulo-secao">Evolua seu nível de jogo aprendendo diretamente com os melhores profissionais do cenário mundial.</p>
 
+    <div class="carrossel-container">
+        <button class="seta-carrossel seta-esquerda" onclick="mudarPlayer(-1)">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <div id="card-player" class="card-proplayer-compacto">
+            <div class="card-imagem-area">
+                <img id="player-img" src="imagens/blackoutzx.jpg" alt="Pro Player">
+            </div>
+            
+            <div class="card-info-area">
+                <span id="player-jogo" class="tag-jogo">FORTNITE</span>
+                <h3 id="player-nome" class="nome-player">👑 Pro Player: Blackoutz</h3>
+                <p id="player-desc" class="desc-player">Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa com um dos maiores nomes do Fortnite brasileiro.</p>
+                <div class="preco-linha">
+                    <span>Valor da sessão:</span>
+                    <strong id="player-preco">R$ 150,00</strong>
+                </div>
+                <button class="btn-garantir">GARANTIR VAGA NA AULA</button>
+            </div>
+        </div>
+
+        <button class="seta-carrossel seta-direita" onclick="mudarPlayer(1)">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
+</section>
     <section id="pedidos" class="conteudo">
         <h2 class="section-title">📦 Meus Pedidos</h2>
         <p style="text-align: left; color: #94a3b8; margin-bottom: 20px;">Acompanhe aqui o histórico das suas compras realizadas na Bepro.gg.</p>
