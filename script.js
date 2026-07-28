@@ -515,7 +515,7 @@ function obterCaminhoImagem(nomeProduto) {
 }
 
 // ==========================================
-// 🎯 FILTRAR CATEGORIAS E SUBCATEGORIAS
+// 🎯 FILTRAR CATEGORIAS E SUBCATEGORIAS (CORRIGIDO)
 // ==========================================
 function filtrarCategoria(categoria, elementoClicado) {
     const elContainer = document.getElementById("lista-produtos");
@@ -523,6 +523,7 @@ function filtrarCategoria(categoria, elementoClicado) {
 
     if (!elContainer) return;
 
+    // Destaca o botão ativo na barra de categorias
     if (elementoClicado) {
         document.querySelectorAll('.barra-categorias .categoria-item').forEach(item => {
             item.classList.remove('active');
@@ -531,86 +532,105 @@ function filtrarCategoria(categoria, elementoClicado) {
     }
 
     let produtosFiltrados = [];
+    const cat = categoria.toLowerCase().trim();
 
-    if (categoria === 'todos') {
+    if (cat === 'todos') {
         produtosFiltrados = todosProdutos;
         if (elTitulo) elTitulo.innerText = "📦 Todos os Produtos";
-    } else if (categoria === 'teclados') {
+
+    } else if (cat === 'teclados') {
         produtosFiltrados = todosProdutos.filter(p => {
+            const pCat = (p.categoria || "").toLowerCase();
             const n = p.nome.toLowerCase();
-            return n.includes("teclado") || n.includes("wooting") || n.includes("huntsman");
+            return pCat === 'teclados' || n.includes("teclado") || n.includes("wooting") || n.includes("huntsman");
         });
         if (elTitulo) elTitulo.innerText = "⌨️ Teclados";
-    } else if (categoria === 'mouses') {
+
+    } else if (cat === 'mouses') {
         produtosFiltrados = todosProdutos.filter(p => {
+            const pCat = (p.categoria || "").toLowerCase();
             const n = p.nome.toLowerCase();
-            return n.includes("mouse") || n.includes("superlight") || n.includes("sleeve") || n.includes("pad");
+            return pCat === 'mouses' || pCat === 'mousepads' || n.includes("mouse") || n.includes("superlight") || n.includes("sleeve") || n.includes("pad") || n.includes("artisan") || n.includes("saturn");
         });
         if (elTitulo) elTitulo.innerText = "🖱️ Mouses & Acessórios";
-    } else if (categoria === 'monitores') {
+
+    } else if (cat === 'monitores') {
         produtosFiltrados = todosProdutos.filter(p => {
+            const pCat = (p.categoria || "").toLowerCase();
             const n = p.nome.toLowerCase();
-            return n.includes("monitor") || n.includes("zowie") || n.includes("xl2586x");
+            return pCat === 'monitores' || n.includes("monitor") || n.includes("zowie") || n.includes("xl2586x") || n.includes("ultragear") || n.includes("rog swift");
         });
         if (elTitulo) elTitulo.innerText = "🖥️ Monitores";
-    } else if (categoria === 'headsets') {
+
+    } else if (cat === 'headsets') {
         produtosFiltrados = todosProdutos.filter(p => {
+            const pCat = (p.categoria || "").toLowerCase();
             const n = p.nome.toLowerCase();
-            return n.includes("headset") || n.includes("audeze") || n.includes("fone");
+            return pCat === 'headsets' || n.includes("headset") || n.includes("audeze") || n.includes("fone") || n.includes("hyperx") || n.includes("arctis") || n.includes("cloud");
         });
         if (elTitulo) elTitulo.innerText = "🎧 Headsets & Áudio";
-    } else if (categoria === 'hardware') {
+
+    } else if (cat === 'hardware' || cat === 'pecas') {
         produtosFiltrados = todosProdutos.filter(p => {
+            const pCat = (p.categoria || "").toLowerCase();
             const n = p.nome.toLowerCase();
-            return n.includes("ryzen") || n.includes("rtx") || n.includes("radeon") || n.includes("asrock") || n.includes("ddr5") || n.includes("ssd") || n.includes("cooler") || n.includes("80+");
+            return pCat === 'pecas' || pCat === 'hardware' || n.includes("ryzen") || n.includes("rtx") || n.includes("radeon") || n.includes("asrock") || n.includes("ddr5") || n.includes("ssd") || n.includes("cooler") || n.includes("fonte") || n.includes("gabinete");
         });
         if (elTitulo) elTitulo.innerText = "⚙️ Hardware & Peças (Tudo)";
-    } 
+
     // SUBCATEGORIAS DE HARDWARE
-    else if (categoria === 'gpu') {
+    } else if (cat === 'gpu') {
         produtosFiltrados = todosProdutos.filter(p => {
             const n = p.nome.toLowerCase();
             return n.includes("rtx") || n.includes("rx") || n.includes("radeon") || n.includes("geforce") || n.includes("placa de video");
         });
         if (elTitulo) elTitulo.innerText = "🎮 Placas de Vídeo";
-    } else if (categoria === 'placa-mae') {
+
+    } else if (cat === 'placa-mae') {
         produtosFiltrados = todosProdutos.filter(p => {
             const n = p.nome.toLowerCase();
-            return n.includes("b550") || n.includes("b660") || n.includes("x570") || n.includes("z690") || n.includes("asrock") || n.includes("placa mãe") || n.includes("placa mae");
+            return n.includes("b550") || n.includes("b660") || n.includes("b650") || n.includes("x570") || n.includes("z690") || n.includes("asrock") || n.includes("placa mãe") || n.includes("placa mae");
         });
         if (elTitulo) elTitulo.innerText = "🔌 Placas Mãe";
-    } else if (categoria === 'cpu') {
+
+    } else if (cat === 'cpu') {
         produtosFiltrados = todosProdutos.filter(p => {
             const n = p.nome.toLowerCase();
-            return n.includes("ryzen") || n.includes("intel") || n.includes("i5") || n.includes("i7") || n.includes("7800x3d");
+            return n.includes("ryzen") || n.includes("intel") || n.includes("i5") || n.includes("i7") || n.includes("i9") || n.includes("7800x3d");
         });
         if (elTitulo) elTitulo.innerText = "💻 Processadores";
-    } else if (categoria === 'ram') {
+
+    } else if (cat === 'ram') {
         produtosFiltrados = todosProdutos.filter(p => {
             const n = p.nome.toLowerCase();
-            return n.includes("ddr4") || n.includes("ddr5") || n.includes("ram");
+            return n.includes("ddr4") || n.includes("ddr5") || n.includes("ram") || n.includes("gb");
         });
         if (elTitulo) elTitulo.innerText = "⚡ Memória RAM";
-    } else if (categoria === 'fonte-armazenamento') {
+
+    } else if (cat === 'fonte-armazenamento') {
         produtosFiltrados = todosProdutos.filter(p => {
             const n = p.nome.toLowerCase();
-            return n.includes("fonte") || n.includes("ssd") || n.includes("80+") || n.includes("nvme");
+            return n.includes("fonte") || n.includes("ssd") || n.includes("80+") || n.includes("nvme") || n.includes("gold") || n.includes("750w");
         });
         if (elTitulo) elTitulo.innerText = "🔋 Fontes & Armazenamento";
-    } else if (categoria === 'promocao') {
-        produtosFiltrados = todosProdutos.filter(p => p.preco < 1000);
+
+    } else if (cat === 'promocao') {
+        produtosFiltrados = todosProdutos.filter(p => Number(p.preco) < 1000);
         if (elTitulo) elTitulo.innerText = "🏷️ Promoções em Destaque";
     }
 
+    // Renderiza na tela
     elContainer.innerHTML = "";
 
     if (produtosFiltrados.length === 0) {
-        elContainer.innerHTML = "<p style='color: #64748b; font-size: 1.1rem; grid-column: 1 / -1;'>Nenhum produto encontrado nesta categoria.</p>";
+        elContainer.innerHTML = "<p style='color: #64748b; font-size: 1.1rem; grid-column: 1 / -1; text-align: center; padding: 20px;'>Nenhum produto encontrado nesta categoria.</p>";
         return;
     }
 
     produtosFiltrados.forEach(p => {
         const caminhoImg = obterCaminhoImagem(p.nome);
+        const precoFormatado = Number(p.preco).toFixed(2);
+        const nomeEscapado = p.nome.replace(/'/g, "\\'");
 
         elContainer.innerHTML += `
             <div class="card-produto-loja">
@@ -619,8 +639,8 @@ function filtrarCategoria(categoria, elementoClicado) {
                 </div>
                 <div class="card-produto-detalhes">
                     <h3 class="card-produto-titulo">${p.nome}</h3>
-                    <p class="card-produto-preco">R$ ${p.preco}</p>
-                    <button onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})" class="btn-card-comprar">
+                    <p class="card-produto-preco">R$ ${precoFormatado}</p>
+                    <button onclick="adicionarAoCarrinho('${nomeEscapado}', ${p.preco})" class="btn-card-comprar">
                         Adicionar ao Carrinho
                     </button>
                 </div>
@@ -710,6 +730,129 @@ window.onload = () => {
     atualizarStatusLogin();
 };
 
+// 1. ESTRUTURAS DE DADOS (Agora globais, visíveis para todas as funções)
+const tabelaPrecos = {
+    "AMD Ryzen 7 7800X3D (O Rei do FPS)": 2499,
+    "AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)": 2499,
+    "AMD Ryzen 7 7800X3D (Melhor engine sub-tick)": 2499,
+    "AMD Ryzen 7 7800X3D (Crucial para o mapa pesado do Warzone)": 2499,
+    "AMD Ryzen 5 7600X": 1400,
+    "Intel Core i7-14700K": 2800,
+    "NVIDIA GeForce RTX 4070 Super": 4399,
+    "NVIDIA GeForce RTX 4060 Ti": 2799,
+    "NVIDIA GeForce RTX 4070": 3999,
+    "NVIDIA GeForce RTX 3060 Ti": 2100,
+    "NVIDIA GeForce RTX 4070 Ti Super": 6100,
+    "NVIDIA GeForce RTX 4080 Super (Foco em alta resolução/Frames)": 8500,
+    "32 GB DDR5 6000 MHz CL30": 850,
+    "32 GB DDR5 6000 MHz": 800,
+    "16 GB DDR5 5600 MHz": 450,
+    "32 GB DDR5 6400 MHz CL32": 950,
+    "Wooting 80HE (Rapid Trigger Analógico)": 1800,
+    "Wooting 60HE+ ou Razer Huntsman V3 Pro TKL": 1450,
+    "Wooting 80HE (Desempenho de SOCD/Snap Tap)": 1800,
+    "Logitech G Pro X TKL Rapid": 1000,
+    "Razer Huntsman V3 Pro Mini": 1100,
+    "Wooting 80HE": 1800,
+    "Razer Viper V3 Pro (8000Hz Polling Rate)": 850,
+    "Logitech G Pro X Superlight 2 Dex": 950,
+    "Razer DeathAdder V3 Pro ou Logitech G Pro X Superlight 2": 850,
+    "Razer Viper V3 Pro (Leveza para cliques rápidos/APM)": 850,
+    "Logitech G Pro X Superlight 2": 800,
+    "Razer Viper V3 Pro": 850,
+    "Artisan FX Hayate Otsu XL": 400,
+    "Artisan FX Zero Soft XL (Controle perfeito de flicada)": 450,
+    "Lethal Gaming Gear Saturn Pro XL": 350,
+    "Logitech G640 Large": 150,
+    "Artisan Ninja FX Zero Mid": 400,
+    "SkyPAD Glass 3.0 XL (Rastreamento infinito de tracking)": 750,
+    "Audeze Maxwell Wireless": 2300,
+    "HyperX Cloud III Wireless": 950,
+    "SteelSeries Arctis Nova Pro Wireless": 2100,
+    "Logitech G Pro X 2 LIGHTSPEED": 1400,
+    "Beyerdynamic DT 990 Pro + Amp (Áudio de estúdio para pixels)": 1900,
+    "Audeze Maxwell (Melhor palco sonoro para passos distantes)": 2300,
+    "ASUS ROG Swift 360Hz OLED": 5500,
+    "BenQ ZOWIE XL2586X+ (540Hz DyAc 2 - O padrão dos Majors)": 5999,
+    "BenQ ZOWIE XL2566K (360Hz DyAc+)": 4200,
+    "LG UltraGear 27\" OLED 240Hz (Cores e tempo de resposta absurdo)": 4500,
+    "LG UltraGear 360Hz IPS": 3200,
+    "ASUS ROG Swift PG27AQDM (1440p OLED 240Hz)": 4500
+};
+
+const setups = {
+    fortnite: [
+        "Processador: AMD Ryzen 7 7800X3D (O Rei do FPS)",
+        "Placa de Vídeo: NVIDIA GeForce RTX 4070 Super",
+        "Memória RAM: 32 GB DDR5 6000 MHz CL30",
+        "Teclado: Wooting 80HE (Rapid Trigger Analógico)",
+        "Mouse: Razer Viper V3 Pro (8000Hz Polling Rate)",
+        "Mousepad: Artisan FX Hayate Otsu XL",
+        "Headset: Audeze Maxwell Wireless",
+        "Monitor: ASUS ROG Swift 360Hz OLED"
+    ],
+    valorant: [
+        "Processador: AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)",
+        "Placa de Vídeo: NVIDIA GeForce RTX 4060 Ti",
+        "Memória RAM: 32 GB DDR5 6000 MHz CL30",
+        "Teclado: Wooting 60HE+ ou Razer Huntsman V3 Pro TKL",
+        "Mouse: Logitech G Pro X Superlight 2 Dex",
+        "Mousepad: Artisan FX Zero Soft XL (Controle perfeito de flicada)",
+        "Headset: HyperX Cloud III Wireless",
+        "Monitor: BenQ ZOWIE XL2586X+ (540Hz DyAc 2)"
+    ],
+    cs2: [
+        "Processador: AMD Ryzen 7 7800X3D (Melhor engine sub-tick)",
+        "Placa de Vídeo: NVIDIA GeForce RTX 4070",
+        "Memória RAM: 32 GB DDR5 6000 MHz",
+        "Teclado: Wooting 80HE (Desempenho de SOCD/Snap Tap)",
+        "Mouse: Razer DeathAdder V3 Pro ou Logitech G Pro X Superlight 2",
+        "Mousepad: Lethal Gaming Gear Saturn Pro XL",
+        "Headset: SteelSeries Arctis Nova Pro Wireless",
+        "Monitor: BenQ ZOWIE XL2566K (360Hz DyAc+)"
+    ],
+    lol: [
+        "Processador: AMD Ryzen 5 7600X",
+        "Placa de Vídeo: NVIDIA GeForce RTX 3060 Ti",
+        "Memória RAM: 16 GB DDR5 5600 MHz",
+        "Teclado: Logitech G Pro X TKL Rapid",
+        "Mouse: Razer Viper V3 Pro (Leveza para cliques rápidos/APM)",
+        "Mousepad: Logitech G640 Large",
+        "Headset: Logitech G Pro X 2 LIGHTSPEED",
+        "Monitor: LG UltraGear 27\" OLED 240Hz (Cores e tempo de resposta absurdo)"
+    ],
+    rainbow: [
+        "Processador: Intel Core i7-14700K",
+        "Placa de Vídeo: NVIDIA GeForce RTX 4070 Ti Super",
+        "Memória RAM: 32 GB DDR5 6000 MHz",
+        "Teclado: Razer Huntsman V3 Pro Mini",
+        "Mouse: Logitech G Pro X Superlight 2",
+        "Mousepad: Artisan Ninja FX Zero Mid",
+        "Headset: Beyerdynamic DT 990 Pro + Amp (Áudio de estúdio para pixels)",
+        "Monitor: LG UltraGear 360Hz IPS"
+    ],
+    warzone: [
+        "Processador: AMD Ryzen 7 7800X3D (Crucial para o mapa pesado do Warzone)",
+        "Placa de Vídeo: NVIDIA GeForce RTX 4080 Super (Foco em alta resolução/Frames)",
+        "Memória RAM: 32 GB DDR5 6400 MHz CL32",
+        "Teclado: Wooting 80HE",
+        "Mouse: Razer Viper V3 Pro",
+        "Mousepad: SkyPAD Glass 3.0 XL (Rastreamento infinito de tracking)",
+        "Headset: Audeze Maxwell (Melhor palco sonoro para passos distantes)",
+        "Monitor: ASUS ROG Swift PG27AQDM (1440p OLED 240Hz)"
+    ]
+};
+
+const nomesJogos = {
+    fortnite: "Fortnite",
+    valorant: "Valorant",
+    cs2: "Counter Strike 2",
+    lol: "League of Legends",
+    rainbow: "Rainbow Six Siege",
+    warzone: "Call of Duty: Warzone"
+};
+
+// 2. FUNÇÃO PRINCIPAL DE ANÁLISE
 function analisarSetup() {
     const jogo = document.getElementById("jogo").value;
     const resultado = document.getElementById("resultado-setup");
@@ -722,127 +865,6 @@ function analisarSetup() {
 
     if (resultado) resultado.innerHTML = "";
     if (robot) robot.style.display = "block";
-
-    const tabelaPrecos = {
-        "AMD Ryzen 7 7800X3D (O Rei do FPS)": 2499,
-        "AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)": 2499,
-        "AMD Ryzen 7 7800X3D (Melhor engine sub-tick)": 2499,
-        "AMD Ryzen 7 7800X3D (Crucial para o mapa pesado do Warzone)": 2499,
-        "AMD Ryzen 5 7600X": 1400,
-        "Intel Core i7-14700K": 2800,
-        "NVIDIA GeForce RTX 4070 Super": 4399,
-        "NVIDIA GeForce RTX 4060 Ti": 2799,
-        "NVIDIA GeForce RTX 4070": 3999,
-        "NVIDIA GeForce RTX 3060 Ti": 2100,
-        "NVIDIA GeForce RTX 4070 Ti Super": 6100,
-        "NVIDIA GeForce RTX 4080 Super (Foco em alta resolução/Frames)": 8500,
-        "32 GB DDR5 6000 MHz CL30": 850,
-        "32 GB DDR5 6000 MHz": 800,
-        "16 GB DDR5 5600 MHz": 450,
-        "32 GB DDR5 6400 MHz CL32": 950,
-        "Wooting 80HE (Rapid Trigger Analógico)": 1800,
-        "Wooting 60HE+ ou Razer Huntsman V3 Pro TKL": 1450,
-        "Wooting 80HE (Desempenho de SOCD/Snap Tap)": 1800,
-        "Logitech G Pro X TKL Rapid": 1000,
-        "Razer Huntsman V3 Pro Mini": 1100,
-        "Wooting 80HE": 1800,
-        "Razer Viper V3 Pro (8000Hz Polling Rate)": 850,
-        "Logitech G Pro X Superlight 2 Dex": 950,
-        "Razer DeathAdder V3 Pro ou Logitech G Pro X Superlight 2": 850,
-        "Razer Viper V3 Pro (Leveza para cliques rápidos/APM)": 850,
-        "Logitech G Pro X Superlight 2": 800,
-        "Razer Viper V3 Pro": 850,
-        "Artisan FX Hayate Otsu XL": 400,
-        "Artisan FX Zero Soft XL (Controle perfeito de flicada)": 450,
-        "Lethal Gaming Gear Saturn Pro XL": 350,
-        "Logitech G640 Large": 150,
-        "Artisan Ninja FX Zero Mid": 400,
-        "SkyPAD Glass 3.0 XL (Rastreamento infinito de tracking)": 750,
-        "Audeze Maxwell Wireless": 2300,
-        "HyperX Cloud III Wireless": 950,
-        "SteelSeries Arctis Nova Pro Wireless": 2100,
-        "Logitech G Pro X 2 LIGHTSPEED": 1400,
-        "Beyerdynamic DT 990 Pro + Amp (Áudio de estúdio para pixels)": 1900,
-        "Audeze Maxwell (Melhor palco sonoro para passos distantes)": 2300,
-        "ASUS ROG Swift 360Hz OLED": 5500,
-        "BenQ ZOWIE XL2586X+ (540Hz DyAc 2 - O padrão dos Majors)": 5999,
-        "BenQ ZOWIE XL2566K (360Hz DyAc+)": 4200,
-        "LG UltraGear 27\" OLED 240Hz (Cores e tempo de resposta absurdo)": 4500,
-        "LG UltraGear 360Hz IPS": 3200,
-        "ASUS ROG Swift PG27AQDM (1440p OLED 240Hz)": 4500
-    };
-
-    const setups = {
-        fortnite: [
-            "Processador: AMD Ryzen 7 7800X3D (O Rei do FPS)",
-            "Placa de Vídeo: NVIDIA GeForce RTX 4070 Super",
-            "Memória RAM: 32 GB DDR5 6000 MHz CL30",
-            "Teclado: Wooting 80HE (Rapid Trigger Analógico)",
-            "Mouse: Razer Viper V3 Pro (8000Hz Polling Rate)",
-            "Mousepad: Artisan FX Hayate Otsu XL",
-            "Headset: Audeze Maxwell Wireless",
-            "Monitor: ASUS ROG Swift 360Hz OLED"
-        ],
-        valorant: [
-            "Processador: AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)",
-            "Placa de Vídeo: NVIDIA GeForce RTX 4060 Ti",
-            "Memória RAM: 32 GB DDR5 6000 MHz CL30",
-            "Teclado: Wooting 60HE+ ou Razer Huntsman V3 Pro TKL",
-            "Mouse: Logitech G Pro X Superlight 2 Dex",
-            "Mousepad: Artisan FX Zero Soft XL (Controle perfeito de flicada)",
-            "Headset: HyperX Cloud III Wireless",
-            "Monitor: BenQ ZOWIE XL2586X+ (540Hz DyAc 2)"
-        ],
-        cs2: [
-            "Processador: AMD Ryzen 7 7800X3D (Melhor engine sub-tick)",
-            "Placa de Vídeo: NVIDIA GeForce RTX 4070",
-            "Memória RAM: 32 GB DDR5 6000 MHz",
-            "Teclado: Wooting 80HE (Desempenho de SOCD/Snap Tap)",
-            "Mouse: Razer DeathAdder V3 Pro ou Logitech G Pro X Superlight 2",
-            "Mousepad: Lethal Gaming Gear Saturn Pro XL",
-            "Headset: SteelSeries Arctis Nova Pro Wireless",
-            "Monitor: BenQ ZOWIE XL2566K (360Hz DyAc+)"
-        ],
-        lol: [
-            "Processador: AMD Ryzen 5 7600X",
-            "Placa de Vídeo: NVIDIA GeForce RTX 3060 Ti",
-            "Memória RAM: 16 GB DDR5 5600 MHz",
-            "Teclado: Logitech G Pro X TKL Rapid",
-            "Mouse: Razer Viper V3 Pro (Leveza para cliques rápidos/APM)",
-            "Mousepad: Logitech G640 Large",
-            "Headset: Logitech G Pro X 2 LIGHTSPEED",
-            "Monitor: LG UltraGear 27\" OLED 240Hz (Cores e tempo de resposta absurdo)"
-        ],
-        rainbow: [
-            "Processador: Intel Core i7-14700K",
-            "Placa de Vídeo: NVIDIA GeForce RTX 4070 Ti Super",
-            "Memória RAM: 32 GB DDR5 6000 MHz",
-            "Teclado: Razer Huntsman V3 Pro Mini",
-            "Mouse: Logitech G Pro X Superlight 2",
-            "Mousepad: Artisan Ninja FX Zero Mid",
-            "Headset: Beyerdynamic DT 990 Pro + Amp (Áudio de estúdio para pixels)",
-            "Monitor: LG UltraGear 360Hz IPS"
-        ],
-        warzone: [
-            "Processador: AMD Ryzen 7 7800X3D (Crucial para o mapa pesado do Warzone)",
-            "Placa de Vídeo: NVIDIA GeForce RTX 4080 Super (Foco em alta resolução/Frames)",
-            "Memória RAM: 32 GB DDR5 6400 MHz CL32",
-            "Teclado: Wooting 80HE",
-            "Mouse: Razer Viper V3 Pro",
-            "Mousepad: SkyPAD Glass 3.0 XL (Rastreamento infinito de tracking)",
-            "Headset: Audeze Maxwell (Melhor palco sonoro para passos distantes)",
-            "Monitor: ASUS ROG Swift PG27AQDM (1440p OLED 240Hz)"
-        ]
-    };
-
-    const nomesJogos = {
-        fortnite: "Fortnite",
-        valorant: "Valorant",
-        cs2: "Counter Strike 2",
-        lol: "League of Legends",
-        rainbow: "Rainbow Six Siege",
-        warzone: "Call of Duty: Warzone"
-    };
 
     let itens = setups[jogo];
 
@@ -882,10 +904,42 @@ function analisarSetup() {
                     <div class="setup-table" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; text-align: left;">
                         ${htmlCards}
                     </div>
+
+                    <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #1f293d;">
+                        <button onclick="adicionarPacoteCompleto('${jogo}')" style="background: #00d4ff; color: #000; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px rgba(0, 212, 255, 0.4); text-transform: uppercase; transition: 0.3s;">
+                            🛒 Adicionar Pacote Completo ao Carrinho
+                        </button>
+                    </div>
                 </div>
             `;
         }
     }, 1500);
+}
+
+// 3. FUNÇÃO QUE REALMENTE ADICIONA TODOS OS ITENS AO CARRINHO
+function adicionarPacoteCompleto(jogoChave) {
+    const listaItens = setups[jogoChave];
+    if (!listaItens) return;
+
+    // Executa a função individual de carrinho para cada um dos 8 itens recomendados
+    listaItens.forEach(item => {
+        const partes = item.split(":");
+        if (partes.length >= 2) {
+            const modelo = partes[1].trim();
+            const precoReal = tabelaPrecos[modelo] || 150;
+
+            if (typeof adicionarAoCarrinho === "function") {
+                adicionarAoCarrinho(modelo, precoReal);
+            }
+        }
+    });
+
+    // Se você tiver uma função de atualizar contador ou modal do carrinho, aciona aqui
+    if (typeof atualizarCarrinho === "function") {
+        atualizarCarrinho();
+    }
+
+    alert(`🚀 Todos os componentes recomendados para ${nomesJogos[jogoChave]} foram adicionados ao carrinho!`);
 }
 
 // ==========================================
@@ -968,4 +1022,43 @@ function mudarPlayer(direcao) {
         card.style.opacity = '1';
         card.style.transform = 'scale(1)';
     }, 200);
+}
+
+// ==========================================
+// 🏆 CONTROLE DO MODAL DE PLANOS DE COACH
+// ==========================================
+
+// Abrir o modal de planos
+function abrirModalPlanos() {
+    const modal = document.getElementById("modal-planos");
+    if (modal) modal.style.display = "flex";
+}
+
+// Fechar o modal
+function fecharModalPlanos() {
+    const modal = document.getElementById("modal-planos");
+    if (modal) modal.style.display = "none";
+}
+
+// Ao clicar em um plano, adiciona ao carrinho e vai para o checkout
+function assinarPlano(nomePlano, preco) {
+    const item = {
+        id: "coach-" + nomePlano.toLowerCase(),
+        nome: `Aulas Pro Player (Plano ${nomePlano})`,
+        preco: preco,
+        quantidade: 1
+    };
+
+    // Adiciona ao carrinho
+    if (typeof carrinho !== "undefined") {
+        carrinho.push(item);
+        if (typeof atualizarCarrinho === "function") atualizarCarrinho();
+    }
+
+    fecharModalPlanos();
+    
+    // Redireciona para o carrinho
+    if (typeof trocarAba === "function") {
+        trocarAba("carrinho");
+    }
 }
