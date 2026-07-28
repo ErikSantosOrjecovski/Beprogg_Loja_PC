@@ -1,0 +1,7 @@
+{
+    "liveServer.settings.ignoreFiles": [
+        "**/pedidos.json",
+        "pedidos.json",
+        "**/*.json"
+    ]
+}
