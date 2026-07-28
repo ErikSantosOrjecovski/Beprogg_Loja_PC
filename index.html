@@ -20,7 +20,11 @@
 
     <div class="header-actions">
         <button class="icon-btn" onclick="trocarAba('loja')"><i class="fa-regular fa-heart"></i></button>
+<<<<<<< HEAD
         <button class="icon-btn" onclick="trocarAba('loja')"><i class="fa-solid fa-cart-shopping"></i></button>
+=======
+        <button class="icon-btn" onclick="trocarAba('carrinho')"><i class="fa-solid fa-cart-shopping"></i></button>
+>>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
         
         <div id="auth-area" class="auth-area" style="display:none;">
             <span id="auth-user"></span>
@@ -66,7 +70,10 @@
 <main>
 
     <section id="inicio" class="conteudo ativo">
+<<<<<<< HEAD
         
+=======
+>>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
         <div class="hero-banner" style="background: linear-gradient(135deg, #070b19 0%, #001f3f 100%); border: 1px solid #00d4ff33; border-radius: 12px; padding: 60px 40px; text-align: center; margin-bottom: 40px; position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);">
             <div style="position: relative; z-index: 2; max-width: 800px; margin: 0 auto;">
                 <span style="color: #00d4ff; text-transform: uppercase; letter-spacing: 2px; font-weight: bold; font-size: 14px;">Elevate Your Game</span>
@@ -137,6 +144,7 @@
             <button onclick="analisarSetup()">Analisar Setup Ideal</button>
         </div>
         <div id="robot" style="display: none;">
+<<<<<<< HEAD
     <div id="robot-emoji">🤖</div>
     <div id="robot-text">BePro analisando seu setup...</div>
 </div>
@@ -201,23 +209,124 @@
         <button onclick="trocarAba('pagamento')" style="margin: 20px 0 40px 0; max-width: 250px;">Ir para Pagamento 💳</button>
     </div>
 </section>
+=======
+            <div id="robot-emoji">🤖</div>
+            <div id="robot-text">BePro analisando seu setup...</div>
+        </div>
+        
+        <div id="resultado-setup"></div>
+    </section>
+
+    <section id="loja" class="conteudo">
+        <div class="loja-topo">
+            <h2 class="section-title">Store - Catálogo Completo</h2>
+        </div>
+
+        <div class="barra-categorias">
+            <div class="categoria-item" onclick="filtrarCategoria('todos', this)">
+                <i data-lucide="grid" class="categoria-icone"></i><span>TODOS</span>
+            </div>
+
+            <div class="categoria-item" onclick="filtrarCategoria('promocao', this)">
+                <i data-lucide="tag" class="categoria-icone"></i><span>PROMOÇÃO</span>
+            </div>
+
+            <div class="categoria-item dropdown-parent" onclick="filtrarCategoria('hardware', this)">
+                <i data-lucide="cpu" class="categoria-icone"></i><span>HARDWARE ▾</span>
+                
+                <div class="subcategorias-menu">
+                    <div onclick="event.stopPropagation(); filtrarCategoria('gpu', this.closest('.categoria-item'))">Placas de Vídeo</div>
+                    <div onclick="event.stopPropagation(); filtrarCategoria('placa-mae', this.closest('.categoria-item'))">Placas Mãe</div>
+                    <div onclick="event.stopPropagation(); filtrarCategoria('cpu', this.closest('.categoria-item'))">Processadores</div>
+                    <div onclick="event.stopPropagation(); filtrarCategoria('ram', this.closest('.categoria-item'))">Memória RAM</div>
+                    <div onclick="event.stopPropagation(); filtrarCategoria('fonte-armazenamento', this.closest('.categoria-item'))">Fontes & SSDs</div>
+                </div>
+            </div>
+
+            <div class="categoria-item" onclick="filtrarCategoria('teclados', this)">
+                <i data-lucide="keyboard" class="categoria-icone"></i><span>TECLADOS</span>
+            </div>
+
+            <div class="categoria-item" onclick="filtrarCategoria('mouses', this)">
+                <i data-lucide="mouse" class="categoria-icone"></i><span>MOUSES</span>
+            </div>
+
+            <div class="categoria-item" onclick="filtrarCategoria('monitores', this)">
+                <i data-lucide="monitor" class="categoria-icone"></i><span>MONITORES</span>
+            </div>
+
+            <div class="categoria-item" onclick="filtrarCategoria('headsets', this)">
+                <i data-lucide="headphones" class="categoria-icone"></i><span>HEADSETS</span>
+            </div>
+        </div>
+
+        <div style="max-width: 1200px; margin: 20px auto 0 auto; padding: 0 20px;">
+            <h3 id="titulo-categoria-atual" style="color: #00d4ff; text-align: left; border-bottom: 2px solid #1f293d; padding-bottom: 10px; text-transform: uppercase;">📦 Todos os Produtos</h3>
+            
+            <div id="lista-produtos" class="produtos-grid" style="margin-top: 25px;"></div>
+        </div>
+    </section>
+
+    <section id="carrinho" class="conteudo">
+        <h2>🛒 Seu Carrinho</h2>
+        
+        <div id="carrinho-container-flex">
+            <div class="carrinho-produtos-area">
+                <div id="lista-carrinho"></div>
+            </div>
+
+            <div class="carrinho-resumo-painel">
+                <h3 id="total-carrinho">Total: <span>R$ 0,00</span></h3>
+                
+                <hr style="border-color: #1a2332; margin: 15px 0;">
+
+                <h4 style="color: #00d4ff; margin: 0 0 10px 0;">💳 Dados para Entrega e Pagamento</h4>
+                
+                <input type="text" id="nome-cliente" placeholder="Seu Nome Completo">
+                <input type="text" id="telefone" placeholder="Telefone / WhatsApp">
+                <input type="text" id="endereco" placeholder="Endereço Completo de Entrega">
+                
+                <select id="forma-pagamento">
+                    <option value="" disabled selected>Selecione a forma de pagamento</option>
+                    <option value="Pix">⚡ Pix (Aprovação Instantânea)</option>
+                    <option value="Cartao">💳 Cartão de Crédito</option>
+                    <option value="Boleto">📄 Boleto Bancário</option>
+                </select>
+
+                <button onclick="finalizarPedido()">Confirmar Pedido</button>
+                <p id="mensagem-pedido" style="margin-top: 10px; font-size: 13px;"></p>
+            </div>
+        </div>
+    </section>
+>>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 
     <section id="pagamento" class="conteudo">
         <h2 class="section-title">💳 Finalizar Compra</h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto;">
             <div class="card">
                 <h3>📦 Dados para entrega</h3>
+<<<<<<< HEAD
                 <input id="nome-cliente" type="text" placeholder="Seu nome" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
                 <input id="telefone" type="text" placeholder="Telefone" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
                 <input id="endereco" type="text" placeholder="Endereço" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
                 <select id="forma-pagamento" style="width: 96%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 20px;">
+=======
+                <input id="nome-cliente-pag" type="text" placeholder="Seu nome" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
+                <input id="telefone-pag" type="text" placeholder="Telefone" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
+                <input id="endereco-pag" type="text" placeholder="Endereço" style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;">
+                <select id="forma-pagamento-pag" style="width: 96%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 20px;">
+>>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
                     <option value="">Forma de pagamento</option>
                     <option value="PIX">PIX</option>
                     <option value="Cartão">Cartão</option>
                     <option value="Boleto">Boleto</option>
                 </select>
                 <button onclick="finalizarPedido()">Finalizar Pedido</button>
+<<<<<<< HEAD
                 <p id="mensagem-pedido" style="margin-top: 15px; color: #00d4ff; font-weight: bold;"></p>
+=======
+                <p id="mensagem-pedido-pag" style="margin-top: 15px; color: #00d4ff; font-weight: bold;"></p>
+>>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
             </div>
             <div class="card">
                 <h3>🛒 Resumo do Pedido</h3>
@@ -227,6 +336,7 @@
     </section>
 
     <section id="coach" class="conteudo">
+<<<<<<< HEAD
     <h2 class="titulo-secao">Aulas com Pro Players</h2>
     <p class="subtitulo-secao">Evolua seu nível de jogo aprendendo diretamente com os melhores profissionais do cenário mundial.</p>
 
@@ -257,6 +367,92 @@
         </button>
     </div>
 </section>
+=======
+        <h2 class="titulo-secao">Aulas com Pro Players</h2>
+        <p class="subtitulo-secao">Evolua seu nível de jogo aprendendo diretamente com os melhores profissionais do cenário mundial.</p>
+
+        <div class="carrossel-container">
+            <button class="seta-carrossel seta-esquerda" onclick="mudarPlayer(-1)">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+            <div id="card-player" class="card-proplayer-compacto">
+                <div class="card-imagem-area">
+                    <img id="player-img" src="imagens/blackoutzx.jpg" alt="Pro Player">
+                </div>
+
+                <div class="card-info-area">
+                    <span id="player-jogo" class="tag-jogo">FORTNITE</span>
+                    <h3 id="player-nome" class="nome-player">👑 Pro Player: Blackoutz</h3>
+                    <p id="player-desc" class="desc-player">
+                        Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa com um dos maiores nomes do Fortnite brasileiro.
+                    </p>
+                    <div class="preco-linha">
+                        <span>Valor da sessão:</span>
+                        <strong id="player-preco">R$ 150,00</strong>
+                    </div>
+                    
+                    <button class="btn-garantir" onclick="abrirModalPlanos()">GARANTIR VAGA NA AULA</button>
+                </div>
+            </div>
+
+            <button class="seta-carrossel seta-direita" onclick="mudarPlayer(1)">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div id="modal-planos" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <button class="modal-fechar" onclick="fecharModalPlanos()">&times;</button>
+                
+                <h2>🏆 Escolha seu Plano de Coaching</h2>
+                <p class="modal-subtitulo">Evolua seu jogo com acompanhamento do Pro Player</p>
+
+                <div class="planos-grid">
+                    <div class="plano-card">
+                        <span class="plano-tag">🌱 Iniciante</span>
+                        <h3>Plano Básico</h3>
+                        <div class="plano-preco">R$ 150 <span>/mês</span></div>
+                        <ul class="plano-beneficios">
+                            <li><i class="fa-solid fa-check"></i> 1 Sessão de VOD Review (Replay)</li>
+                            <li><i class="fa-solid fa-check"></i> Guia em PDF de Rotinas de Treino</li>
+                            <li><i class="fa-solid fa-check"></i> Acesso ao Discord de Alunos</li>
+                        </ul>
+                        <button onclick="assinarPlano('Básico', 150)">Selecionar Básico</button>
+                    </div>
+
+                    <div class="plano-card plano-destaque">
+                        <span class="plano-tag-destaque">🔥 MAIS POPULAR</span>
+                        <span class="plano-tag">⚡ Intermediário</span>
+                        <h3>Plano Pro</h3>
+                        <div class="plano-preco">R$ 350 <span>/mês</span></div>
+                        <ul class="plano-beneficios">
+                            <li><i class="fa-solid fa-check"></i> 3 Sessões Ao Vivo (1h cada)</li>
+                            <li><i class="fa-solid fa-check"></i> Análise de Sensibilidade/Config</li>
+                            <li><i class="fa-solid fa-check"></i> Tudo do Plano Básico</li>
+                            <li><i class="fa-solid fa-check"></i> Grupo VIP de Discussão Tática</li>
+                        </ul>
+                        <button onclick="assinarPlano('Pro', 350)">Selecionar Pro</button>
+                    </div>
+
+                    <div class="plano-card">
+                        <span class="plano-tag">👑 Alta Performance</span>
+                        <h3>Plano Champion</h3>
+                        <div class="plano-preco">R$ 650 <span>/mês</span></div>
+                        <ul class="plano-beneficios">
+                            <li><i class="fa-solid fa-check"></i> Acompanhamento Semanal 1-on-1</li>
+                            <li><i class="fa-solid fa-check"></i> Partidas Duo In-Game com o Pro</li>
+                            <li><i class="fa-solid fa-check"></i> Suporte VIP via WhatsApp</li>
+                            <li><i class="fa-solid fa-check"></i> Relatório de Evolução Mensal</li>
+                        </ul>
+                        <button onclick="assinarPlano('Champion', 650)">Selecionar Champion</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+>>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
     <section id="pedidos" class="conteudo">
         <h2 class="section-title">📦 Meus Pedidos</h2>
         <p style="text-align: left; color: #94a3b8; margin-bottom: 20px;">Acompanhe aqui o histórico das suas compras realizadas na Bepro.gg.</p>
@@ -354,7 +550,10 @@
             cadastroBox.style.display = 'none';
         }
     }
+<<<<<<< HEAD
     
+=======
+>>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 </script>
 <script src="script.js"></script>
 </body>

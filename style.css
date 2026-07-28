@@ -1452,6 +1452,7 @@ footer {
 }
 
 /* ==========================================
+<<<<<<< HEAD
    🎨 ESTILO DOS QUADRADOS E IMAGENS
    ========================================== */
 
@@ -1500,4 +1501,272 @@ footer {
 
 .card-produto:hover .card-imagem img, .item-card:hover .card-imagem img {
     transform: scale(1.08); /* Efeito de zoom leve */
+=======
+   🛒 AJUSTES FINAIS DE LAYOUT DO CARRINHO
+   ========================================== */
+
+#carrinho {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#carrinho h2 {
+    text-align: left;
+    color: #ffffff;
+    border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+#carrinho-container-flex {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
+@media (max-width: 850px) {
+    #carrinho-container-flex {
+        flex-direction: column;
+    }
+}
+
+.carrinho-produtos-area {
+    flex: 1 1 60%;
+    width: 100%;
+}
+
+.carrinho-resumo-painel {
+    flex: 1 1 40%;
+    min-width: 320px;
+    background: #0d1b2a;
+    border: 1px solid #1a2332;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    box-sizing: border-box;
+}
+
+#lista-carrinho {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+/* Mensagem de carrinho vazio centralizada */
+.carrinho-vazio-msg {
+    background: #0d1b2a;
+    border: 1px dashed #1a2332;
+    padding: 40px 20px;
+    border-radius: 12px;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+/* Formatação dos inputs de pagamento */
+.carrinho-resumo-painel input,
+.carrinho-resumo-painel select {
+    width: 100%;
+    background: #16222f !important;
+    border: 1px solid #223143 !important;
+    padding: 12px 14px;
+    border-radius: 8px;
+    color: #ffffff !important;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+}
+
+.carrinho-resumo-painel input:focus,
+.carrinho-resumo-painel select:focus {
+    border-color: #00d4ff !important;
+    box-shadow: 0 0 8px rgba(0, 212, 255, 0.25);
+}
+
+.carrinho-resumo-painel button {
+    width: 100% !important;
+    background: #00d4ff !important;
+    color: #080d16 !important;
+    font-weight: 800 !important;
+    padding: 14px !important;
+    border-radius: 8px !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+}
+
+/* ==========================================
+   🏆 MODAL E CARDS DE PLANOS DE COACH
+   ========================================== */
+
+/* Overlay escuro de fundo */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Caixa principal do Modal */
+.modal-content {
+    background: #0d1b2a;
+    border: 1px solid #1a2332;
+    border-radius: 16px;
+    max-width: 1000px;
+    width: 100%;
+    padding: 35px;
+    position: relative;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-fechar {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modal-fechar:hover {
+    color: #00d4ff;
+}
+
+.modal-subtitulo {
+    color: #94a3b8;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* Grade dos 3 Planos */
+.planos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+/* Card Individual de Plano */
+.plano-card {
+    background: #111a2e;
+    border: 1px solid #1f293d;
+    border-radius: 14px;
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.plano-card:hover {
+    transform: translateY(-5px);
+    border-color: #00d4ff;
+}
+
+/* Destaque para o Plano Pro */
+.plano-destaque {
+    border: 2px solid #00d4ff !important;
+    background: #16223b;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+}
+
+.plano-tag-destaque {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00d4ff;
+    color: #080d16;
+    font-weight: bold;
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+}
+
+.plano-tag {
+    font-size: 0.8rem;
+    color: #00d4ff;
+    font-weight: 600;
+}
+
+.plano-card h3 {
+    margin: 10px 0;
+    color: #ffffff;
+    font-size: 1.4rem;
+}
+
+.plano-preco {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #00d4ff;
+    margin-bottom: 15px;
+}
+
+.plano-preco span {
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+
+.plano-beneficios {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px 0;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.plano-beneficios li {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.plano-beneficios li i {
+    color: #00ff88;
+}
+
+.plano-card button {
+    width: 100%;
+    background: #00d4ff;
+    color: #080d16;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.plano-card button:hover {
+    background: #00b4d8;
+    box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+>>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 }

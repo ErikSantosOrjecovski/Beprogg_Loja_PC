@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 {
     "liveServer.settings.ignoreFiles": [
         "**/pedidos.json"
     ]
+=======
+{
+    "liveServer.settings.ignoreFiles": [
+        "**/pedidos.json"
+    ]
+>>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 }
