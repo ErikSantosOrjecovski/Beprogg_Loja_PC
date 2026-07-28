@@ -534,9 +534,7 @@ function obterCaminhoImagem(nomeProduto) {
 }
 
 // ==========================================
-<<<<<<< HEAD
 // 🎯 FILTRAR CATEGORIAS E SUBCATEGORIAS
-=======
 // 🎯 FILTRAR E RENDERIZAR COM IMAGEM DEDICADA
 // ==========================================
 // ==========================================
@@ -573,7 +571,6 @@ function obterCaminhoImagem(nomeProduto) {
 
 // ==========================================
 // 🎯 FILTRAR CATEGORIAS E SUBCATEGORIAS (CORRIGIDO)
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 // ==========================================
 function filtrarCategoria(categoria, elementoClicado) {
     const elContainer = document.getElementById("lista-produtos");
@@ -581,10 +578,7 @@ function filtrarCategoria(categoria, elementoClicado) {
 
     if (!elContainer) return;
 
-<<<<<<< HEAD
-=======
     // Destaca o botão ativo na barra de categorias
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
     if (elementoClicado) {
         document.querySelectorAll('.barra-categorias .categoria-item').forEach(item => {
             item.classList.remove('active');
@@ -593,7 +587,6 @@ function filtrarCategoria(categoria, elementoClicado) {
     }
 
     let produtosFiltrados = [];
-<<<<<<< HEAD
 
     if (categoria === 'todos') {
         produtosFiltrados = todosProdutos;
@@ -631,7 +624,6 @@ function filtrarCategoria(categoria, elementoClicado) {
     } 
     // SUBCATEGORIAS DE HARDWARE
     else if (categoria === 'gpu') {
-=======
     const cat = categoria.toLowerCase().trim();
 
     if (cat === 'todos') {
@@ -680,13 +672,11 @@ function filtrarCategoria(categoria, elementoClicado) {
 
     // SUBCATEGORIAS DE HARDWARE
     } else if (cat === 'gpu') {
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
         produtosFiltrados = todosProdutos.filter(p => {
             const n = p.nome.toLowerCase();
             return n.includes("rtx") || n.includes("rx") || n.includes("radeon") || n.includes("geforce") || n.includes("placa de video");
         });
         if (elTitulo) elTitulo.innerText = "🎮 Placas de Vídeo";
-<<<<<<< HEAD
     } else if (categoria === 'placa-mae') {
         produtosFiltrados = todosProdutos.filter(p => {
             const n = p.nome.toLowerCase();
@@ -720,7 +710,6 @@ function filtrarCategoria(categoria, elementoClicado) {
 
     if (produtosFiltrados.length === 0) {
         elContainer.innerHTML = "<p style='color: #64748b; font-size: 1.1rem; grid-column: 1 / -1;'>Nenhum produto encontrado nesta categoria.</p>";
-=======
 
     } else if (cat === 'placa-mae') {
         produtosFiltrados = todosProdutos.filter(p => {
@@ -760,22 +749,17 @@ function filtrarCategoria(categoria, elementoClicado) {
 
     if (produtosFiltrados.length === 0) {
         elContainer.innerHTML = "<p style='color: #64748b; font-size: 1.1rem; grid-column: 1 / -1; text-align: center; padding: 20px;'>Nenhum produto encontrado nesta categoria.</p>";
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
         return;
     }
 
     produtosFiltrados.forEach(p => {
         const caminhoImg = obterCaminhoImagem(p.nome);
-<<<<<<< HEAD
-=======
         const precoFormatado = Number(p.preco).toFixed(2);
         const nomeEscapado = p.nome.replace(/'/g, "\\'");
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 
         elContainer.innerHTML += `
             <div class="card-produto-loja">
                 <div class="card-produto-img-box">
-<<<<<<< HEAD
                     <img src="${caminhoImg}"
                      alt="${p.nome}" 
                      class="card-produto-img"
@@ -785,14 +769,12 @@ function filtrarCategoria(categoria, elementoClicado) {
                     <h3 class="card-produto-titulo">${p.nome}</h3>
                     <p class="card-produto-preco">R$ ${p.preco}</p>
                     <button onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})" class="btn-card-comprar">
-=======
                     <img src="${caminhoImg}" alt="${p.nome}" class="card-produto-img">
                 </div>
                 <div class="card-produto-detalhes">
                     <h3 class="card-produto-titulo">${p.nome}</h3>
                     <p class="card-produto-preco">R$ ${precoFormatado}</p>
                     <button onclick="adicionarAoCarrinho('${nomeEscapado}', ${p.preco})" class="btn-card-comprar">
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
                         Adicionar ao Carrinho
                     </button>
                 </div>
@@ -882,8 +864,6 @@ window.onload = () => {
     atualizarStatusLogin();
 };
 
-<<<<<<< HEAD
-=======
 // 1. ESTRUTURAS DE DADOS (Agora globais, visíveis para todas as funções)
 const tabelaPrecos = {
     "AMD Ryzen 7 7800X3D (O Rei do FPS)": 2499,
@@ -1007,7 +987,6 @@ const nomesJogos = {
 };
 
 // 2. FUNÇÃO PRINCIPAL DE ANÁLISE
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 function analisarSetup() {
     const jogo = document.getElementById("jogo").value;
     const resultado = document.getElementById("resultado-setup");
@@ -1021,7 +1000,6 @@ function analisarSetup() {
     if (resultado) resultado.innerHTML = "";
     if (robot) robot.style.display = "block";
 
-<<<<<<< HEAD
     const tabelaPrecos = {
         "AMD Ryzen 7 7800X3D (O Rei do FPS)": 2499,
         "AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)": 2499,
@@ -1143,8 +1121,6 @@ function analisarSetup() {
         warzone: "Call of Duty: Warzone"
     };
 
-=======
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
     let itens = setups[jogo];
 
     setTimeout(() => {
@@ -1183,23 +1159,18 @@ function analisarSetup() {
                     <div class="setup-table" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; text-align: left;">
                         ${htmlCards}
                     </div>
-<<<<<<< HEAD
-=======
 
                     <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #1f293d;">
                         <button onclick="adicionarPacoteCompleto('${jogo}')" style="background: #00d4ff; color: #000; border: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px rgba(0, 212, 255, 0.4); text-transform: uppercase; transition: 0.3s;">
                             🛒 Adicionar Pacote Completo ao Carrinho
                         </button>
                     </div>
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
                 </div>
             `;
         }
     }, 1500);
 }
 
-<<<<<<< HEAD
-=======
 // 3. FUNÇÃO QUE REALMENTE ADICIONA TODOS OS ITENS AO CARRINHO
 function adicionarPacoteCompleto(jogoChave) {
     const listaItens = setups[jogoChave];
@@ -1226,7 +1197,6 @@ function adicionarPacoteCompleto(jogoChave) {
     alert(`🚀 Todos os componentes recomendados para ${nomesJogos[jogoChave]} foram adicionados ao carrinho!`);
 }
 
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 // ==========================================
 // 👑 CARROSSEL DE PRO PLAYERS (CARD ÚNICO)
 // ==========================================
@@ -1307,8 +1277,6 @@ function mudarPlayer(direcao) {
         card.style.opacity = '1';
         card.style.transform = 'scale(1)';
     }, 200);
-<<<<<<< HEAD
-=======
 }
 
 // ==========================================
@@ -1348,5 +1316,4 @@ function assinarPlano(nomePlano, preco) {
     if (typeof trocarAba === "function") {
         trocarAba("carrinho");
     }
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 }
