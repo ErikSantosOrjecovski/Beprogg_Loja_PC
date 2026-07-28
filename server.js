@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
@@ -228,7 +227,6 @@ app.get("/produtos", (req, res) => {
 // ==========================================
 app.listen(3000, () => {
     console.log("Servidor rodando com sucesso em http://localhost:3000");
-=======
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
@@ -458,5 +456,4 @@ app.get("/produtos", (req, res) => {
 // ==========================================
 app.listen(3000, () => {
     console.log("Servidor rodando com sucesso em http://localhost:3000");
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 });

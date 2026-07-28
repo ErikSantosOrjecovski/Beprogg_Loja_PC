@@ -1452,7 +1452,6 @@ footer {
 }
 
 /* ==========================================
-<<<<<<< HEAD
    🎨 ESTILO DOS QUADRADOS E IMAGENS
    ========================================== */
 
@@ -1501,7 +1500,6 @@ footer {
 
 .card-produto:hover .card-imagem img, .item-card:hover .card-imagem img {
     transform: scale(1.08); /* Efeito de zoom leve */
-=======
    🛒 AJUSTES FINAIS DE LAYOUT DO CARRINHO
    ========================================== */
 
@@ -1768,5 +1766,4 @@ footer {
 .plano-card button:hover {
     background: #00b4d8;
     box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
 }

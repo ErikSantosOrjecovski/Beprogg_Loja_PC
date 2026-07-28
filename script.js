@@ -446,7 +446,6 @@ async function carregarProdutos() {
 }
 
 // ==========================================
-<<<<<<< HEAD
 // 🖼️ FUNÇÃO DE IMAGENS AJUSTADA AOS NOMES DA SUA PASTA
 // ==========================================
 function obterCaminhoImagem(nomeProduto) {
@@ -501,7 +500,6 @@ function obterCaminhoImagem(nomeProduto) {
     if (nome.includes("benq") || nome.includes("zowie") || nome.includes("monitor")) return "imagens/BenqZowie.png";
 
     // Imagem padrão caso o produto não seja encontrado
-=======
 // 🎯 2. FILTRAR POR CATEGORIA AO CLICAR
 // ==========================================
 // Function auxiliar para encontrar a imagem correspondente ao produto
@@ -532,7 +530,6 @@ function obterCaminhoImagem(nomeProduto) {
     if (nome.includes("7600") || nome.includes("9070")) return "imagens/rx7600.jpg";
 
     // Imagem padrao caso não encontre uma exata
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
     return "imagens/logo-bepro.png.jpeg";
 }
 
