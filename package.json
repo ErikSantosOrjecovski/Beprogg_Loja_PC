@@ -12,10 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-<<<<<<< HEAD
     "bcrypt": "^6.0.0",
-=======
->>>>>>> 23979982f3b432d4af0549c2d1b53f87e44cdc47
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "mysql2": "^3.23.2"
