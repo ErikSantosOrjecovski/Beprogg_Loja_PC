@@ -1,3 +1,25 @@
+// Função auxiliar para evitar XSS no Front-end
+function sanitizarTexto(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// Exemplo de uso ao exibir dados do usuário na tela:
+function exibirNomeUsuario(nome) {
+    const elemento = document.getElementById("nome-usuario");
+    
+    // ✅ Opção 1 (A mais segura):
+    elemento.textContent = nome;
+
+    // ✅ Opção 2 (Caso precise usar innerHTML por algum motivo):
+    // elemento.innerHTML = `<span>${sanitizarTexto(nome)}</span>`;
+}
+
 // ==========================================
 // 🔹 CONTROLE DE ABAS
 // ==========================================
@@ -44,14 +66,14 @@ function atualizarCarrinhoUI() {
     }
 
     carrinho.forEach((item, index) => {
-        soma += item.preco;
-        lista.innerHTML += `
-            <div class="card">
-                <h3>${item.nome}</h3>
-                <p>R$ ${item.preco}</p>
-                <button onclick="removerItem(${index})">Remover</button>
-            </div>`;
-    });
+    soma += item.preco;
+    lista.innerHTML += `
+        <div class="card">
+            <h3>${sanitizarTexto(item.nome)}</h3>
+            <p>R$ ${item.preco}</p>
+            <button onclick="removerItem(${index})">Remover</button>
+        </div>`;
+});
     total.innerText = "Total: R$ " + soma;
 }
 
@@ -410,12 +432,13 @@ async function carregarPedidos() {
         const pedidos = await response.json();
         lista.innerHTML = pedidos.length === 0 ? "<p>Nenhum pedido encontrado.</p>" : "";
         pedidos.forEach(p => {
-            lista.innerHTML += `
-                <div class="card" style="border-left: 5px solid green;">
-                    <h4>Cliente: ${p.cliente} | Total: R$ ${p.total || 0}</h4>
-                    <p>Data: ${p.data} | Status: <strong>${p.status}</strong></p>
-                </div>`;
+    lista.innerHTML += `
+        <div class="card" style="border-left: 5px solid green;">
+            <h4>Cliente: ${sanitizarTexto(p.cliente)} | Total: R$ ${p.total || 0}</h4>
+            <p>Data: ${sanitizarTexto(p.data)} | Status: <strong>${sanitizarTexto(p.status)}</strong></p>
+        </div>`;
         });
+        
     } catch {
         lista.innerHTML = "<p>Erro ao carregar pedidos.</p>";
     }
