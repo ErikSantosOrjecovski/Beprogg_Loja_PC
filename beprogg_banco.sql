@@ -28,7 +28,7 @@ CREATE TABLE produtos (
 -- Tabela de Aulas e Mentoria (Módulo Academy / Coach Adaptado)
 CREATE TABLE aulas_coach (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(150) NOT NULL, -- Guardará o padrão 'Jogo - Pro Player'
+    titulo VARCHAR(150) NOT NULL,
     descricao TEXT NOT NULL
 );
 
@@ -45,16 +45,11 @@ CREATE TABLE pedidos (
 );
 
 -- ========================================================
--- 2. INSERÇÃO DOS DADOS (DML) - PRODUTOS COMBINANDO COM O SEU SCRIPT.JS
--- 2. INSERÇÃO DOS DADOS (DML) - COM CATEGORIAS ESPECÍFICAS
+-- 2. INSERÇÃO DOS DADOS (DML) - PRODUTOS
 -- ========================================================
 
--- Corrigido 'category' para 'categoria' e adicionado todos os produtos da sua lista do JS
 INSERT INTO produtos (nome, categoria, preco, imagem_url, descricao) VALUES
--- Peças e Hardware (Categoria: 'pecas')
 ('AMD Ryzen 7 7800X3D', 'pecas', 2499.00, 'img/produtos/ryzen7.jpg', 'O rei absoluto dos jogos competitivos atualmente.'),
-
--- 🔧 PEÇAS E HARDWARE (categoria: 'pecas')
 ('AMD Ryzen 7 7800X3D', 'pecas', 2499.00, 'img/produtos/ryzen7.jpg', 'O rei do FPS e da estabilidade no 1% Low.'),
 ('AMD Ryzen 5 7600X', 'pecas', 1400.00, 'img/produtos/ryzen5.jpg', 'Excelente desempenho custo-benefício para eSports.'),
 ('AMD Ryzen 9 7950X3D', 'pecas', 4299.00, 'img/produtos/ryzen9.jpg', 'Desempenho máximo para jogos e criação de conteúdo pesado.'),
@@ -93,22 +88,16 @@ INSERT INTO produtos (nome, categoria, preco, imagem_url, descricao) VALUES
 ('Gabinete com bom airflow', 'pecas', 350.00, 'img/produtos/gabinete.jpg', 'Frente em mesh para garantir fluxo de ar contínuo.'),
 ('Gabinete NZXT H9 Flow', 'pecas', 1150.00, 'img/produtos/h9flow.jpg', 'Design aquário com excelente fluxo de ar e visão interna total.'),
 ('Gabinete Lian Li O11 Dynamic EVO', 'pecas', 1299.00, 'img/produtos/o11d.jpg', 'Modularidade total e suporte para múltiplos radiadores.'),
-
--- ⌨️ TECLADOS (categoria: 'teclados')
 ('Wooting 80HE', 'teclados', 1800.00, 'img/produtos/wooting80he.jpg', 'Rapid Trigger Analógico e tecnologia SOCD/Snap Tap de ponta.'),
 ('Wooting 60HE+', 'teclados', 1450.00, 'img/produtos/wooting60he.jpg', 'Formato compacto 60% com os switches analógicos mais rápidos.'),
 ('Razer Huntsman V3 Pro TKL', 'teclados', 1450.00, 'img/produtos/huntsman_tkl.jpg', 'Switches ópticos analógicos Gen-2 para acionamento ultrarrápido.'),
 ('Logitech G Pro X TKL Rapid', 'teclados', 1000.00, 'img/produtos/logitech_tkl.jpg', 'Teclado de nível profissional projetado com foco em eSports.'),
 ('Razer Huntsman V3 Pro Mini', 'teclados', 1100.00, 'img/produtos/huntsman_mini.jpg', 'Desempenho compacto com ajuste fino de ponto de atuação.'),
 ('Corsair K70 MAX RGB Magnetic', 'teclados', 1399.00, 'img/produtos/k70max.jpg', 'Switches magnéticos MGX ajustáveis ponto a ponto.'),
-
--- 🖱️ MOUSES (categoria: 'mouses')
 ('Razer Viper V3 Pro', 'mouses', 850.00, 'img/produtos/viper_v3_pro.jpg', 'Sensor de alta precisão com até 8000Hz de Polling Rate e peso reduzido.'),
 ('Logitech G Pro X Superlight 2 Dex', 'mouses', 950.00, 'img/produtos/superlight2_dex.jpg', 'Design ergonômico com switches híbridos LIGHTFORCE e sensor HERO 2.'),
 ('Razer DeathAdder V3 Pro', 'mouses', 850.00, 'img/produtos/deathadder_v3.jpg', 'Formato ergonômico icônico com tecnologia sem fio ultrarrápida.'),
 ('Logitech G Pro X Superlight 2', 'mouses', 800.00, 'img/produtos/superlight2.jpg', 'A evolução do mouse simétrico campeão dos eSports.'),
-
--- 🟩 MOUSEPADS E ACESSÓRIOS (categoria: 'mouses')
 ('Artisan FX Hayate Otsu XL', 'mouses', 400.00, 'img/produtos/hayate_otsu.jpg', 'Mousepad japonês com equilíbrio ideal entre velocidade e controle.'),
 ('Artisan FX Zero Soft XL', 'mouses', 450.00, 'img/produtos/artisan_zero.jpg', 'Controle absoluto para precisão cirúrgica em flicadas.'),
 ('Lethal Gaming Gear Saturn Pro XL', 'mouses', 350.00, 'img/produtos/lgg_saturn.jpg', 'Superfície de controle de altíssima durabilidade.'),
@@ -117,22 +106,17 @@ INSERT INTO produtos (nome, categoria, preco, imagem_url, descricao) VALUES
 ('SkyPAD Glass 3.0 XL', 'mouses', 750.00, 'img/produtos/skypad3.jpg', 'Mousepad de vidro temperado para deslize e tracking infinitos.'),
 ('Pulsar ES Arm Sleeve', 'mouses', 120.00, 'img/produtos/sleeve.jpg', 'Manguito de alta qualidade para consistência no deslize do braço.'),
 ('Base Labs Gaming Sleeve', 'mouses', 79.00, 'img/produtos/baselabs_sleeve.jpg', 'Redução do atrito do braço contra o mousepad para deslizes consistentes.'),
-
--- 🎧 HEADSETS & ÁUDIO (categoria: 'headsets')
 ('Audeze Maxwell Wireless Gaming', 'headsets', 2300.00, 'img/produtos/audeze_maxwell.jpg', 'Drivers planares magnéticos de 90mm para palco sonoro imbatível.'),
 ('HyperX Cloud III Wireless', 'headsets', 950.00, 'img/produtos/cloud3_wireless.jpg', 'Conforto lendário com até 120 horas de bateria e áudio espacial.'),
 ('SteelSeries Arctis Nova Pro Wireless', 'headsets', 2100.00, 'img/produtos/arctis_nova_pro.jpg', 'Sistema de áudio de alta fidelidade com cancelamento ativo de ruído.'),
 ('Logitech G Pro X 2 LIGHTSPEED', 'headsets', 1400.00, 'img/produtos/gpro_x2.jpg', 'Drivers de Grafeno para clareza e localização sonora perfeitas.'),
 ('Beyerdynamic DT 990 Pro + Amp', 'headsets', 1900.00, 'img/produtos/dt990pro.jpg', 'Fone de estúdio aberto para percepção espacial máxima de passos.'),
--- Periféricos Premium (Categoria: 'perifericos')
 ('Teclado Wooting 80HE', 'perifericos', 1800.00, 'img/produtos/wooting.jpg', 'Teclado analógico com Rapid Trigger, o melhor do mundo para FPS.'),
 ('Mouse Logitech G Pro X Superlight 2', 'perifericos', 900.00, 'img/produtos/superlight2.jpg', 'Sensor HERO 2 de altíssima precisão e peso ultra leve de 60g.'),
 ('FX Hayate Otsu v2 XL', 'perifericos', 350.00, 'img/produtos/mousepad.jpg', 'Mousepad premium feito para deslize rápido e paradas precisas.'),
 ('Audeze Maxwell Wireless Gaming', 'perifericos', 2300.00, 'img/produtos/audeze.jpg', 'Áudio planar magnético de estúdio para localização perfeita de passos.'),
 ('BenQ ZOWIE XL2586X+', 'perifericos', 5999.00, 'img/produtos/zowie.jpg', 'Monitor profissional de esports com tecnologia DyAc 2.'),
-('Pulsar ES Arm Sleeve', 'perifericos', 120.00, 'img/produtos/sleeve.jpg', 'Manguito de alta qualidade para consistência no deslize do braço.');
-
--- 🖥️ MONITORES (categoria: 'monitores')
+('Pulsar ES Arm Sleeve', 'perifericos', 120.00, 'img/produtos/sleeve.jpg', 'Manguito de alta qualidade para consistência no deslize do braço.'),
 ('ASUS ROG Swift 360Hz OLED', 'monitores', 5500.00, 'img/produtos/asus_360hz_oled.jpg', 'Tempo de resposta de 0.03ms com a nitidez do painel OLED.'),
 ('BenQ ZOWIE XL2586X+', 'monitores', 5999.00, 'img/produtos/zowie_540hz.jpg', 'Painel Fast-TN de 540Hz com tecnologia DyAc 2 para clareza em movimento.'),
 ('BenQ ZOWIE XL2566K', 'monitores', 4200.00, 'img/produtos/zowie_360hz.jpg', 'Monitor 360Hz e DyAc+ padrão dos campeonatos internacionais.'),
@@ -142,7 +126,7 @@ INSERT INTO produtos (nome, categoria, preco, imagem_url, descricao) VALUES
 ('Alienware AW2725DF (360Hz QD-OLED)', 'monitores', 4299.00, 'img/produtos/alienware_360.jpg', 'Cores QD-OLED com altíssima taxa de atualização.');
 
 -- ========================================================
--- 3. INSERÇÃO DOS DADOS - CATEGORIAS DE JOGOS COMPETITIVOS
+-- 3. INSERÇÃO DOS DADOS - AULAS DE COACH
 -- ========================================================
 
 INSERT INTO aulas_coach (titulo, descricao) VALUES 
