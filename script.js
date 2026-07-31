@@ -36,19 +36,42 @@ function trocarAba(id) {
 }
 
 // ==========================================
-// 🛒 CARRINHO DE COMPRAS
+// 🛒 CARRINHO DE COMPRAS (CORRIGIDO)
 // ==========================================
 let carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
-function adicionarAoCarrinho(nome, preco = null) {
+
+
+// Aceita tanto (nome, preco) quanto chamadas diretas
+function adicionarAoCarrinho(nomeOuId, preco = null) {
+    let nome = nomeOuId;
+    let valor = preco;
+
+    // Se passou um ID numérico, busca o produto na lista global
+    if (typeof nomeOuId === 'number' || !isNaN(nomeOuId)) {
+        const prod = todosProdutos.find(p => Number(p.id) === Number(nomeOuId));
+        if (prod) {
+            nome = prod.nome;
+            valor = prod.preco;
+        }
+    }
+
     const item = {
-        nome,
-        preco: preco !== null ? Number(preco) : 100
+        nome: String(nome),
+        preco: valor !== null ? Number(valor) : 0
     };
+
     carrinho.push(item);
     salvarCarrinho();
     atualizarCarrinhoUI();
     atualizarResumoPagamento();
+    
+    // Garanta que a função atualizarBadges exista no seu código
+    if (typeof atualizarBadges === 'function') {
+        atualizarBadges();
+    }
+
+    alert(`"${item.nome}" foi adicionado ao carrinho!`);
 }
 
 function atualizarCarrinhoUI() {
@@ -60,20 +83,23 @@ function atualizarCarrinhoUI() {
     let soma = 0;
 
     if (carrinho.length === 0) {
-        lista.innerHTML = "<p>Seu carrinho está vazio.</p>";
+        lista.innerHTML = "<p style='color: #94a3b8;'>Seu carrinho está vazio.</p>";
         total.innerText = "Total: R$ 0";
         return;
     }
 
     carrinho.forEach((item, index) => {
-    soma += item.preco;
-    lista.innerHTML += `
-        <div class="card">
-            <h3>${sanitizarTexto(item.nome)}</h3>
-            <p>R$ ${item.preco}</p>
-            <button onclick="removerItem(${index})">Remover</button>
-        </div>`;
-});
+        soma += Number(item.preco);
+        lista.innerHTML += `
+            <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 10px; background: #0d1117; border: 1px solid #1f293d;">
+                <div>
+                    <h4 style="color: #fff; margin: 0;">${sanitizarTexto(item.nome)}</h4>
+                    <p style="color: #00d4ff; font-weight: bold; margin: 5px 0 0 0;">R$ ${item.preco}</p>
+                </div>
+                <button onclick="removerItem(${index})" style="background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Remover</button>
+            </div>`;
+    });
+    
     total.innerText = "Total: R$ " + soma;
 }
 
@@ -1032,4 +1058,122 @@ function assinarPlano(nomePlano, preco) {
     adicionarAoCarrinho(`Aulas Pro Player (Plano ${nomePlano})`, preco);
     fecharModalPlanos();
     trocarAba("carrinho");
+}
+
+// ========================================================
+// SISTEMA DE FAVORITOS (LocalStorage)
+// ========================================================
+
+// 1. Busca os IDs favoritados do LocalStorage
+function getFavoritos() {
+    return JSON.parse(localStorage.getItem('bepro_favoritos')) || [];
+}
+
+// 2. Verifica se um produto específico é favorito
+function isFavorito(id) {
+    const favoritos = getFavoritos();
+    return favoritos.includes(Number(id));
+}
+
+// 3. Adiciona ou remove o produto dos favoritos
+function toggleFavorito(idProduto, event) {
+    if (event) event.stopPropagation();
+
+    let favoritos = getFavoritos();
+    const idNum = Number(idProduto);
+
+    if (favoritos.includes(idNum)) {
+        favoritos = favoritos.filter(id => id !== idNum);
+    } else {
+        favoritos.push(idNum);
+    }
+
+    localStorage.setItem('bepro_favoritos', JSON.stringify(favoritos));
+
+    // Atualiza a exibição
+    const titulo = document.getElementById('titulo-categoria-atual');
+    if (titulo && titulo.textContent.includes('FAVORITOS')) {
+        verFavoritos();
+    } else {
+        if (typeof carregarProdutos === 'function') carregarProdutos();
+        else if (typeof renderizarProdutos === 'function') renderizarProdutos();
+    }
+}
+
+// 4. Ação do clique no coração do Cabeçalho
+function verFavoritos() {
+    trocarAba('loja');
+
+    const favoritos = getFavoritos();
+    const titulo = document.getElementById('titulo-categoria-atual');
+
+    if (titulo) {
+        titulo.innerHTML = '❤️ Meus Produtos Favoritos';
+    }
+
+    if (favoritos.length === 0) {
+        const container = document.getElementById('lista-produtos');
+        if (container) {
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">
+                    <i class="fa-regular fa-heart" style="font-size: 48px; margin-bottom: 15px; color: #ff4757;"></i>
+                    <h3>Você ainda não possui favoritos!</h3>
+                    <p>Navegue pelo catálogo e clique no coração dos produtos que você mais gostou.</p>
+                </div>
+            `;
+        }
+        return;
+    }
+
+    const listaGeral = window.produtosGlobais || window.todosOsProdutos || [];
+    const produtosFavoritados = listaGeral.filter(prod => favoritos.includes(Number(prod.id)));
+
+    if (typeof exibirProdutos === 'function') {
+        exibirProdutos(produtosFavoritados);
+    } else if (typeof renderizarProdutos === 'function') {
+        renderizarProdutos(produtosFavoritados);
+    }
+}
+
+// Função para atualizar os números nos ícones do topo
+function atualizarBadges() {
+    const cartBadge = document.getElementById('cart-count');
+    const favBadge = document.getElementById('fav-count');
+
+    // Atualiza o carrinho
+    if (cartBadge) {
+        cartBadge.textContent = carrinho.length;
+    }
+
+    // Atualiza os favoritos (se a variável favoritos existir)
+    if (favBadge) {
+        const qtdFavoritos = typeof favoritos !== 'undefined' ? favoritos.length : 0;
+        favBadge.textContent = qtdFavoritos;
+    }
+}
+
+// Executa assim que a página carrega para atualizar o número na tela
+document.addEventListener('DOMContentLoaded', () => {
+    atualizarCarrinhoUI();
+    atualizarBadges(); // 👈 Executa ao carregar a página
+});
+
+// 1. Variável global de favoritos (coloque no topo ou junto das variáveis globais)
+let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+
+// 2. Adicione esta função no final do arquivo:
+function alternarFavorito(id) {
+    const index = favoritos.indexOf(id);
+
+    if (index === -1) {
+        favoritos.push(id); // Adiciona aos favoritos
+    } else {
+        favoritos.splice(index, 1); // Remove dos favoritos
+    }
+
+    // Salva no navegador
+    localStorage.setItem('favoritos', JSON.stringify(favoritos));
+    
+    // Atualiza o contador (badge) do topo na hora
+    atualizarBadges();
 }

@@ -6,6 +6,32 @@
     <title>Bepro.gg</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Estilos para os badges com contadores nos botões */
+        .header-badge-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: #00d4ff;
+            color: #000;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 50%;
+            padding: 2px 6px;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 8px #00d4ff;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -19,8 +45,19 @@
     </div>
 
     <div class="header-actions">
-        <button class="icon-btn" onclick="trocarAba('loja')"><i class="fa-regular fa-heart"></i></button>
-        <button class="icon-btn" onclick="trocarAba('carrinho')"><i class="fa-solid fa-cart-shopping"></i></button>
+        <div class="header-badge-container">
+            <button class="icon-btn" id="btn-favoritos-header" onclick="verFavoritos()" title="Meus Favoritos">
+                <i class="fa-regular fa-heart"></i>
+            </button>
+            <span class="badge-count" id="fav-count">0</span>
+        </div>
+        
+        <div class="header-badge-container">
+            <button class="icon-btn" onclick="trocarAba('carrinho')" title="Seu Carrinho">
+                <i class="fa-solid fa-cart-shopping"></i>
+            </button>
+            <span class="badge-count" id="cart-count">0</span>
+        </div>
 
         <div id="auth-area" class="auth-area" style="display:none;">
             <span id="auth-user"></span>
@@ -137,80 +174,70 @@
             <button onclick="analisarSetup()">Analisar Setup Ideal</button>
         </div>
         <div id="robot" style="display: none;">
-    <div id="robot-emoji">🤖</div>
-    <div id="robot-text">BePro analisando seu setup...</div>
-</div>
+            <div id="robot-emoji">🤖</div>
+            <div id="robot-text">BePro analisando seu setup...</div>
+        </div>
         <div id="resultado-setup"></div>
     </section>
 
-   <section id="loja" class="conteudo">
-    <div class="loja-topo">
-        <h2 class="section-title">Store - Catálogo Completo</h2>
-    </div>
-
-    <div class="barra-categorias">
-    <div class="categoria-item" onclick="filtrarCategoria('todos', this)">
-        <i data-lucide="grid" class="categoria-icone"></i><span>TODOS</span>
-    </div>
-
-    <div class="categoria-item" onclick="filtrarCategoria('promocao', this)">
-        <i data-lucide="tag" class="categoria-icone"></i><span>PROMOÇÃO</span>
-    </div>
-
-    <div class="categoria-item dropdown-parent" onclick="filtrarCategoria('hardware', this)">
-        <i data-lucide="cpu" class="categoria-icone"></i><span>HARDWARE ▾</span>
-
-        <div class="subcategorias-menu">
-            <div onclick="event.stopPropagation(); filtrarCategoria('gpu', this.closest('.categoria-item'))">Placas de Vídeo</div>
-            <div onclick="event.stopPropagation(); filtrarCategoria('placa-mae', this.closest('.categoria-item'))">Placas Mãe</div>
-            <div onclick="event.stopPropagation(); filtrarCategoria('cpu', this.closest('.categoria-item'))">Processadores</div>
-            <div onclick="event.stopPropagation(); filtrarCategoria('ram', this.closest('.categoria-item'))">Memória RAM</div>
-            <div onclick="event.stopPropagation(); filtrarCategoria('fonte-armazenamento', this.closest('.categoria-item'))">Fontes & SSDs</div>
+    <section id="loja" class="conteudo">
+        <div class="loja-topo">
+            <h2 class="section-title">Store - Catálogo Completo</h2>
         </div>
-    </div>
 
-    <div class="categoria-item" onclick="filtrarCategoria('teclados', this)">
-        <i data-lucide="keyboard" class="categoria-icone"></i><span>TECLADOS</span>
-    </div>
+        <div class="barra-categorias">
+            <div class="categoria-item" onclick="filtrarCategoria('todos', this)">
+                <i data-lucide="grid" class="categoria-icone"></i><span>TODOS</span>
+            </div>
 
-    <div class="categoria-item" onclick="filtrarCategoria('mouses', this)">
-        <i data-lucide="mouse" class="categoria-icone"></i><span>MOUSES</span>
-    </div>
+            <div class="categoria-item" onclick="filtrarCategoria('promocao', this)">
+                <i data-lucide="tag" class="categoria-icone"></i><span>PROMOÇÃO</span>
+            </div>
 
-    <div class="categoria-item" onclick="filtrarCategoria('monitores', this)">
-        <i data-lucide="monitor" class="categoria-icone"></i><span>MONITORES</span>
-    </div>
+            <div class="categoria-item dropdown-parent" onclick="filtrarCategoria('hardware', this)">
+                <i data-lucide="cpu" class="categoria-icone"></i><span>HARDWARE ▾</span>
 
-    <div class="categoria-item" onclick="filtrarCategoria('headsets', this)">
-        <i data-lucide="headphones" class="categoria-icone"></i><span>HEADSETS</span>
-    </div>
-</div>
+                <div class="subcategorias-menu">
+                    <div onclick="event.stopPropagation(); filtrarCategoria('gpu', this.closest('.categoria-item'))">Placas de Vídeo</div>
+                    <div onclick="event.stopPropagation(); filtrarCategoria('placa-mae', this.closest('.categoria-item'))">Placas Mãe</div>
+                    <div onclick="event.stopPropagation(); filtrarCategoria('cpu', this.closest('.categoria-item'))">Processadores</div>
+                    <div onclick="event.stopPropagation(); filtrarCategoria('ram', this.closest('.categoria-item'))">Memória RAM</div>
+                    <div onclick="event.stopPropagation(); filtrarCategoria('fonte-armazenamento', this.closest('.categoria-item'))">Fontes & SSDs</div>
+                </div>
+            </div>
 
-    <div style="max-width: 1200px; margin: 20px auto 0 auto; padding: 0 20px;">
-        <h3 id="titulo-categoria-atual" style="color: #00d4ff; text-align: left; border-bottom: 2px solid #1f293d; padding-bottom: 10px; text-transform: uppercase;">📦 Todos os Produtos</h3>
+            <div class="categoria-item" onclick="filtrarCategoria('teclados', this)">
+                <i data-lucide="keyboard" class="categoria-icone"></i><span>TECLADOS</span>
+            </div>
 
-        <div id="lista-produtos" class="produtos-grid" style="margin-top: 25px;"></div>
-    </div>
+            <div class="categoria-item" onclick="filtrarCategoria('mouses', this)">
+                <i data-lucide="mouse" class="categoria-icone"></i><span>MOUSES</span>
+            </div>
 
-    <hr style="border: 1px solid #1f293d; margin: 40px 0;">
+            <div class="categoria-item" onclick="filtrarCategoria('monitores', this)">
+                <i data-lucide="monitor" class="categoria-icone"></i><span>MONITORES</span>
+            </div>
 
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; text-align: left;">
-        <h3 class="section-title">🛒 Seu Carrinho</h3>
-        <div id="lista-carrinho" class="produtos-grid"></div>
-        <h3 id="total-carrinho" style="color: #00d4ff; text-align: left; font-family: 'Rajdhani', sans-serif; font-size: 24px; margin-top: 20px;">Total: R$ 0,00</h3>
-        <button onclick="trocarAba('pagamento')" style="margin: 20px 0 40px 0; max-width: 250px;">Ir para Pagamento 💳</button>
-    </div>
-</section>
+            <div class="categoria-item" onclick="filtrarCategoria('headsets', this)">
+                <i data-lucide="headphones" class="categoria-icone"></i><span>HEADSETS</span>
+            </div>
+        </div>
 
-    <!-- NOVO: aba dedicada de Carrinho (adicionada pelo Kelvyn, commit 2397998).
-         Placeholder por enquanto: sem duplicar os IDs de #lista-carrinho / #total-carrinho
-         que já existem dentro de #loja, até vermos o script.js e decidirmos como popular
-         os dados aqui sem conflito. -->
+        <div style="max-width: 1200px; margin: 20px auto 0 auto; padding: 0 20px;">
+            <h3 id="titulo-categoria-atual" style="color: #00d4ff; text-align: left; border-bottom: 2px solid #1f293d; padding-bottom: 10px; text-transform: uppercase;">📦 Todos os Produtos</h3>
+
+            <div id="lista-produtos" class="produtos-grid" style="margin-top: 25px;"></div>
+        </div>
+    </section>
+
     <section id="carrinho" class="conteudo">
         <h2 class="section-title">🛒 Seu Carrinho</h2>
-        <div style="max-width: 1200px; margin: 20px auto 0 auto; padding: 0 20px; text-align: left; color: #94a3b8;">
-            <p>Em integração — assim que revisarmos o script.js juntos, essa aba passa a exibir os itens do carrinho aqui também.</p>
-            <button onclick="trocarAba('loja')" style="margin: 20px 0 40px 0; max-width: 250px;">Ver Carrinho na Loja 🛒</button>
+        <div style="max-width: 900px; margin: 20px auto 0 auto; padding: 0 20px;">
+            <div id="lista-carrinho" style="margin-bottom: 20px;"></div>
+            <h3 id="total-carrinho" style="color: #00d4ff; margin-bottom: 20px; font-size: 22px;">Total: R$ 0</h3>
+            <button onclick="trocarAba('pagamento')" style="background: #00d4ff; color: #000; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer;">
+                Ir para Pagamento 💳
+            </button>
         </div>
     </section>
 
@@ -239,87 +266,87 @@
     </section>
 
     <section id="coach" class="conteudo">
-    <h2 class="titulo-secao">Aulas com Pro Players</h2>
-    <p class="subtitulo-secao">Evolua seu nível de jogo aprendendo diretamente com os melhores profissionais do cenário mundial.</p>
+        <h2 class="titulo-secao">Aulas com Pro Players</h2>
+        <p class="subtitulo-secao">Evolua seu nível de jogo aprendendo diretamente com os melhores profissionais do cenário mundial.</p>
 
-    <div class="carrossel-container">
-        <button class="seta-carrossel seta-esquerda" onclick="mudarPlayer(-1)">
-            <i class="fa-solid fa-chevron-left"></i>
-        </button>
+        <div class="carrossel-container">
+            <button class="seta-carrossel seta-esquerda" onclick="mudarPlayer(-1)">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
 
-        <div id="card-player" class="card-proplayer-compacto">
-            <div class="card-imagem-area">
-                <img id="player-img" src="imagens/blackoutzx.jpg" alt="Pro Player">
-            </div>
-
-            <div class="card-info-area">
-                <span id="player-jogo" class="tag-jogo">FORTNITE</span>
-                <h3 id="player-nome" class="nome-player">👑 Pro Player: Blackoutz</h3>
-                <p id="player-desc" class="desc-player">Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa com um dos maiores nomes do Fortnite brasileiro.</p>
-                <div class="preco-linha">
-                    <span>Valor da sessão:</span>
-                    <strong id="player-preco">R$ 150,00</strong>
+            <div id="card-player" class="card-proplayer-compacto">
+                <div class="card-imagem-area">
+                    <img id="player-img" src="imagens/blackoutzx.jpg" alt="Pro Player">
                 </div>
-                <button class="btn-garantir" onclick="abrirModalPlanos()">GARANTIR VAGA NA AULA</button>
+
+                <div class="card-info-area">
+                    <span id="player-jogo" class="tag-jogo">FORTNITE</span>
+                    <h3 id="player-nome" class="nome-player">👑 Pro Player: Blackoutz</h3>
+                    <p id="player-desc" class="desc-player">Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa com um dos maiores nomes do Fortnite brasileiro.</p>
+                    <div class="preco-linha">
+                        <span>Valor da sessão:</span>
+                        <strong id="player-preco">R$ 150,00</strong>
+                    </div>
+                    <button class="btn-garantir" onclick="abrirModalPlanos()">GARANTIR VAGA NA AULA</button>
+                </div>
             </div>
+
+            <button class="seta-carrossel seta-direita" onclick="mudarPlayer(1)">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
         </div>
 
-        <button class="seta-carrossel seta-direita" onclick="mudarPlayer(1)">
-            <i class="fa-solid fa-chevron-right"></i>
-        </button>
-    </div>
+        <div id="modal-planos" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <button class="modal-fechar" onclick="fecharModalPlanos()">&times;</button>
 
-    <!-- NOVO: modal de planos de coaching (adicionado pelo Kelvyn, commit 2397998) -->
-    <div id="modal-planos" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <button class="modal-fechar" onclick="fecharModalPlanos()">&times;</button>
+                <h2>🏆 Escolha seu Plano de Coaching</h2>
+                <p class="modal-subtitulo">Evolua seu jogo com acompanhamento do Pro Player</p>
 
-            <h2>🏆 Escolha seu Plano de Coaching</h2>
-            <p class="modal-subtitulo">Evolua seu jogo com acompanhamento do Pro Player</p>
+                <div class="planos-grid">
+                    <div class="plano-card">
+                        <span class="plano-tag">🌱 Iniciante</span>
+                        <h3>Plano Básico</h3>
+                        <div class="plano-preco">R$ 150 <span>/mês</span></div>
+                        <ul class="plano-beneficios">
+                            <li><i class="fa-solid fa-check"></i> 1 Sessão de VOD Review (Replay)</li>
+                            <li><i class="fa-solid fa-check"></i> Guia em PDF de Rotinas de Treino</li>
+                            <li><i class="fa-solid fa-check"></i> Acesso ao Discord de Alunos</li>
+                        </ul>
+                        <button onclick="assinarPlano('Básico', 150)">Selecionar Básico</button>
+                    </div>
 
-            <div class="planos-grid">
-                <div class="plano-card">
-                    <span class="plano-tag">🌱 Iniciante</span>
-                    <h3>Plano Básico</h3>
-                    <div class="plano-preco">R$ 150 <span>/mês</span></div>
-                    <ul class="plano-beneficios">
-                        <li><i class="fa-solid fa-check"></i> 1 Sessão de VOD Review (Replay)</li>
-                        <li><i class="fa-solid fa-check"></i> Guia em PDF de Rotinas de Treino</li>
-                        <li><i class="fa-solid fa-check"></i> Acesso ao Discord de Alunos</li>
-                    </ul>
-                    <button onclick="assinarPlano('Básico', 150)">Selecionar Básico</button>
-                </div>
+                    <div class="plano-card plano-destaque">
+                        <span class="plano-tag-destaque">🔥 MAIS POPULAR</span>
+                        <span class="plano-tag">⚡ Intermediário</span>
+                        <h3>Plano Pro</h3>
+                        <div class="plano-preco">R$ 350 <span>/mês</span></div>
+                        <ul class="plano-beneficios">
+                            <li><i class="fa-solid fa-check"></i> 3 Sessões Ao Vivo (1h cada)</li>
+                            <li><i class="fa-solid fa-check"></i> Análise de Sensibilidade/Config</li>
+                            <li><i class="fa-solid fa-check"></i> Tudo do Plano Básico</li>
+                            <li><i class="fa-solid fa-check"></i> Grupo VIP de Discussão Tática</li>
+                        </ul>
+                        <button onclick="assinarPlano('Pro', 350)">Selecionar Pro</button>
+                    </div>
 
-                <div class="plano-card plano-destaque">
-                    <span class="plano-tag-destaque">🔥 MAIS POPULAR</span>
-                    <span class="plano-tag">⚡ Intermediário</span>
-                    <h3>Plano Pro</h3>
-                    <div class="plano-preco">R$ 350 <span>/mês</span></div>
-                    <ul class="plano-beneficios">
-                        <li><i class="fa-solid fa-check"></i> 3 Sessões Ao Vivo (1h cada)</li>
-                        <li><i class="fa-solid fa-check"></i> Análise de Sensibilidade/Config</li>
-                        <li><i class="fa-solid fa-check"></i> Tudo do Plano Básico</li>
-                        <li><i class="fa-solid fa-check"></i> Grupo VIP de Discussão Tática</li>
-                    </ul>
-                    <button onclick="assinarPlano('Pro', 350)">Selecionar Pro</button>
-                </div>
-
-                <div class="plano-card">
-                    <span class="plano-tag">👑 Alta Performance</span>
-                    <h3>Plano Champion</h3>
-                    <div class="plano-preco">R$ 650 <span>/mês</span></div>
-                    <ul class="plano-beneficios">
-                        <li><i class="fa-solid fa-check"></i> Acompanhamento Semanal 1-on-1</li>
-                        <li><i class="fa-solid fa-check"></i> Partidas Duo In-Game com o Pro</li>
-                        <li><i class="fa-solid fa-check"></i> Suporte VIP via WhatsApp</li>
-                        <li><i class="fa-solid fa-check"></i> Relatório de Evolução Mensal</li>
-                    </ul>
-                    <button onclick="assinarPlano('Champion', 650)">Selecionar Champion</button>
+                    <div class="plano-card">
+                        <span class="plano-tag">👑 Alta Performance</span>
+                        <h3>Plano Champion</h3>
+                        <div class="plano-preco">R$ 650 <span>/mês</span></div>
+                        <ul class="plano-beneficios">
+                            <li><i class="fa-solid fa-check"></i> Acompanhamento Semanal 1-on-1</li>
+                            <li><i class="fa-solid fa-check"></i> Partidas Duo In-Game com o Pro</li>
+                            <li><i class="fa-solid fa-check"></i> Suporte VIP via WhatsApp</li>
+                            <li><i class="fa-solid fa-check"></i> Relatório de Evolução Mensal</li>
+                        </ul>
+                        <button onclick="assinarPlano('Champion', 650)">Selecionar Champion</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
     <section id="pedidos" class="conteudo">
         <h2 class="section-title">📦 Meus Pedidos</h2>
         <p style="text-align: left; color: #94a3b8; margin-bottom: 20px;">Acompanhe aqui o histórico das suas compras realizadas na Bepro.gg.</p>
@@ -417,7 +444,6 @@
             cadastroBox.style.display = 'none';
         }
     }
-
 </script>
 <script src="script.js"></script>
 </body>
