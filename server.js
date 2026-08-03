@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const mysql = require("mysql2");
 
+// 1. CRIAR A APLICAÇÃO EXPRESS PRIMEIRO
 const app = express();
 
 // ==========================================
