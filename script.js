@@ -650,8 +650,16 @@ function filtrarCategoria(categoria, elementoClicado) {
     produtosFiltrados.forEach(p => {
         const caminhoImg = obterCaminhoImagem(p.nome);
 
+        // Verifica se o produto atual já está nos favoritos para pintar o coração
+        const favoritado = isFavorito(p.id);
+
         elContainer.innerHTML += `
-            <div class="card-produto-loja">
+            <div class="card-produto-loja" style="position: relative;">
+                
+                <button type="button" class="btn-favorito" onclick="toggleFavorito(${p.id}, event)" title="Favoritar">
+                    <i class="${favoritado ? 'fa-solid' : 'fa-regular'} fa-heart" style="${favoritado ? 'color: #ff4757;' : ''}"></i>
+                </button>
+
                 <div class="card-produto-img-box">
                     <img src="${caminhoImg}"
                      alt="${p.nome}"
@@ -669,7 +677,6 @@ function filtrarCategoria(categoria, elementoClicado) {
         `;
     });
 }
-
 // ==========================================
 // 🎮 FILTRO CATEGORIZADO DE PRO PLAYERS
 // ==========================================
@@ -1060,8 +1067,8 @@ function assinarPlano(nomePlano, preco) {
     trocarAba("carrinho");
 }
 
-// ========================================================
-// SISTEMA DE FAVORITOS (LocalStorage)
+/// ========================================================
+// SISTEMA DE FAVORITOS (LocalStorage) - CORRIGIDO
 // ========================================================
 
 // 1. Busca os IDs favoritados do LocalStorage
@@ -1075,105 +1082,221 @@ function isFavorito(id) {
     return favoritos.includes(Number(id));
 }
 
-// 3. Adiciona ou remove o produto dos favoritos
+// 3. Adiciona ou remove o produto dos favoritos (Chame esta função no botão)
 function toggleFavorito(idProduto, event) {
-    if (event) event.stopPropagation();
+    // PREVINE O PISCAR/RECARREGAMENTO DA PÁGINA:
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
 
     let favoritos = getFavoritos();
     const idNum = Number(idProduto);
 
-    if (favoritos.includes(idNum)) {
-        favoritos = favoritos.filter(id => id !== idNum);
+    const index = favoritos.indexOf(idNum);
+    if (index === -1) {
+        favoritos.push(idNum); // Adiciona aos favoritos
     } else {
-        favoritos.push(idNum);
+        favoritos.splice(index, 1); // Remove dos favoritos
     }
 
+    // Salva no LocalStorage
     localStorage.setItem('bepro_favoritos', JSON.stringify(favoritos));
 
-    // Atualiza a exibição
+    // Atualiza a badge (contador) do topo na hora!
+    atualizarBadges();
+
+    // Atualiza a exibição na tela se estivermos na página de favoritos ou catálogo
     const titulo = document.getElementById('titulo-categoria-atual');
     if (titulo && titulo.textContent.includes('FAVORITOS')) {
         verFavoritos();
     } else {
         if (typeof carregarProdutos === 'function') carregarProdutos();
         else if (typeof renderizarProdutos === 'function') renderizarProdutos();
+        else if (typeof exibirProdutos === 'function') exibirProdutos(window.produtosGlobais || window.todosOsProdutos);
     }
 }
 
 // 4. Ação do clique no coração do Cabeçalho
-function verFavoritos() {
-    trocarAba('loja');
-
-    const favoritos = getFavoritos();
-    const titulo = document.getElementById('titulo-categoria-atual');
-
-    if (titulo) {
-        titulo.innerHTML = '❤️ Meus Produtos Favoritos';
+// 4. Ação do clique no coração do Cabeçalho
+// Variable global para controlar se estamos vendo a aba de favoritos
+// Apenas ESTA função verFavoritos deve existir no script.js:
+function verFavoritos(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
     }
 
-    if (favoritos.length === 0) {
-        const container = document.getElementById('lista-produtos');
-        if (container) {
+    // 1. Usa a função oficial para trocar de aba
+    if (typeof trocarAba === 'function') {
+        trocarAba('loja');
+    }
+
+    const container = document.getElementById('lista-produtos');
+    if (!container) return;
+
+    // 2. Limpa a lista imediatamente
+    container.innerHTML = '';
+
+    // 3. Pega os favoritos
+    const favoritos = typeof getFavoritos === 'function' ? getFavoritos() : [];
+
+    // 4. Executa a atualização do título e cards APÓS a troca de aba terminar
+    setTimeout(() => {
+        // Atualiza o título AQUI DENTRO para a trocarAba não sobrescrever
+        const titulo = document.getElementById('titulo-categoria-atual');
+        if (titulo) {
+            titulo.innerHTML = '❤️ Meus Produtos Favoritos';
+        }
+
+        if (!favoritos || favoritos.length === 0) {
             container.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">
                     <i class="fa-regular fa-heart" style="font-size: 48px; margin-bottom: 15px; color: #ff4757;"></i>
-                    <h3>Você ainda não possui favoritos!</h3>
+                    <h3 style="color: #fff;">Você ainda não possui favoritos!</h3>
                     <p>Navegue pelo catálogo e clique no coração dos produtos que você mais gostou.</p>
                 </div>
             `;
+            return;
         }
-        return;
-    }
 
-    const listaGeral = window.produtosGlobais || window.todosOsProdutos || [];
-    const produtosFavoritados = listaGeral.filter(prod => favoritos.includes(Number(prod.id)));
+        const favsStr = favoritos.map(id => String(id));
+        const listaGeral = window.todosProdutos || todosProdutos || [];
+        const produtosFavoritados = listaGeral.filter(p => favsStr.includes(String(p.id)));
 
-    if (typeof exibirProdutos === 'function') {
-        exibirProdutos(produtosFavoritados);
-    } else if (typeof renderizarProdutos === 'function') {
-        renderizarProdutos(produtosFavoritados);
-    }
+        container.innerHTML = '';
+
+        if (produtosFavoritados.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">
+                    <h3 style="color: #fff;">Nenhum produto favoritado encontrado.</h3>
+                </div>
+            `;
+            return;
+        }
+
+        produtosFavoritados.forEach((p, index) => {
+            const idProd = p.id !== undefined ? p.id : index;
+            const caminhoImg = p.imagem || 'imagens/logo-bepro.png.jpeg';
+
+            container.innerHTML += `
+                <div class="card-produto-loja" style="position: relative;">
+                    <button type="button" class="btn-favorito" onclick="toggleFavorito('${idProd}', event)" title="Favoritar">
+                        <i class="fa-solid fa-heart" style="color: #ff4757;"></i>
+                    </button>
+                    <div class="card-produto-img-box">
+                        <img src="${caminhoImg}" alt="${p.nome}" class="card-produto-img" onerror="this.onerror=null; this.src='imagens/logo-bepro.png.jpeg';">
+                    </div>
+                    <div class="card-produto-detalhes">
+                        <h3 class="card-produto-titulo">${p.nome}</h3>
+                        <p class="card-produto-preco">R$ ${p.preco}</p>
+                        <button onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})" class="btn-card-comprar">
+                            Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    }, 50);
 }
 
-// Função para atualizar os números nos ícones do topo
+// 5. Função para atualizar os números nos ícones do topo
 function atualizarBadges() {
     const cartBadge = document.getElementById('cart-count');
     const favBadge = document.getElementById('fav-count');
 
-    // Atualiza o carrinho
-    if (cartBadge) {
+    // Atualiza o carrinho (se existir a variável)
+    if (cartBadge && typeof carrinho !== 'undefined') {
         cartBadge.textContent = carrinho.length;
     }
 
-    // Atualiza os favoritos (se a variável favoritos existir)
+    // Atualiza o contador de favoritos usando o LocalStorage
     if (favBadge) {
-        const qtdFavoritos = typeof favoritos !== 'undefined' ? favoritos.length : 0;
-        favBadge.textContent = qtdFavoritos;
+        const favoritos = getFavoritos();
+        favBadge.textContent = favoritos.length;
     }
 }
 
-// Executa assim que a página carrega para atualizar o número na tela
+// Executa assim que a página carrega
+// Executa assim que a página carrega
 document.addEventListener('DOMContentLoaded', () => {
-    atualizarCarrinhoUI();
-    atualizarBadges(); // 👈 Executa ao carregar a página
+    // 1. Atualizações de UI
+    if (typeof atualizarCarrinhoUI === 'function') atualizarCarrinhoUI();
+    if (typeof atualizarBadges === 'function') atualizarBadges();
+
+    // 2. Controle do Menu Dropdown de Categorias
+    const btnDrop = document.getElementById('btnDropdownCat');
+    const menuDrop = document.getElementById('menuDropdownCat');
+
+    if (btnDrop && menuDrop) {
+        // Abre/Fecha o menu ao clicar no botão
+        btnDrop.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuDrop.classList.toggle('ativo');
+        });
+
+        // Fecha ao selecionar uma categoria
+        menuDrop.addEventListener('click', () => {
+            menuDrop.classList.remove('ativo');
+        });
+
+        // Fecha se clicar fora do menu
+        document.addEventListener('click', (e) => {
+            if (!btnDrop.contains(e.target) && !menuDrop.contains(e.target)) {
+                menuDrop.classList.remove('ativo');
+            }
+        });
+    }
 });
 
-// 1. Variável global de favoritos (coloque no topo ou junto das variáveis globais)
-let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+// 1. Função para renderizar APENAS os favoritados na tela
+function renderizarFavoritos() {
+    const elContainer = document.getElementById("lista-produtos");
+    if (!elContainer) return;
 
-// 2. Adicione esta função no final do arquivo:
-function alternarFavorito(id) {
-    const index = favoritos.indexOf(id);
+    const favoritos = getFavoritos(); // Ex: [1, 3]
 
-    if (index === -1) {
-        favoritos.push(id); // Adiciona aos favoritos
-    } else {
-        favoritos.splice(index, 1); // Remove dos favoritos
+    // Se não tiver favoritos, exibe o aviso
+    if (!favoritos || favoritos.length === 0) {
+        elContainer.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">
+                <i class="fa-regular fa-heart" style="font-size: 48px; margin-bottom: 15px; color: #ff4757;"></i>
+                <h3 style="color: #fff;">Você ainda não possui favoritos!</h3>
+                <p>Navegue pelo catálogo e clique no coração dos produtos que você mais gostou.</p>
+            </div>
+        `;
+        return;
     }
 
-    // Salva no navegador
-    localStorage.setItem('favoritos', JSON.stringify(favoritos));
-    
-    // Atualiza o contador (badge) do topo na hora
-    atualizarBadges();
+    // Filtra apenas os produtos favoritados dentro de 'todosProdutos'
+    const produtosFavoritados = todosProdutos.filter(prod => favoritos.includes(Number(prod.id)));
+
+    // Limpa o container
+    elContainer.innerHTML = "";
+
+    // Desenha na tela apenas os favoritados
+    produtosFavoritados.forEach((p, index) => {
+        const idProd = p.id !== undefined ? p.id : index;
+        const favoritado = isFavorito(idProd);
+        const caminhoImg = p.imagem || 'imagens/logo-bepro.png.jpeg';
+
+        elContainer.innerHTML += `
+            <div class="card-produto-loja" style="position: relative;">
+                <button type="button" class="btn-favorito" onclick="toggleFavorito(${idProd}, event)" title="Favoritar">
+                    <i class="${favoritado ? 'fa-solid' : 'fa-regular'} fa-heart" style="${favoritado ? 'color: #ff4757;' : ''}"></i>
+                </button>
+                <div class="card-produto-img-box">
+                    <img src="${caminhoImg}" alt="${p.nome}" class="card-produto-img" onerror="this.onerror=null; this.src='imagens/logo-bepro.png.jpeg';">
+                </div>
+                <div class="card-produto-detalhes">
+                    <h3 class="card-produto-titulo">${p.nome}</h3>
+                    <p class="card-produto-preco">R$ ${p.preco}</p>
+                    <button onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})" class="btn-card-comprar">
+                        Adicionar ao Carrinho
+                    </button>
+                </div>
+            </div>
+        `;
+    });
 }
+

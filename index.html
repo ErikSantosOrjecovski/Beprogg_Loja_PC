@@ -46,7 +46,7 @@
 
     <div class="header-actions">
         <div class="header-badge-container">
-            <button class="icon-btn" id="btn-favoritos-header" onclick="verFavoritos()" title="Meus Favoritos">
+            <button type="button" class="icon-btn" id="btn-favoritos-header" onclick="verFavoritos(event)" title="Meus Favoritos">
                 <i class="fa-regular fa-heart"></i>
             </button>
             <span class="badge-count" id="fav-count">0</span>
@@ -185,49 +185,53 @@
             <h2 class="section-title">Store - Catálogo Completo</h2>
         </div>
 
-        <div class="barra-categorias">
-            <div class="categoria-item" onclick="filtrarCategoria('todos', this)">
-                <i data-lucide="grid" class="categoria-icone"></i><span>TODOS</span>
-            </div>
+        <div class="loja-header-filtros">
+            <div class="titulo-e-categorias" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 id="titulo-categoria-atual" style="color: #00e5ff; font-size: 1.2rem; margin: 0;">
+                    📦 TODOS OS PRODUTOS
+                </h3>
 
-            <div class="categoria-item" onclick="filtrarCategoria('promocao', this)">
-                <i data-lucide="tag" class="categoria-icone"></i><span>PROMOÇÃO</span>
-            </div>
+                <div class="dropdown-categorias">
+                    <button type="button" class="btn-dropdown-cat" id="btnDropdownCat">
+                        <i data-lucide="list"></i>
+                        <span>Categorias</span>
+                        <i data-lucide="chevron-down" class="icone-seta"></i>
+                    </button>
 
-            <div class="categoria-item dropdown-parent" onclick="filtrarCategoria('hardware', this)">
-                <i data-lucide="cpu" class="categoria-icone"></i><span>HARDWARE ▾</span>
+                    <div class="dropdown-menu-cat" id="menuDropdownCat">
+                        <div class="item-cat" onclick="filtrarCategoria('todos', this)">
+                            <i data-lucide="grid"></i> Todos os Produtos
+                        </div>
+                        <div class="item-cat" onclick="filtrarCategoria('promocao', this)">
+                            <i data-lucide="tag"></i> Promoções
+                        </div>
+                        
+                        <div class="item-cat-header"><i data-lucide="cpu"></i> HARDWARE</div>
+                        <div class="sub-item-cat" onclick="filtrarCategoria('gpu', this)">• Placas de Vídeo</div>
+                        <div class="sub-item-cat" onclick="filtrarCategoria('placa-mae', this)">• Placas Mãe</div>
+                        <div class="sub-item-cat" onclick="filtrarCategoria('cpu', this)">• Processadores</div>
+                        <div class="sub-item-cat" onclick="filtrarCategoria('ram', this)">• Memória RAM</div>
+                        <div class="sub-item-cat" onclick="filtrarCategoria('fonte-armazenamento', this)">• Fontes & SSDs</div>
 
-                <div class="subcategorias-menu">
-                    <div onclick="event.stopPropagation(); filtrarCategoria('gpu', this.closest('.categoria-item'))">Placas de Vídeo</div>
-                    <div onclick="event.stopPropagation(); filtrarCategoria('placa-mae', this.closest('.categoria-item'))">Placas Mãe</div>
-                    <div onclick="event.stopPropagation(); filtrarCategoria('cpu', this.closest('.categoria-item'))">Processadores</div>
-                    <div onclick="event.stopPropagation(); filtrarCategoria('ram', this.closest('.categoria-item'))">Memória RAM</div>
-                    <div onclick="event.stopPropagation(); filtrarCategoria('fonte-armazenamento', this.closest('.categoria-item'))">Fontes & SSDs</div>
+                        <div class="item-cat-header"><i data-lucide="gamepad-2"></i> PERIFÉRICOS</div>
+                        <div class="item-cat" onclick="filtrarCategoria('teclados', this)">
+                            <i data-lucide="keyboard"></i> Teclados
+                        </div>
+                        <div class="item-cat" onclick="filtrarCategoria('mouses', this)">
+                            <i data-lucide="mouse"></i> Mouses
+                        </div>
+                        <div class="item-cat" onclick="filtrarCategoria('monitores', this)">
+                            <i data-lucide="monitor"></i> Monitores
+                        </div>
+                        <div class="item-cat" onclick="filtrarCategoria('headsets', this)">
+                            <i data-lucide="headphones"></i> Headsets
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="categoria-item" onclick="filtrarCategoria('teclados', this)">
-                <i data-lucide="keyboard" class="categoria-icone"></i><span>TECLADOS</span>
-            </div>
-
-            <div class="categoria-item" onclick="filtrarCategoria('mouses', this)">
-                <i data-lucide="mouse" class="categoria-icone"></i><span>MOUSES</span>
-            </div>
-
-            <div class="categoria-item" onclick="filtrarCategoria('monitores', this)">
-                <i data-lucide="monitor" class="categoria-icone"></i><span>MONITORES</span>
-            </div>
-
-            <div class="categoria-item" onclick="filtrarCategoria('headsets', this)">
-                <i data-lucide="headphones" class="categoria-icone"></i><span>HEADSETS</span>
-            </div>
         </div>
 
-        <div style="max-width: 1200px; margin: 20px auto 0 auto; padding: 0 20px;">
-            <h3 id="titulo-categoria-atual" style="color: #00d4ff; text-align: left; border-bottom: 2px solid #1f293d; padding-bottom: 10px; text-transform: uppercase;">📦 Todos os Produtos</h3>
-
-            <div id="lista-produtos" class="produtos-grid" style="margin-top: 25px;"></div>
-        </div>
+        <div id="lista-produtos" class="grid-produtos"></div>
     </section>
 
     <section id="carrinho" class="conteudo">
