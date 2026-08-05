@@ -131,3 +131,7 @@ INSERT INTO aulas_coach (titulo, descricao) VALUES
 ('Rainbow Six Siege - Neskwga', 'Estratégias de ataque e defesa estruturadas, posicionamento de mira (crosshair placement) e comunicação avançada de equipe em alto nível.'),
 ('Valorant - FRTT', 'Otimização de utilitários de agentes, estratégias avançadas de clutch, leitura de economia e movimentação tática com o fRoD brasileiro.'),
 ('Call of Duty: Warzone - TonyBoy', 'Movimentação avançada (slide cancel), gerenciamento de inventário sob pressão, escolha dos melhores loadouts do meta e rotações para o endgame.');
+
+SELECT user, host, plugin FROM mysql.user;
+
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('root');
