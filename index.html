@@ -43,7 +43,9 @@
             <button onclick="sairConta()" style="background: #ff4d4d; color: white; padding: 5px 10px; border-radius: 6px; font-size: 12px; margin-left: 10px;">Sair</button>
         </div>
 
-        <button class="icon-btn" onclick="trocarAba('login')"><i class="fa-regular fa-user"></i></button>
+        <button class="icon-btn" onclick="abrirPerfil()">
+    <i class="fa-regular fa-user"></i>
+</button>
     </div>
 </header>
 
@@ -408,6 +410,36 @@
             </div>
         </div>
     </section>
+
+    <section id="perfil" class="conteudo">
+
+    <h2 class="section-title">👤 Minha Conta</h2>
+
+    <div class="card" style="max-width:700px;margin:auto;">
+
+        <h3>Informações da Conta</h3>
+
+        <p><strong>Nome:</strong> <span id="perfil-nome"></span></p>
+
+        <p><strong>Email:</strong> <span id="perfil-email"></span></p>
+
+        <p><strong>CPF:</strong> <span id="perfil-cpf"></span></p>
+
+        <p><strong>Telefone:</strong> <span id="perfil-telefone"></span></p>
+
+        <br>
+
+        <button onclick="trocarAba('pedidos')">
+            📦 Meus Pedidos
+        </button>
+
+        <button onclick="sairConta()" style="background:red;margin-left:10px;">
+            Sair
+        </button>
+
+    </div>
+
+</section>
 
 </main>
 
