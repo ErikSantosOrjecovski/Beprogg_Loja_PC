@@ -133,6 +133,7 @@ function abrirPerfil(){
 
     trocarAba("perfil");
     carregarPerfil?.();
+     carregarPlano?.();
 }
 
 async function gerarRecomendacao(){
@@ -312,55 +313,764 @@ function fazerLogin(){
 
 
 function atualizarResumoPagamento(){
-    const resumo=document.getElementById("resumo-pagamento");
+
+    const resumo =
+        document.getElementById("resumo-pagamento");
+
     if(!resumo)return;
 
     resumo.innerHTML="";
+
     let total=0;
 
     carrinho.forEach(item=>{
-        total+=Number(item.preco);
-        resumo.innerHTML+=`<p>${item.nome} - R$ ${item.preco}</p>`;
+
+        total+=Number(item.preco)||0;
+
+        resumo.innerHTML+=`
+            <p>
+                ${sanitizarTexto(item.nome)}
+                -
+                ${moeda(item.preco)}
+            </p>
+        `;
     });
 
-    resumo.innerHTML+=`<h4>Total: R$ ${total}</h4>`;
+    resumo.innerHTML+=`
+        <h4>
+            Total: ${moeda(total)}
+        </h4>
+    `;
 }
 
 
-async function finalizarPedido(){
+/* =========================================================
+   PAGAMENTO
+   ========================================================= */
 
-    console.log("nome:", document.getElementById("nome-cliente"));
-    console.log("telefone:", document.getElementById("telefone"));
-    console.log("endereco:", document.getElementById("endereco"));
-    console.log("pagamento:", document.getElementById("forma-pagamento"));
-    console.log("carrinho:", carrinho);
+function obterTotalCarrinho(){
+
+    return carrinho.reduce(
+        (total,item)=>
+            total+(Number(item.preco)||0),
+        0
+    );
+}
+
+
+/* =========================================================
+   CRIAR ÁREA DOS DETALHES
+   ========================================================= */
+
+function criarAreaDetalhesPagamento(){
+
+    const select =
+        document.getElementById("forma-pagamento");
+
+    if(!select)return null;
+
+    let area =
+        document.getElementById("detalhes-pagamento");
+
+    if(!area){
+
+        area=document.createElement("div");
+
+        area.id="detalhes-pagamento";
+
+        select.parentNode.insertBefore(
+            area,
+            select.nextSibling
+        );
+    }
+
+    return area;
+}
+
+
+/* =========================================================
+   CAMPO
+   ========================================================= */
+
+function campoPagamento(
+    id,
+    label,
+    type="text",
+    placeholder=""
+){
+
+    return `
+
+        <label
+            for="${id}"
+            style="
+                display:block;
+                margin:10px 0 5px;
+                color:#cbd5e1;
+                font-weight:600;
+            "
+        >
+            ${label}
+        </label>
+
+        <input
+            id="${id}"
+            type="${type}"
+            placeholder="${placeholder}"
+            autocomplete="off"
+
+            style="
+                width:100%;
+                box-sizing:border-box;
+                padding:11px;
+                border-radius:7px;
+                border:1px solid #263449;
+                background:#0d1117;
+                color:#fff;
+            "
+        >
+    `;
+}
+
+
+/* =========================================================
+   MOSTRAR CAMPOS DO PAGAMENTO
+   ========================================================= */
+
+function atualizarCamposPagamento(){
+
+    const select =
+        document.getElementById("forma-pagamento");
+
+    const area =
+        criarAreaDetalhesPagamento();
+
+    if(!select || !area)return;
+
+    const metodo =
+        String(select.value||"").toLowerCase();
+
+    area.innerHTML="";
+
+
+    /* =========================
+       PIX
+       ========================= */
+
+    if(metodo==="pix"){
+
+        area.innerHTML=`
+
+            <div
+                style="
+                    padding:15px;
+                    margin-bottom:15px;
+                    border:1px solid #1f3b52;
+                    border-radius:8px;
+                    background:#0d1722;
+                "
+            >
+
+                <h4
+                    style="
+                        margin:0 0 10px;
+                        color:#00d4ff;
+                    "
+                >
+                    💠 Pagamento via PIX
+                </h4>
+
+                <p
+                    style="
+                        color:#cbd5e1;
+                        margin-bottom:10px;
+                    "
+                >
+                    Informe uma chave PIX ou gere o
+                    pagamento através do QR Code.
+                </p>
+
+                ${campoPagamento(
+                    "pix-chave",
+                    "Chave PIX",
+                    "text",
+                    "CPF, e-mail, telefone ou chave aleatória"
+                )}
+
+                <div
+                    id="pix-resultado"
+                    style="
+                        margin-top:15px;
+                        text-align:center;
+                    "
+                ></div>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    /* =========================
+       CARTÃO
+       ========================= */
+
+    if(
+        metodo==="cartao" ||
+        metodo==="cartao_credito" ||
+        metodo==="credito"
+    ){
+
+        const total =
+            obterTotalCarrinho();
+
+        let parcelasHTML="";
+
+        for(let i=1;i<=12;i++){
+
+            const valor=
+                total/i;
+
+            parcelasHTML+=`
+
+                <option value="${i}">
+                    ${i}x de ${moeda(valor)}
+                </option>
+
+            `;
+        }
+
+
+        area.innerHTML=`
+
+            <div
+                style="
+                    padding:15px;
+                    margin-bottom:15px;
+                    border:1px solid #1f3b52;
+                    border-radius:8px;
+                    background:#0d1722;
+                "
+            >
+
+                <h4
+                    style="
+                        margin:0 0 10px;
+                        color:#00d4ff;
+                    "
+                >
+                    💳 Cartão de crédito
+                </h4>
+
+
+                ${campoPagamento(
+                    "cartao-numero",
+                    "Número do cartão",
+                    "text",
+                    "0000 0000 0000 0000"
+                )}
+
+
+                ${campoPagamento(
+                    "cartao-nome",
+                    "Nome no cartão",
+                    "text",
+                    "NOME COMPLETO"
+                )}
+
+
+                <div
+                    style="
+                        display:grid;
+                        grid-template-columns:1fr 1fr;
+                        gap:10px;
+                    "
+                >
+
+                    <div>
+
+                        ${campoPagamento(
+                            "cartao-validade",
+                            "Validade",
+                            "text",
+                            "MM/AA"
+                        )}
+
+                    </div>
+
+
+                    <div>
+
+                        ${campoPagamento(
+                            "cartao-cvv",
+                            "CVV",
+                            "password",
+                            "123"
+                        )}
+
+                    </div>
+
+                </div>
+
+
+                <label
+                    for="cartao-parcelas"
+                    style="
+                        display:block;
+                        margin:10px 0 5px;
+                        color:#cbd5e1;
+                        font-weight:600;
+                    "
+                >
+                    Parcelas
+                </label>
+
+
+                <select
+                    id="cartao-parcelas"
+
+                    style="
+                        width:100%;
+                        padding:11px;
+                        border-radius:7px;
+                        border:1px solid #263449;
+                        background:#0d1117;
+                        color:#fff;
+                    "
+                >
+
+                    ${parcelasHTML}
+
+                </select>
+
+            </div>
+        `;
+
+
+        configurarMascaraCartao();
+
+        return;
+    }
+
+
+    /* =========================
+       BOLETO
+       ========================= */
+
+    if(metodo==="boleto"){
+
+        area.innerHTML=`
+
+            <div
+                style="
+                    padding:15px;
+                    margin-bottom:15px;
+                    border:1px solid #1f3b52;
+                    border-radius:8px;
+                    background:#0d1722;
+                "
+            >
+
+                <h4
+                    style="
+                        margin:0 0 10px;
+                        color:#00d4ff;
+                    "
+                >
+                    🧾 Pagamento via boleto
+                </h4>
+
+
+                <p
+                    style="
+                        color:#cbd5e1;
+                        margin-bottom:10px;
+                    "
+                >
+                    Informe o CPF do pagador para gerar
+                    o boleto.
+                </p>
+
+
+                ${campoPagamento(
+                    "boleto-cpf",
+                    "CPF do pagador",
+                    "text",
+                    "000.000.000-00"
+                )}
+
+
+                <div
+                    id="boleto-resultado"
+                    style="margin-top:15px;"
+                ></div>
+
+            </div>
+
+        `;
+    }
+}
+
+
+/* =========================================================
+   MÁSCARA CARTÃO
+   ========================================================= */
+
+function configurarMascaraCartao(){
+
+    const numero =
+        document.getElementById("cartao-numero");
+
+    const validade =
+        document.getElementById("cartao-validade");
+
+    const cvv =
+        document.getElementById("cartao-cvv");
+
+
+    if(numero){
+
+        numero.addEventListener(
+            "input",
+            ()=>{
+
+                let valor=
+                    numero.value
+                    .replace(/\D/g,"")
+                    .slice(0,16);
+
+                numero.value=
+                    valor
+                    .replace(
+                        /(\d{4})(?=\d)/g,
+                        "$1 "
+                    )
+                    .trim();
+            }
+        );
+    }
+
+
+    if(validade){
+
+        validade.addEventListener(
+            "input",
+            ()=>{
+
+                let valor=
+                    validade.value
+                    .replace(/\D/g,"")
+                    .slice(0,4);
+
+                if(valor.length>2){
+
+                    valor=
+                        valor.slice(0,2)
+                        +"/"+
+                        valor.slice(2);
+                }
+
+                validade.value=valor;
+            }
+        );
+    }
+
+
+    if(cvv){
+
+        cvv.addEventListener(
+            "input",
+            ()=>{
+
+                cvv.value=
+                    cvv.value
+                    .replace(/\D/g,"")
+                    .slice(0,4);
+            }
+        );
+    }
+}
+
+
+/* =========================================================
+   VALIDAR PAGAMENTO
+   ========================================================= */
+
+function validarPagamento(){
+
+    const select =
+        document.getElementById("forma-pagamento");
+
+    if(!select){
+
+        return{
+            ok:false,
+            mensagem:
+                "Forma de pagamento não encontrada."
+        };
+    }
+
+
+    const metodo =
+        String(select.value||"").toLowerCase();
+
+
+    if(!metodo){
+
+        return{
+            ok:false,
+            mensagem:
+                "⚠️ Selecione uma forma de pagamento."
+        };
+    }
+
+
+    /* PIX */
+
+    if(metodo==="pix"){
+
+        const chave=
+            document
+            .getElementById("pix-chave")
+            ?.value
+            ?.trim()||"";
+
+        return{
+
+            ok:true,
+
+            dados:{
+
+                tipo:"pix",
+
+                chave:chave
+            }
+        };
+    }
+
+
+    /* BOLETO */
+
+    if(metodo==="boleto"){
+
+        const cpf=
+            document
+            .getElementById("boleto-cpf")
+            ?.value
+            ?.replace(/\D/g,"")||"";
+
+
+        if(cpf.length!==11){
+
+            return{
+
+                ok:false,
+
+                mensagem:
+                    "⚠️ Informe um CPF válido para gerar o boleto."
+            };
+        }
+
+
+        return{
+
+            ok:true,
+
+            dados:{
+
+                tipo:"boleto",
+
+                cpf:cpf
+            }
+        };
+    }
+
+
+    /* CARTÃO */
+
+    if(
+        metodo==="cartao" ||
+        metodo==="cartao_credito" ||
+        metodo==="credito"
+    ){
+
+        const numero=
+            document
+            .getElementById("cartao-numero")
+            ?.value
+            ?.replace(/\D/g,"")||"";
+
+
+        const nome=
+            document
+            .getElementById("cartao-nome")
+            ?.value
+            ?.trim()||"";
+
+
+        const validade=
+            document
+            .getElementById("cartao-validade")
+            ?.value
+            ?.trim()||"";
+
+
+        const cvv=
+            document
+            .getElementById("cartao-cvv")
+            ?.value
+            ?.replace(/\D/g,"")||"";
+
+
+        const parcelas=
+            document
+            .getElementById("cartao-parcelas")
+            ?.value||"1";
+
+
+        if(
+            numero.length!==16 ||
+            !nome ||
+            !/^\d{2}\/\d{2}$/.test(validade) ||
+            cvv.length<3
+        ){
+
+            return{
+
+                ok:false,
+
+                mensagem:
+                    "⚠️ Preencha corretamente os dados do cartão."
+            };
+        }
+
+
+        return{
+
+            ok:true,
+
+            dados:{
+
+                tipo:"cartao_credito",
+
+                numero:numero,
+
+                nome:nome,
+
+                validade:validade,
+
+                cvv:cvv,
+
+                parcelas:Number(parcelas)
+            }
+        };
+    }
+
+
+    return{
+
+        ok:true,
+
+        dados:{
+            tipo:metodo
+        }
+    };
+}
+
+
+/* =========================================================
+   INICIALIZAR PAGAMENTO
+   ========================================================= */
+
+function inicializarPagamento(){
+
+    const select =
+        document.getElementById("forma-pagamento");
+
+    if(!select)return;
+
+
+    if(!select.dataset.pagamentoConfigurado){
+
+        select.addEventListener(
+            "change",
+            atualizarCamposPagamento
+        );
+
+        select.dataset.pagamentoConfigurado="true";
+    }
+
+
+    atualizarCamposPagamento();
+}
+
+
+/* =========================================================
+   FINALIZAR PEDIDO
+   ========================================================= */
+
+   async function finalizarPedido(){
+    const cliente=document.getElementById("nome-cliente");
+    const telefone=document.getElementById("telefone");
+    const endereco=document.getElementById("endereco");
+    const pagamento=document.getElementById("forma-pagamento");
+    const msg=document.getElementById("mensagem-pedido");
 
     if(localStorage.getItem("usuarioLogado")!=="true"){
         alert("Você precisa estar logado para finalizar o pedido!");
         return;
     }
 
+    if(!carrinho.length){
+        msg.innerText="⚠️ O carrinho está vazio!";
+        return;
+    }
+
+    if(!cliente||!telefone||!endereco||!pagamento){
+        msg.innerText="⚠️ Erro: campos do checkout não encontrados.";
+        return;
+    }
+
+    if(!cliente.value.trim()||!telefone.value.trim()||!endereco.value.trim()||!pagamento.value){
+        msg.innerText="⚠️ Preencha todos os dados do pedido!";
+        return;
+    }
+
     const dados={
-        cliente:document.getElementById("nome-cliente").value,
-        telefone:document.getElementById("telefone").value,
-        endereco:document.getElementById("endereco").value,
-        pagamento:document.getElementById("forma-pagamento").value,
+        cliente:cliente.value.trim(),
+        telefone:telefone.value.trim(),
+        endereco:endereco.value.trim(),
+        pagamento:pagamento.value,
         usuario:JSON.parse(localStorage.getItem("usuario")),
         itens:carrinho
     };
 
-    const msg=document.getElementById("mensagem-pedido");
+    if(pagamento.value==="pix"){
+        dados.detalhesPagamento={
+            tipo:"pix",
+            chave:document.getElementById("pix-chave")?.value.trim()||""
+        };
+    }
 
-    if(
-    !dados.cliente ||
-    !dados.telefone ||
-    !dados.endereco ||
-    !dados.pagamento ||
-    !dados.itens.length
-){
-    msg.innerText="⚠️ Preencha os dados e coloque itens no carrinho!";
-    return;
-}
+    if(pagamento.value==="cartao"){
+        dados.detalhesPagamento={
+            tipo:"cartao",
+            numero:document.getElementById("cartao-numero")?.value.replace(/\D/g,"")||"",
+            nome:document.getElementById("cartao-nome")?.value.trim()||"",
+            validade:document.getElementById("cartao-validade")?.value.trim()||"",
+            parcelas:document.getElementById("cartao-parcelas")?.value||"1"
+        };
+    }
+
+    if(pagamento.value==="boleto"){
+        dados.detalhesPagamento={
+            tipo:"boleto",
+            cpf:document.getElementById("boleto-cpf")?.value.replace(/\D/g,"")||""
+        };
+    }
+
+    msg.innerText="⏳ Processando pedido...";
 
     try{
         const res=await fetch("http://localhost:3000/pedido",{
@@ -369,17 +1079,345 @@ async function finalizarPedido(){
             body:JSON.stringify(dados)
         });
 
-        const data=await res.json();
-        msg.innerText=data.mensagem;
+        let data={};
 
-        carrinho=[];
-        salvarCarrinho();
-        atualizarCarrinhoUI();
+        try{
+            data=await res.json();
+        }catch(e){
+            data={};
+        }
 
-    }catch{
-        msg.innerText="❌ Erro ao enviar pedido.";
+        if(!res.ok){
+            throw new Error(data.mensagem||data.message||`Erro HTTP ${res.status}`);
+        }
+
+        msg.innerText=data.mensagem||data.message||"✅ Pedido realizado com sucesso!";
+
+        const planoSelecionado=JSON.parse(localStorage.getItem("planoSelecionado"));
+
+if(planoSelecionado){
+    const usuario=JSON.parse(localStorage.getItem("usuario"));
+
+    if(usuario?.email){
+        const resPlano=await fetch("http://localhost:3000/ativar-plano",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                email:usuario.email,
+                plano:planoSelecionado.nome.toLowerCase()
+            })
+        });
+
+        if(resPlano.ok){
+            localStorage.setItem("planoAtivo",planoSelecionado.nome);
+            localStorage.removeItem("planoSelecionado");
+        }
     }
 }
+
+        carrinho=[];
+
+        salvarCarrinho();
+        atualizarCarrinhoUI();
+        atualizarResumoPagamento();
+        atualizarBadges();
+
+    }catch(error){
+        console.error("Erro ao finalizar pedido:",error);
+        msg.innerText="❌ Erro ao finalizar pedido: "+error.message;
+    }
+}
+
+async function carregarPedidos(){
+    const container=document.getElementById("lista-pedidos");
+    if(!container)return;
+
+    const usuario=JSON.parse(localStorage.getItem("usuario"));
+
+    if(!usuario){
+        container.innerHTML=`<div class="card"><h3>🔒 Faça login</h3><p>Entre na sua conta para visualizar seus pedidos.</p></div>`;
+        return;
+    }
+
+    container.innerHTML="<p>⏳ Carregando seus pedidos...</p>";
+
+    try{
+        const res=await fetch(`http://localhost:3000/pedidos?email=${encodeURIComponent(usuario.email)}`);
+
+        if(!res.ok)throw new Error(`HTTP ${res.status}`);
+
+        const pedidos=await res.json();
+
+        if(!Array.isArray(pedidos)||pedidos.length===0){
+            container.innerHTML=`
+                <div class="card" style="grid-column:1/-1;text-align:center;padding:40px;">
+                    <h3>📦 Nenhum pedido encontrado</h3>
+                    <p style="color:#94a3b8;">Você ainda não realizou nenhuma compra.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML="";
+
+        pedidos.forEach((pedido,index)=>{
+            const itens=pedido.itens||[];
+            let listaItens="";
+
+            itens.forEach(item=>{
+                listaItens+=`
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1f293d;">
+                        <span>${sanitizarTexto(item.nome||"Produto")}</span>
+                        <strong>${moeda(item.preco||0)}</strong>
+                    </div>
+                `;
+            });
+
+            const total=pedido.total||itens.reduce((s,item)=>s+(Number(item.preco)||0),0);
+            const pagamento=pedido.pagamento||"Não informado";
+
+            container.innerHTML+=`
+                <div class="card" style="padding:20px;margin-bottom:20px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <h3>📦 Pedido #${pedido.id||index+1}</h3>
+                        <span style="color:#00d4ff;font-weight:bold;">
+                            ${pedido.status||"Pedido realizado"}
+                        </span>
+                    </div>
+
+                    <p><strong>💳 Pagamento:</strong> ${sanitizarTexto(String(pagamento))}</p>
+
+                    <h4>🛒 Produtos comprados</h4>
+                    ${listaItens}
+
+                    <h3 style="text-align:right;color:#00d4ff;">
+                        Total: ${moeda(total)}
+                    </h3>
+                </div>
+            `;
+        });
+
+    }catch(error){
+        console.error("Erro ao carregar pedidos:",error);
+
+        container.innerHTML=`
+            <div class="card">
+                <h3>❌ Não foi possível carregar seus pedidos</h3>
+                <p style="color:#94a3b8;">Verifique se o servidor está funcionando.</p>
+            </div>
+        `;
+    }
+}
+
+/* =========================================================
+   SISTEMA DE PAGAMENTO
+   ========================================================= */
+
+function obterTotalCarrinho(){
+    return carrinho.reduce((total,item)=>{
+        return total + (Number(item.preco) || 0);
+    },0);
+}
+
+function atualizarCamposPagamento(){
+    const select=document.getElementById("forma-pagamento");
+    const area=document.getElementById("detalhes-pagamento");
+
+    if(!select || !area)return;
+
+    const pagamento=select.value;
+    area.innerHTML="";
+
+    /* PIX */
+    if(pagamento==="pix"){
+        area.innerHTML=`
+            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
+                <h4 style="color:#00d4ff;margin-top:0;">💠 Pagamento via PIX</h4>
+                <p style="color:#cbd5e1;">Escolha como deseja pagar:</p>
+
+                <label style="color:#fff;">Chave PIX</label>
+
+                <input
+                    id="pix-chave"
+                    type="text"
+                    placeholder="Digite sua chave PIX"
+                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+
+                <div id="pix-resultado" style="margin-top:15px;text-align:center;"></div>
+            </div>
+        `;
+        return;
+    }
+
+    /* CARTÃO */
+    if(pagamento==="cartao"){
+        const total=obterTotalCarrinho();
+        let parcelas="";
+
+        for(let i=1;i<=12;i++){
+            parcelas+=`
+                <option value="${i}">
+                    ${i}x de ${moeda(total/i)}
+                </option>
+            `;
+        }
+
+        area.innerHTML=`
+            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
+                <h4 style="color:#00d4ff;margin-top:0;">💳 Cartão de crédito</h4>
+
+                <label style="color:#fff;">Número do cartão</label>
+                <input
+                    id="cartao-numero"
+                    type="text"
+                    placeholder="0000 0000 0000 0000"
+                    maxlength="19"
+                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+
+                <label style="color:#fff;">Nome no cartão</label>
+                <input
+                    id="cartao-nome"
+                    type="text"
+                    placeholder="NOME COMPLETO"
+                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div>
+                        <label style="color:#fff;">Validade</label>
+                        <input
+                            id="cartao-validade"
+                            type="text"
+                            placeholder="MM/AA"
+                            maxlength="5"
+                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                        >
+                    </div>
+
+                    <div>
+                        <label style="color:#fff;">CVV</label>
+                        <input
+                            id="cartao-cvv"
+                            type="password"
+                            placeholder="123"
+                            maxlength="4"
+                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                        >
+                    </div>
+                </div>
+
+                <label for="cartao-parcelas" style="display:block;color:#fff;margin-top:15px;">
+                    Parcelas
+                </label>
+
+                <select
+                    id="cartao-parcelas"
+                    style="width:96%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+                    ${parcelas}
+                </select>
+            </div>
+        `;
+
+        configurarCartao();
+        return;
+    }
+
+    /* BOLETO */
+    if(pagamento==="boleto"){
+        area.innerHTML=`
+            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
+                <h4 style="color:#00d4ff;margin-top:0;">🧾 Pagamento via Boleto</h4>
+
+                <p style="color:#cbd5e1;">
+                    Informe o CPF do pagador.
+                </p>
+
+                <label style="color:#fff;">CPF</label>
+
+                <input
+                    id="boleto-cpf"
+                    type="text"
+                    placeholder="000.000.000-00"
+                    maxlength="14"
+                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+
+                <div id="boleto-resultado"></div>
+            </div>
+        `;
+
+        configurarCartao();
+    }
+}
+
+
+/* =========================================================
+   MÁSCARAS
+   ========================================================= */
+
+function configurarCartao(){
+    const numero=document.getElementById("cartao-numero");
+    const validade=document.getElementById("cartao-validade");
+    const cvv=document.getElementById("cartao-cvv");
+    const cpf=document.getElementById("boleto-cpf");
+
+    if(numero){
+        numero.addEventListener("input",()=>{
+            let valor=numero.value.replace(/\D/g,"").slice(0,16);
+            numero.value=valor.replace(/(\d{4})(?=\d)/g,"$1 ");
+        });
+    }
+
+    if(validade){
+        validade.addEventListener("input",()=>{
+            let valor=validade.value.replace(/\D/g,"").slice(0,4);
+
+            if(valor.length>2){
+                valor=valor.slice(0,2)+"/"+valor.slice(2);
+            }
+
+            validade.value=valor;
+        });
+    }
+
+    if(cvv){
+        cvv.addEventListener("input",()=>{
+            cvv.value=cvv.value.replace(/\D/g,"").slice(0,4);
+        });
+    }
+
+    if(cpf){
+        cpf.addEventListener("input",()=>{
+            let valor=cpf.value.replace(/\D/g,"").slice(0,11);
+
+            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
+            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
+            valor=valor.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+
+            cpf.value=valor;
+        });
+    }
+}
+
+
+/* =========================================================
+   INICIALIZAR PAGAMENTO
+   ========================================================= */
+
+function inicializarPagamento(){
+    const select=document.getElementById("forma-pagamento");
+
+    if(!select)return;
+
+    select.addEventListener(
+        "change",
+        atualizarCamposPagamento
+    );
+}
+
 
 let todosProdutos=[];
 
@@ -887,9 +1925,14 @@ if(modal)modal.style.display="none";
 }
 
 function assinarPlano(nomePlano,preco){
-adicionarAoCarrinho(`Aulas Pro Player (Plano ${nomePlano})`,preco);
-fecharModalPlanos();
-trocarAba("carrinho");
+    localStorage.setItem("planoSelecionado",JSON.stringify({
+        nome:nomePlano,
+        preco:preco
+    }));
+
+    adicionarAoCarrinho(`Aulas Pro Player (Plano ${nomePlano})`,preco);
+    fecharModalPlanos();
+    trocarAba("carrinho");
 }
 
 function getFavoritos(){
@@ -987,6 +2030,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 atualizarCarrinhoUI();
 atualizarResumoPagamento();
 atualizarBadges();
+inicializarPagamento();
 
 const btn=document.getElementById("btnDropdownCat");
 const menu=document.getElementById("menuDropdownCat");
@@ -1159,4 +2203,65 @@ trocarAba("inicio");
 
 console.log("✅ BePro JS carregado com sucesso");
 
+async function carregarPlano(){
+    const usuario=JSON.parse(localStorage.getItem("usuario"));
 
+    if(!usuario?.email)return;
+
+    try{
+        const res=await fetch(`http://localhost:3000/meu-plano?email=${encodeURIComponent(usuario.email)}`);
+        const plano=await res.json();
+
+        const box=document.getElementById("plano-ativo");
+        const titulo=document.getElementById("plano-titulo");
+        const beneficios=document.getElementById("plano-beneficios");
+
+        if(!plano.ativo){
+            box.style.display="none";
+            return;
+        }
+
+        const dados={
+            basico:{
+                nome:"🌱 Plano Básico",
+                beneficios:[
+                    "1 Sessão de VOD Review (Replay)",
+                    "Guia em PDF de Rotinas de Treino",
+                    "Acesso ao Discord de Alunos"
+                ]
+            },
+            pro:{
+                nome:"🔥 Plano Pro",
+                beneficios:[
+                    "3 Sessões Ao Vivo (1h cada)",
+                    "Análise de Sensibilidade/Config",
+                    "Tudo do Plano Básico",
+                    "Grupo VIP de Discussão Tática"
+                ]
+            },
+            champion:{
+                nome:"👑 Plano Champion",
+                beneficios:[
+                    "Acompanhamento Semanal 1-on-1",
+                    "Partidas Duo In-Game com o Pro",
+                    "Suporte VIP via WhatsApp",
+                    "Relatório de Evolução Mensal"
+                ]
+            }
+        };
+
+        const info=dados[plano.plano];
+
+        if(!info){
+            box.style.display="none";
+            return;
+        }
+
+        titulo.innerText=info.nome;
+        beneficios.innerHTML=info.beneficios.map(b=>`<li>✅ ${b}</li>`).join("");
+        box.style.display="block";
+
+    }catch(error){
+        console.error("Erro ao carregar plano:",error);
+    }
+}

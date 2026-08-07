@@ -51,6 +51,15 @@ CREATE TABLE pedidos (
         ON DELETE SET NULL
 );
 
+CREATE TABLE planos_usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_email VARCHAR(255) NOT NULL UNIQUE,
+    plano VARCHAR(50) NOT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
+    data_ativacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_expiracao DATETIME NULL
+);
+
 -- ========================================================
 -- 2. INSERÇÃO DOS DADOS (DML) - PRODUTOS
 -- ========================================================
@@ -134,4 +143,4 @@ INSERT INTO aulas_coach (titulo, descricao) VALUES
 
 SELECT user, host, plugin FROM mysql.user;
 
-SET PASSWORD FOR 'root'@'localhost' = PASSWORD('root');
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';

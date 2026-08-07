@@ -254,6 +254,116 @@ app.get("/produtos", (req, res) => {
     });
 });
 
+// ============================
+// 🎓 PLANOS DA ACADEMY
+// ============================
+
+app.post("/ativar-plano",(req,res)=>{
+    const {email,plano}=req.body;
+    const planos=["basico","pro","champion"];
+
+    if(!isNonEmptyString(email)||!planos.includes(plano)){
+        return res.status(400).json({error:"Usuário ou plano inválido."});
+    }
+
+    const query=`
+        INSERT INTO planos_usuarios
+        (usuario_email,plano,ativo,data_ativacao)
+        VALUES(?,?,TRUE,NOW())
+        ON DUPLICATE KEY UPDATE
+        plano=VALUES(plano),
+        ativo=TRUE,
+        data_ativacao=NOW()
+    `;
+
+    db.query(query,[email.trim(),plano],(err)=>{
+        if(err){
+            console.error("Erro ao ativar plano:",err.message);
+            return res.status(500).json({error:"Erro ao ativar plano."});
+        }
+
+        res.status(200).json({
+            message:"Plano ativado com sucesso!",
+            plano:plano
+        });
+    });
+});
+
+app.get("/meu-plano",(req,res)=>{
+    const {email}=req.query;
+
+    if(!isNonEmptyString(email)){
+        return res.status(400).json({error:"E-mail obrigatório."});
+    }
+
+    const query=`
+        SELECT *
+        FROM planos_usuarios
+        WHERE usuario_email=?
+        AND ativo=TRUE
+        LIMIT 1
+    `;
+
+    db.query(query,[email.trim()],(err,results)=>{
+        if(err){
+            console.error("Erro ao buscar plano:",err.message);
+            return res.status(500).json({error:"Erro ao buscar plano."});
+        }
+
+        if(!results.length){
+            return res.json({
+                ativo:false,
+                plano:null
+            });
+        }
+
+        res.json({
+            ativo:true,
+            plano:results[0].plano,
+            data_ativacao:results[0].data_ativacao,
+            data_expiracao:results[0].data_expiracao
+        });
+    });
+});
+
+// ==========================================
+// 🎓 BUSCAR PLANO ATIVO DO USUÁRIO
+// ==========================================
+app.get("/meu-plano",(req,res)=>{
+    const email=req.query.email;
+
+    if(!email){
+        return res.status(400).json({error:"E-mail não informado."});
+    }
+
+    const query=`
+        SELECT plano,ativo,data_ativacao,data_expiracao
+        FROM planos_usuarios
+        WHERE usuario_email=?
+        LIMIT 1
+    `;
+
+    db.query(query,[email],(err,results)=>{
+        if(err){
+            console.error("Erro ao buscar plano:",err.message);
+            return res.status(500).json({error:"Erro ao buscar plano."});
+        }
+
+        if(!results.length){
+            return res.json({ativo:false});
+        }
+
+        const plano=results[0];
+
+        res.json({
+            ativo:Boolean(plano.ativo),
+            plano:plano.plano,
+            data_ativacao:plano.data_ativacao,
+            data_expiracao:plano.data_expiracao
+        });
+    });
+});
+
 // ==========================================
 // ❌ MANIPULAÇÃO DE ROTAS NÃO ENCONTRADAS & ERROS GLOBAIS
 // ==========================================
