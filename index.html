@@ -162,6 +162,30 @@
     </section>
 
     <section id="loja" class="conteudo">
+        <section class="store-hero">
+            <div class="store-hero-nav">
+                <button class="store-nav-toggle"><i class="fa-solid fa-bars"></i></button>
+                <a href="#" class="store-nav-item" onclick="setStoreNavActive(this); trocarAba('monte'); return false;">MONTE SEU PC</a>
+                <a href="#" class="store-nav-item" onclick="setStoreNavActive(this); trocarAba('coach'); return false;">COACH / AULAS</a>
+                <a href="#" class="store-nav-item" onclick="setStoreNavActive(this); abrirPromocao(); return false;">OFERTAS</a>
+            </div>
+
+            <div class="store-hero-banner">
+                <div class="store-hero-copy">
+                    <span class="store-hero-label">OFERTA EXCLUSIVA</span>
+                    <h2>ATÉ 20% OFF EM SEUS ITENS GAMER FAVORITOS</h2>
+                    <p>Confira nossos descontos especiais em hardware, periféricos e PCs gamers para deixar seu setup pronto para o próximo level.</p>
+                    <button onclick="abrirPromocao()">VER OFERTAS 20% OFF</button>
+                </div>
+
+                <div class="store-hero-visual" onclick="abrirPromocao()">
+                    <img src="imagens/rtx4070-removebg-preview.png" alt="Placa de vídeo" class="hero-img hero-img-1">
+                    <img src="imagens/Razer Viper V3 Pro.png" alt="Mouse gamer" class="hero-img hero-img-2">
+                    <img src="imagens/BenqZowie.png" alt="Monitor gamer" class="hero-img hero-img-3">
+                </div>
+            </div>
+        </section>
+
         <div class="loja-topo">
             <h2 class="section-title">Store - Catálogo Completo</h2>
         </div>

@@ -15,6 +15,192 @@ main {
     padding: 30px 5%;
 }
 
+.store-hero {
+    width: 100%;
+    margin-bottom: 30px;
+    background: radial-gradient(circle at top left, rgba(0, 112, 255, 0.18), transparent 40%),
+                linear-gradient(180deg, #050914 0%, #0d1220 100%);
+    border: 1px solid rgba(0, 212, 255, 0.12);
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.store-hero-nav {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 18px 20px 14px;
+    background: rgba(3, 12, 27, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.store-nav-toggle {
+    display: none;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+.store-nav-item {
+    color: #cbd5e1;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 12px 16px;
+    border-radius: 12px;
+    transition: background 0.2s ease, color 0.2s ease;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.store-nav-item.active,
+.store-nav-item:hover {
+    color: #ffffff;
+    background: rgba(0, 212, 255, 0.18);
+}
+
+.store-hero-banner {
+    display: grid;
+    grid-template-columns: 1fr 0.95fr;
+    align-items: center;
+    gap: 28px;
+    padding: 40px 34px 42px;
+}
+
+.store-hero-copy {
+    color: #f8fafc;
+    text-align: left;
+}
+
+.store-hero-label {
+    display: inline-block;
+    background: #05162e;
+    color: #7dd3fc;
+    font-weight: 800;
+    padding: 8px 18px;
+    border-radius: 999px;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+}
+
+.store-hero-copy h2 {
+    font-size: clamp(2.5rem, 3vw, 3.5rem);
+    margin: 0 0 18px;
+    line-height: 1.05;
+    color: #e2e8f0;
+}
+
+.store-hero-copy p {
+    font-size: 1.05rem;
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 26px;
+    color: #cbd5e1;
+}
+
+.store-hero-copy button {
+    background: #00d4ff;
+    color: #020617;
+    border: none;
+    padding: 14px 32px;
+    font-weight: 700;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.store-hero-copy button:hover {
+    background: #60f5ff;
+    transform: translateY(-2px);
+    box-shadow: 0 18px 35px rgba(0, 212, 255, 0.24);
+}
+
+.store-hero-visual {
+    position: relative;
+    min-height: 360px;
+    cursor: pointer;
+}
+
+.store-hero-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at bottom left, rgba(0, 212, 255, 0.16), transparent 35%);
+    pointer-events: none;
+}
+
+.hero-img {
+    position: absolute;
+    border-radius: 22px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.hero-img-1 {
+    width: 320px;
+    top: 16px;
+    right: 20px;
+    transform: rotate(6deg);
+}
+
+.hero-img-2 {
+    width: 190px;
+    bottom: 20px;
+    left: 20px;
+    transform: rotate(-12deg);
+}
+
+.hero-img-3 {
+    width: 220px;
+    bottom: 0;
+    right: 130px;
+    transform: rotate(10deg);
+}
+
+.hero-img:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 900px) {
+    .store-hero-banner {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .store-hero-copy {
+        margin-bottom: 20px;
+    }
+
+    .store-hero-nav {
+        justify-content: center;
+    }
+
+    .store-nav-toggle {
+        display: inline-flex;
+    }
+
+    .store-nav-item {
+        padding: 10px 14px;
+    }
+
+    .store-hero-visual {
+        min-height: 280px;
+    }
+
+    .hero-img-1,
+    .hero-img-2,
+    .hero-img-3 {
+        position: static;
+        width: 130px;
+        margin: 0 auto 14px;
+        transform: none;
+    }
+}
+
 /* Títulos estilizados (Gamer/Tech) */
 h1, h2, h3, .aba, .btn-neon, .product-title {
     font-family: 'Rajdhani', sans-serif;
@@ -1199,13 +1385,15 @@ footer {
 /* Card Compacto */
 .card-proplayer-compacto {
     display: flex;
-    align-items: center;
+    align-items: stretch; /* stretch so both image and info match height */
     background: #0f172a;
     border: 1px solid #1e293b;
     border-radius: 16px;
     padding: 30px;
     gap: 30px;
     width: 100%;
+    max-width: 960px;
+    min-height: 320px; /* enforce consistent minimum height */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     transition: transform 0.2s ease, opacity 0.2s ease;
 }
@@ -1232,6 +1420,7 @@ footer {
     flex-direction: column;
     text-align: left;
     flex-grow: 1;
+    justify-content: space-between; /* push button to bottom, keeps height consistent */
 }
 
 /* Fontes Maior & Legíveis */
