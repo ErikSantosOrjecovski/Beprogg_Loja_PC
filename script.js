@@ -1468,72 +1468,384 @@ async function carregarProdutos(){
 }
 
 
-function obterCaminhoImagem(nomeProduto){
-    const nome=nomeProduto.toLowerCase();
+function obterCaminhoImagem(nomeProduto) {
+    if (!nomeProduto) {
+        return "imagens/logo-bepro.png.jpeg";
+    }
 
-    if(nome.includes("7800x3d")||nome.includes("ryzen"))
-        return"imagens/andryzen5-5560-removebg-preview.png";
+    const nome = nomeProduto
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
 
-    if(nome.includes("i5"))return"imagens/intelcore-i5-removebg-preview.png";
-    if(nome.includes("i7"))return"imagens/intelcore-i7-removebg-preview.png";
+    // =====================================================
+    // PROCESSADORES AMD
+    // =====================================================
 
-    if(nome.includes("cooler"))
-        return"imagens/aircooler-removebg-preview.png";
+    if (nome.includes("7800x3d")) {
+        return "imagens/amdryzen7-5700x.png";
+    }
 
-    if(nome.includes("b550"))
-        return"imagens/placamaeb550-removebg-preview.png";
+    if (nome.includes("7950x3d")) {
+        return "imagens/amdryzen7-5700x.png";
+    }
 
-    if(nome.includes("b650")||nome.includes("b660")||nome.includes("asrock"))
-        return"imagens/placamaeb660-removebg-preview.png";
+    if (nome.includes("9700x")) {
+        return "imagens/amdryzen7-5700x.png";
+    }
 
-    if(nome.includes("x570"))
-        return"imagens/placamaex570-removebg-preview.png";
+    if (nome.includes("7600x")) {
+        return "imagens/andryzen5-5560-removebg-preview.png";
+    }
 
-    if(nome.includes("ddr5")&&nome.includes("32"))
-        return"imagens/ram32gb-ddr5-removebg-preview.png";
+    if (nome.includes("5700x")) {
+        return "imagens/amdryzen7-5700x.png";
+    }
 
-    if(nome.includes("ddr4")&&nome.includes("32"))
-        return"imagens/ram32gb-ddr4-removebg-preview.png";
+    // =====================================================
+    // PROCESSADORES INTEL
+    // =====================================================
 
-    if(nome.includes("3060"))
-        return"imagens/rtx3060-removebg-preview.png";
+    if (nome.includes("i9-14900k")) {
+        return "imagens/Intel Core i9-14900K.png";
+    }
 
-    if(nome.includes("4060"))
-        return"imagens/rtx4060-removebg-preview.png";
+    if (nome.includes("i7-14700k")) {
+        return "imagens/Intel Core i7-14700K.png";
+    }
 
-    if(nome.includes("4070")||nome.includes("5070"))
-        return"imagens/rtx4070-removebg-preview.png";
+    if (nome.includes("i7")) {
+        return "imagens/intelcore-i7-removebg-preview.png";
+    }
 
-    if(nome.includes("ssd")||nome.includes("nvme"))
-        return"imagens/ssd-1tb-removebg-preview.png";
+    if (nome.includes("i5")) {
+        return "imagens/intelcore-i5-removebg-preview.png";
+    }
 
-    if(nome.includes("750w"))
-        return"imagens/fonte750w-removebg-preview.png";
 
-    if(nome.includes("850w"))
-        return"imagens/fonte850w-removebg-preview.png";
+    // =====================================================
+    // PLACAS DE VÍDEO NVIDIA
+    // =====================================================
 
-    if(nome.includes("gabinete"))
-        return"imagens/gabinete-removebg-preview.png";
+    if (nome.includes("4080") || nome.includes("4080 super")) {
+        return "imagens/NVIDIA GeForce RTX 4080 Super.png";
+    }
 
-    if(nome.includes("wooting")||nome.includes("teclado"))
-        return"imagens/wooting-80he-removebg-preview.png";
+    if (nome.includes("4070 ti super")) {
+        return "imagens/NVIDIA GeForce RTX 4070 Ti Super.png";
+    }
 
-    if(nome.includes("mouse")||nome.includes("superlight")||nome.includes("razer"))
-        return"imagens/logitech-superlight2-removebg-preview.png";
+    if (nome.includes("4070 super")) {
+        return "imagens/NVIDIA GeForce RTX 4070 Super.png";
+    }
 
-    if(nome.includes("hayate")||nome.includes("saturn")||nome.includes("mousepad"))
-        return"imagens/hayate-otsu-removebg-preview.png";
+    if (nome.includes("4070")) {
+        return "imagens/rtx4070-removebg-preview.png";
+    }
 
-    if(nome.includes("audeze")||nome.includes("steelseries"))
-        return"imagens/audeze-maxwell-removebg-preview.png";
+    if (nome.includes("4060 ti")) {
+        return "imagens/rtx4060-removebg-preview.png";
+    }
 
-    if(nome.includes("monitor")||nome.includes("benq"))
-        return"imagens/BenqZowie.png";
+    if (nome.includes("4060")) {
+        return "imagens/rtx4060-removebg-preview.png";
+    }
 
-    return"imagens/logo-bepro.png.jpeg";
+    if (nome.includes("3060 ti")) {
+        return "imagens/rtx3060-removebg-preview.png";
+    }
+
+    if (nome.includes("3060")) {
+        return "imagens/rtx3060-removebg-preview.png";
+    }
+
+    if (nome.includes("5070")) {
+        return "imagens/NVIDIA GeForce RTX 5070.png";
+    }
+
+    if (nome.includes("5080")) {
+        return "imagens/NVIDIA GeForce RTX 5080.png";
+    }
+
+
+
+    // =====================================================
+    // PLACAS DE VÍDEO AMD
+    // =====================================================
+
+    if (nome.includes("rx 7600") || nome.includes("rx7600")) {
+        return "imagens/rx7600.png";
+    }
+
+    if (nome.includes("rx 7800 xt")) {
+        return "imagens/AMD Radeon RX 7800 XT 16GB.png";
+    }
+
+if (nome.includes("rx 6750 xt")) {
+        return "imagens/AMD Radeon RX 6750 XT 12GB (2).png";
+    }
+
+    // =====================================================
+    // PLACAS-MÃE
+    // =====================================================
+
+    if (nome.includes("b650")) {
+        return "imagens/MSI MAG B650 Tomahawk WiFi (1).png";
+    }
+
+    if (nome.includes("b550")) {
+        return "imagens/placamaeb550-removebg-preview.png";
+    }
+
+    if (nome.includes("b660")) {
+        return "imagens/placamaeb660-removebg-preview.png";
+    }
+
+    if (nome.includes("x570")) {
+        return "imagens/placamaex570-removebg-preview.png";
+    }
+
+    if (nome.includes("z690")) {
+        return "imagens/placamaez690-removebg-preview.png";
+    }
+
+    if (nome.includes("z790")) {
+        return "imagens/Gigabyte Z790 AORUS Elite AX.png";
+    }
+
+
+    // =====================================================
+    // MEMÓRIA RAM
+    // =====================================================
+
+    if (nome.includes("64 gb") && nome.includes("ddr5")) {
+        return "imagens/ram32gb-ddr5-removebg-preview.png";
+    }
+
+    if (nome.includes("32 gb") && nome.includes("ddr5")) {
+        return "imagens/ram32gb-ddr5-removebg-preview.png";
+    }
+
+    if (nome.includes("16 gb") && nome.includes("ddr5")) {
+        return "imagens/ram16gb-ddr5-removebg-preview.png";
+    }
+
+    if (nome.includes("32 gb") && nome.includes("ddr4")) {
+        return "imagens/ram32gb-ddr4-removebg-preview.png";
+    }
+
+    if (nome.includes("16 gb") && nome.includes("ddr4")) {
+        return "imagens/ram16gb-ddr4-removebg-preview.png";
+    }
+
+
+    // =====================================================
+    // SSD / ARMAZENAMENTO
+    // =====================================================
+
+    if (nome.includes("990 pro") || nome.includes("2 tb samsung")) {
+        return "imagens/SSD 2 TB Samsung 990 Pro NVMe PCIe 4.0.png";
+    }
+
+    if (nome.includes("ssd 2 tb")) {
+        return "imagens/SSD 2 TB Samsung 990 Pro NVMe PCIe 4.0.png";
+    }
+
+    if (nome.includes("ssd 1 tb") ||
+        nome.includes("ssd 1tb") ||
+        nome.includes("nvme")) {
+        return "imagens/ssd-1tb-removebg-preview.png";
+    }
+
+
+    // =====================================================
+    // FONTES
+    // =====================================================
+
+    if (nome.includes("850w")) {
+        return "imagens/fonte850w-removebg-preview.png";
+    }
+
+    if (nome.includes("750w")) {
+        return "imagens/fonte750w.png";
+    }
+
+    if (nome.includes("650w")) {
+        return "imagens/fonte650w.png";
+    }
+
+    if (nome.includes("550w")) {
+        return "imagens/fonte550w.png";
+    }
+
+
+    // =====================================================
+    // COOLERS
+    // =====================================================
+
+    if (nome.includes("galahad") ||
+        nome.includes("lian li") && nome.includes("360")) {
+        return "imagens/Water Cooler Lian Li Galahad II Trinity 360mm.png";
+    }
+
+    if (nome.includes("water cooler") ||
+        nome.includes("aio") ||
+        nome.includes("corsair icue") ||
+        nome.includes("h150i")) {
+        return "imagens/Water Cooler AIO 240 mm.png";
+    }
+
+    if (nome.includes("air cooler") ||
+        nome.includes("deepcool") ||
+        nome.includes("ak620") ||
+        nome.includes("cooler")) {
+        return "imagens/aircooler-removebg-preview.png";
+    }
+
+
+    // =====================================================
+    // GABINETES
+    // =====================================================
+
+    if (nome.includes("nzxt") ||
+        nome.includes("h9 flow")) {
+        return "imagens/Gabinete NZXT H9 Flow.png";
+    }
+
+    if (nome.includes("lian li") ||
+        nome.includes("o11 dynamic")) {
+        return "imagens/Gabinete Lian Li O11 Dynamic EVO.png";
+    }
+
+    if (nome.includes("gabinete")) {
+        return "imagens/gabinete-removebg-preview.png";
+    }
+
+
+    // =====================================================
+    // TECLADOS
+    // =====================================================
+
+    if (nome.includes("wooting 60he") ||
+        nome.includes("wooting 60he+")) {
+        return "imagens/Wooting 60HE+.png";
+    }
+
+    if (nome.includes("wooting 80he")) {
+        return "imagens/wooting-80he-removebg-preview.png";
+    }
+
+    if (nome.includes("huntsman")) {
+        return "imagens/Razer Huntsman V3 Pro TKL.png";
+    }
+
+    if (nome.includes("g pro x tkl") ||
+        nome.includes("logitech g pro x tkl")) {
+        return "imagens/Logitech G Pro X TKL Rapid (1).png";
+    }
+
+    if (nome.includes("teclado")) {
+        return "imagens/Wooting 60HE+.png";
+    }
+
+
+    // =====================================================
+    // MOUSES
+    // =====================================================
+
+    if (nome.includes("superlight 2 dex")) {
+        return "imagens/Logitech G Pro X Superlight 2 Dex.png";
+    }
+
+    if (nome.includes("superlight 2")) {
+        return "imagens/Logitech G Pro X Superlight 2.png";
+    }
+
+    if (nome.includes("deathadder")) {
+        return "imagens/Razer DeathAdder V3 Pro.png";
+    }
+
+    if (nome.includes("razer") && nome.includes("mouse")) {
+        return "imagens/Razer DeathAdder V3 Pro.png";
+    }
+
+    if (nome.includes("mouse")) {
+        return "imagens/logitech-superlight2-removebg-preview.png";
+    }
+
+
+    // =====================================================
+    // MOUSEPADS
+    // =====================================================
+
+    if (nome.includes("saturn")) {
+        return "imagens/Lethal Gaming Gear Saturn Pro XL.png";
+    }
+
+    if (nome.includes("hayate")) {
+        return "imagens/hayate-otsu-removebg-preview.png";
+    }
+
+    if (nome.includes("skypad")) {
+        return "imagens/SkyPAD Glass 3.0 XL.png";
+    }
+
+    if (nome.includes("g640")) {
+        return "imagens/Logitech G640 Large.png";
+    }
+
+    if (nome.includes("mousepad")) {
+        return "imagens/hayate-otsu-removebg-preview.png";
+    }
+
+
+    // =====================================================
+    // HEADSETS
+    // =====================================================
+
+    if (nome.includes("audeze") ||
+        nome.includes("maxwell")) {
+        return "imagens/audeze-maxwell-removebg-preview.png";
+    }
+
+    if (nome.includes("steelseries") ||
+        nome.includes("arctis nova")) {
+        return "imagens/SteelSeries Arctis Nova Pro Wireless.png";
+    }
+
+    if (nome.includes("hyperx") ||
+        nome.includes("cloud iii")) {
+        return "imagens/HyperX Cloud III Wireless.png";
+    }
+
+
+    // =====================================================
+    // MONITORES
+    // =====================================================
+
+    if (nome.includes("lg ultragear 27") ||
+        nome.includes("oled 240hz")) {
+        return "imagens/LG UltraGear 27_ OLED 240Hz.png";
+    }
+
+    if (nome.includes("lg ultragear 360hz")) {
+        return "imagens/LG UltraGear 360Hz IPS.png";
+    }
+
+    if (nome.includes("benq") ||
+        nome.includes("zowie")) {
+        return "imagens/BenqZowie.png";
+    }
+
+
+    // =====================================================
+    // FALLBACK
+    // =====================================================
+
+    console.warn("Imagem não encontrada para:", nomeProduto);
+
+    return "imagens/logo-bepro.png.jpeg";
 }
-
 
 function filtrarCategoria(categoria,elemento){
 
