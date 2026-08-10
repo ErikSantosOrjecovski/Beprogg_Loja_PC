@@ -44,8 +44,36 @@ function adicionarAoCarrinho(nomeOuId,preco=null){
     atualizarCarrinhoUI();
     atualizarResumoPagamento();
     atualizarBadges?.();
+    mostrarNotificacaoCarrinho(item.nome);
 
-    alert(`"${item.nome}" foi adicionado ao carrinho!`);
+}
+
+function mostrarNotificacaoCarrinho(nome) {
+    // Remove uma notificação anterior, se existir
+    const antiga = document.getElementById("notificacao-carrinho");
+    if (antiga) antiga.remove();
+
+    const notificacao = document.createElement("div");
+
+    notificacao.id = "notificacao-carrinho";
+
+    notificacao.innerHTML = `
+        <div class="notificacao-carrinho-icone">🛒</div>
+        <div class="notificacao-carrinho-texto">
+            <strong>Adicionado ao carrinho</strong>
+            <span>${nome}</span>
+        </div>
+    `;
+
+    document.body.appendChild(notificacao);
+
+    setTimeout(() => {
+        notificacao.classList.add("saindo");
+
+        setTimeout(() => {
+            notificacao.remove();
+        }, 300);
+    }, 2200);
 }
 
 function atualizarCarrinhoUI(){
@@ -1528,8 +1556,8 @@ function filtrarCategoria(categoria,elemento){
 
     const busca={
         teclados:["teclado","wooting","huntsman"],
-        mouses:["mouse","superlight","sleeve","pad"],
-        monitores:["monitor","zowie","xl"],
+        mouses:["mouse","superlight","sleeve","pad", "xl"],
+        monitores:["monitor","zowie"],
         headsets:["headset","audeze","fone"],
         hardware:["ryzen","rtx","radeon","ddr","ssd","cooler"],
         gpu:["rtx","rx","radeon","geforce"],
@@ -1563,64 +1591,113 @@ function filtrarCategoria(categoria,elemento){
 }
 
 
-function renderizarProdutos(lista,container){
+function renderizarProdutos(lista, container) {
+    container.innerHTML = "";
 
-    container.innerHTML="";
-
-
-    if(!lista.length){
-        container.innerHTML="<p>Nenhum produto encontrado.</p>";
+    if (!lista.length) {
+        container.innerHTML = "Nenhum produto encontrado.";
         return;
     }
 
+    lista.forEach(p => {
+        const img = obterCaminhoImagem(p.nome);
+        const fav = isFavorito(p.id);
 
-    lista.forEach(p=>{
+        container.innerHTML += `
+            <div class="card-produto-loja" onclick="abrirDetalhesProduto(${p.id})">
 
-        const img=obterCaminhoImagem(p.nome);
-        const fav=isFavorito(p.id);
-
-
-        container.innerHTML+=`
-
-        <div class="card-produto-loja">
-
-            <button class="btn-favorito"
-            onclick="toggleFavorito(${p.id},event)">
-                <i class="${fav?"fa-solid":"fa-regular"} fa-heart"
-                style="${fav?"color:#ff4757":""}">
-                </i>
-            </button>
-
-
-            <div class="card-produto-img-box">
-                <img src="${img}"
-                alt="${sanitizarTexto(p.nome)}"
-                class="card-produto-img"
-                onerror="this.src='imagens/logo-bepro.png.jpeg'">
-            </div>
-
-
-            <div class="card-produto-detalhes">
-
-                <h3 class="card-produto-titulo">
-                    ${sanitizarTexto(p.nome)}
-                </h3>
-
-                <p class="card-produto-preco">
-                    R$ ${p.preco}
-                </p>
-
-
-                <button class="btn-card-comprar"
-                onclick="adicionarAoCarrinho('${p.nome.replace(/'/g,"\\'")}',${p.preco})">
-                    Adicionar ao Carrinho
+                <button class="btn-favorito" onclick="toggleFavorito(${p.id}, event)">
+                    <i class="${fav ? "fa-solid" : "fa-regular"} fa-heart"
+                       style="${fav ? "color:#ff4757" : ""}">
+                    </i>
                 </button>
 
+                <div class="card-produto-img-box">
+                    <img
+                        src="${img}"
+                        alt="${sanitizarTexto(p.nome)}"
+                        class="card-produto-img"
+                        onerror="this.src='imagens/logo-bepro.png.jpeg'"
+                    >
+                </div>
+                <div class="card-produto-detalhes">
+
+                    <h3 class="card-produto-titulo">
+                        ${sanitizarTexto(p.nome)}
+                    </h3>
+                    <p class="card-produto-preco">
+                        R$ ${p.preco}
+                    </p>
+
+                    <button
+                        class="btn-card-comprar"
+                        onclick="event.stopPropagation(); adicionarAoCarrinho('${p.nome.replace(/'/g, "\\'")}', ${p.preco})"
+                    >
+                        Adicionar ao Carrinho
+                    </button>
+                </div>
             </div>
-
-        </div>`;
-
+        `;
     });
+}
+
+function abrirDetalhesProduto(id){
+    const produto=todosProdutos.find(p=>Number(p.id)===Number(id));
+    if(!produto){
+        console.error("Produto não encontrado:",id);
+        return;
+    }
+
+    const imagem=obterCaminhoImagem(produto.nome);
+    const nome=document.getElementById("produto-detalhes-nome");
+    const preco=document.getElementById("produto-detalhes-preco");
+    const imagemPrincipal=document.getElementById("produto-imagem-principal");
+    const miniatura0=document.getElementById("miniatura-0");
+    const descricao=document.getElementById("produto-descricao");
+    const avaliacoes=document.getElementById("produto-avaliacoes");
+
+    if(nome)nome.innerText=produto.nome;
+    if(preco)preco.innerText=moeda(produto.preco);
+    if(imagemPrincipal){
+        imagemPrincipal.src=imagem;
+        imagemPrincipal.alt=produto.nome;
+    }
+    if(miniatura0){
+        miniatura0.src=imagem;
+        miniatura0.alt=produto.nome;
+    }
+    if(descricao){
+        descricao.innerText=produto.descricao||"Produto gamer selecionado pela Bepro.gg. Confira as características e informações deste produto antes de realizar sua compra.";
+    }
+    if(avaliacoes)avaliacoes.innerText="0 avaliações";
+
+    const btnCarrinho=document.getElementById("btn-carrinho-produto");
+    if(btnCarrinho){
+        btnCarrinho.onclick=function(){
+            adicionarAoCarrinho(produto.nome,produto.preco);
+        };
+    }
+
+    const btnComprar=document.getElementById("btn-comprar-produto");
+    if(btnComprar){
+        btnComprar.onclick=function(){
+            adicionarAoCarrinho(produto.nome,produto.preco);
+            trocarAba("pagamento");
+        };
+    }
+
+    trocarAba("produto-detalhes");
+    window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function trocarImagemProduto(indice){
+    const imagemPrincipal=document.getElementById("produto-imagem-principal");
+    const miniatura=document.getElementById(`miniatura-${indice}`);
+
+    if(!imagemPrincipal||!miniatura)return;
+    if(!miniatura.src)return;
+
+    imagemPrincipal.src=miniatura.src;
 }
 
 function atualizarStatusLogin(){
@@ -1944,24 +2021,78 @@ return getFavoritos().includes(Number(id));
 }
 
 function toggleFavorito(idProduto,event){
-if(event){
-event.preventDefault();
-event.stopPropagation();
+    if(event){
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    let favoritos=getFavoritos();
+    const id=Number(idProduto);
+    const index=favoritos.indexOf(id);
+    const produto=todosProdutos.find(p=>Number(p.id)===id);
+    const nomeProduto=produto?produto.nome:"Produto";
+    let adicionado=false;
+
+    if(index===-1){
+        favoritos.push(id);
+        adicionado=true;
+    }else{
+        favoritos.splice(index,1);
+    }
+
+    localStorage.setItem("bepro_favoritos",JSON.stringify(favoritos));
+    atualizarBadges();
+
+    const botao=event?.currentTarget;
+    const icone=botao?.querySelector("i");
+
+    if(icone){
+        if(adicionado){
+            icone.classList.remove("fa-regular");
+            icone.classList.add("fa-solid");
+            icone.style.color="#ff4757";
+        }else{
+            icone.classList.remove("fa-solid");
+            icone.classList.add("fa-regular");
+            icone.style.color="";
+        }
+    }
+
+    mostrarNotificacaoFavorito(nomeProduto,adicionado);
 }
 
-let favoritos=getFavoritos();
-const id=Number(idProduto);
+function mostrarNotificacaoFavorito(nome,adicionado){
+    const antiga=document.getElementById("notificacao-favorito");
+    if(antiga)antiga.remove();
 
-const index=favoritos.indexOf(id);
+    const notificacao=document.createElement("div");
+    notificacao.id="notificacao-favorito";
 
-if(index===-1)favoritos.push(id);
-else favoritos.splice(index,1);
+    notificacao.innerHTML=adicionado
+        ? `
+            <div class="notificacao-favorito-icone">❤️</div>
+            <div class="notificacao-favorito-texto">
+                <strong>Adicionado aos favoritos</strong>
+                <span>${nome}</span>
+            </div>
+          `
+        : `
+            <div class="notificacao-favorito-icone">💔</div>
+            <div class="notificacao-favorito-texto">
+                <strong>Removido dos favoritos</strong>
+                <span>${nome}</span>
+            </div>
+          `;
 
-localStorage.setItem("bepro_favoritos",JSON.stringify(favoritos));
+    document.body.appendChild(notificacao);
 
-atualizarBadges();
+    setTimeout(()=>{
+        notificacao.classList.add("saindo");
 
-if(typeof carregarProdutos==="function")carregarProdutos();
+        setTimeout(()=>{
+            notificacao.remove();
+        },300);
+    },2200);
 }
 
 function verFavoritos(event){

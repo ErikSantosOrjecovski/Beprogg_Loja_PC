@@ -163,12 +163,7 @@
 
     <section id="loja" class="conteudo">
         <section class="store-hero">
-            <div class="store-hero-nav">
-                <button class="store-nav-toggle"><i class="fa-solid fa-bars"></i></button>
-                <a href="#" class="store-nav-item" onclick="setStoreNavActive(this); trocarAba('monte'); return false;">MONTE SEU PC</a>
-                <a href="#" class="store-nav-item" onclick="setStoreNavActive(this); trocarAba('coach'); return false;">COACH / AULAS</a>
-                <a href="#" class="store-nav-item" onclick="setStoreNavActive(this); abrirPromocao(); return false;">OFERTAS</a>
-            </div>
+            
 
             <div class="store-hero-banner">
                 <div class="store-hero-copy">
@@ -238,6 +233,114 @@
 
         <div id="lista-produtos" class="grid-produtos"></div>
     </section>
+
+<!-- =====================================================
+     DETALHES DO PRODUTO
+     ===================================================== -->
+<section id="produto-detalhes" class="conteudo">
+
+    <div class="produto-detalhes-topo">
+        <button class="btn-voltar-loja" onclick="trocarAba('loja')">
+            <i class="fa-solid fa-arrow-left"></i>
+            Voltar para a loja
+        </button>
+    </div>
+
+    <div class="produto-detalhes-container">
+
+        <!-- GALERIA -->
+        <div class="produto-galeria">
+
+            <div class="produto-miniaturas">
+                <button onclick="trocarImagemProduto(0)">
+                    <img id="miniatura-0" src="" alt="">
+                </button>
+
+                <button id="miniatura-container-1" onclick="trocarImagemProduto(1)" style="display:none;">
+                    <img id="miniatura-1" src="" alt="">
+                </button>
+
+                <button id="miniatura-container-2" onclick="trocarImagemProduto(2)" style="display:none;">
+                    <img id="miniatura-2" src="" alt="">
+                </button>
+            </div>
+
+            <div class="produto-imagem-principal">
+                <img
+                    id="produto-imagem-principal"
+                    src=""
+                    alt="Produto"
+                >
+            </div>
+        </div>
+
+        <!-- INFORMAÇÕES -->
+        <div class="produto-info">
+
+            <div class="produto-breadcrumb">
+                BEPRO.GG
+                <span>›</span>
+                PRODUTO
+            </div>
+            <h1 id="produto-detalhes-nome">
+                Produto
+            </h1>
+            <div class="produto-avaliacao">
+                <span class="estrelas">★★★★★</span>
+                <span id="produto-avaliacoes">0 avaliações</span>
+            </div>
+
+            <div class="produto-vendedor">
+                Vendido e entregue por:
+                <strong>Bepro.gg</strong>
+            </div>
+
+            <div class="produto-preco-antigo" id="produto-preco-antigo">
+            </div>
+
+            <div class="produto-preco" id="produto-detalhes-preco">
+                R$ 0,00
+            </div>
+
+            <div class="produto-desconto">
+                💳 À vista no PIX ou boleto
+            </div>
+
+            <div class="produto-parcelamento">
+                💳 Em até 12x no cartão
+            </div>
+
+            <div class="produto-entrega">
+                🚚 <strong>Pronta entrega</strong>
+                <br>
+                <span>Envio rápido e seguro</span>
+            </div>
+            <div class="produto-acoes">
+
+                <button
+                    id="btn-comprar-produto"
+                    class="btn-comprar-agora"
+                >
+                    COMPRAR AGORA
+                </button>
+
+                <button
+                    id="btn-carrinho-produto"
+                    class="btn-adicionar-detalhes"
+                >
+                    🛒 Adicionar ao Carrinho
+                </button>
+
+            </div>
+        </div>
+    </div>
+    <div class="produto-descricao-box">
+        <h2>Sobre este produto</h2>
+        <p id="produto-descricao">
+            Produto gamer selecionado pela Bepro.gg.
+        </p>
+    </div>
+</section>
 
     <section id="carrinho" class="conteudo">
         <h2 class="section-title">🛒 Seu Carrinho</h2>
