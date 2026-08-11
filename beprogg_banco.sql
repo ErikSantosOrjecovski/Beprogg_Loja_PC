@@ -60,6 +60,54 @@ CREATE TABLE planos_usuarios (
     data_expiracao DATETIME NULL
 );
 
+USE beprogg;
+
+CREATE TABLE IF NOT EXISTS disponibilidade_coach (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    data DATE NOT NULL,
+    horario TIME NOT NULL,
+    disponivel BOOLEAN DEFAULT TRUE,
+
+    UNIQUE KEY horario_unico (data, horario)
+);
+
+
+CREATE TABLE IF NOT EXISTS aulas_agendadas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    usuario_email VARCHAR(255) NOT NULL,
+
+    data DATE NOT NULL,
+
+    horario TIME NOT NULL,
+
+    status ENUM(
+        'confirmada',
+        'cancelada'
+    ) DEFAULT 'confirmada',
+
+    data_agendamento DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE KEY aula_unica (data, horario)
+);
+
+USE beprogg;
+
+INSERT INTO disponibilidade_coach
+(data, horario, disponivel)
+VALUES
+('2026-08-12', '14:00:00', TRUE),
+('2026-08-12', '15:00:00', TRUE),
+('2026-08-12', '16:00:00', TRUE),
+
+('2026-08-13', '14:00:00', TRUE),
+('2026-08-13', '17:00:00', TRUE),
+('2026-08-13', '19:00:00', TRUE),
+
+('2026-08-14', '15:00:00', TRUE),
+('2026-08-14', '16:00:00', TRUE),
+('2026-08-14', '20:00:00', TRUE);
+
 -- ========================================================
 -- 2. INSERÇÃO DOS DADOS (DML) - PRODUTOS
 -- ========================================================

@@ -3028,3 +3028,1231 @@ footer {
         transform:translateX(40px);
     }
 }
+
+/* ========================================
+   CARDS DOS BENEFÍCIOS DO PLANO
+======================================== */
+
+#plano-beneficios{
+    width:100%;
+}
+
+
+.beneficio-card{
+
+    background:#111827;
+
+    border:1px solid #263449;
+
+    border-radius:14px;
+
+    padding:22px;
+
+    min-height:245px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+
+.beneficio-card:hover{
+
+    transform:translateY(-4px);
+
+    border-color:#00d4ff;
+
+    box-shadow:
+        0 8px 30px rgba(0,212,255,.12);
+}
+
+
+.beneficio-card-icone{
+
+    font-size:30px;
+
+    margin-bottom:12px;
+}
+
+
+.beneficio-card h3{
+
+    color:#fff;
+
+    font-size:19px;
+
+    margin:0 0 10px 0;
+}
+
+
+.beneficio-card p{
+
+    color:#94a3b8;
+
+    font-size:14px;
+
+    line-height:1.6;
+
+    margin:0 0 15px 0;
+
+    flex:1;
+}
+
+
+.beneficio-status{
+
+    color:#22c55e;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    margin-bottom:14px;
+}
+
+
+.beneficio-btn{
+
+    width:100%;
+
+    border:none;
+
+    border-radius:8px;
+
+    padding:12px;
+
+    background:#00d4ff;
+
+    color:#06101a;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+
+.beneficio-btn:hover{
+
+    transform:scale(1.02);
+
+    filter:brightness(1.1);
+}
+
+
+@media(max-width:700px){
+
+    #plano-beneficios{
+
+        grid-template-columns:1fr !important;
+
+    }
+
+}
+
+/* ========================================
+   MODAL - SESSÕES AO VIVO
+======================================== */
+
+.modal-sessoes{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.75);
+
+    backdrop-filter:blur(6px);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    z-index:9999;
+
+    padding:20px;
+
+}
+
+
+.modal-sessoes-conteudo{
+
+    position:relative;
+
+    width:min(850px,100%);
+
+    max-height:90vh;
+
+    overflow-y:auto;
+
+    background:#0b111c;
+
+    border:1px solid #263449;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    box-shadow:0 20px 70px rgba(0,0,0,.5);
+
+}
+
+
+.modal-sessoes-fechar{
+
+    position:absolute;
+
+    top:15px;
+
+    right:18px;
+
+    width:38px;
+
+    height:38px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#1f2937;
+
+    color:#fff;
+
+    font-size:25px;
+
+    cursor:pointer;
+
+}
+
+
+.modal-sessoes-fechar:hover{
+
+    background:#ef4444;
+
+}
+
+
+.sessao-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:25px;
+
+}
+
+
+.sessao-icone{
+
+    width:55px;
+
+    height:55px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:12px;
+
+    background:#172333;
+
+    font-size:28px;
+
+}
+
+
+.sessao-header h2{
+
+    margin:0;
+
+    color:#fff;
+
+}
+
+
+.sessao-header p{
+
+    margin:5px 0 0;
+
+    color:#94a3b8;
+
+}
+
+
+.sessao-descricao{
+
+    color:#94a3b8;
+
+    line-height:1.6;
+
+}
+
+
+/* VÍDEO */
+
+.video-aula-exemplo{
+
+    width:100%;
+
+    aspect-ratio:16/9;
+
+    margin:20px 0;
+
+    overflow:hidden;
+
+    border-radius:12px;
+
+    background:#05080d;
+
+}
+
+
+.video-aula-exemplo iframe{
+
+    width:100%;
+
+    height:100%;
+
+    border:none;
+
+}
+
+
+/* BOTÃO PRINCIPAL */
+
+.sessao-btn-principal{
+
+    width:100%;
+
+    padding:14px 20px;
+
+    border:none;
+
+    border-radius:9px;
+
+    background:#00d4ff;
+
+    color:#06101a;
+
+    font-weight:bold;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+
+.sessao-btn-principal:hover{
+
+    transform:translateY(-2px);
+
+    filter:brightness(1.1);
+
+}
+
+
+/* CALENDÁRIO */
+
+.calendario-aulas{
+
+    display:grid;
+
+    grid-template-columns:repeat(7,1fr);
+
+    gap:8px;
+
+    margin-top:20px;
+
+}
+
+
+.calendario-dia{
+
+    min-height:65px;
+
+    border:1px solid #263449;
+
+    border-radius:9px;
+
+    background:#111827;
+
+    color:#cbd5e1;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+
+.calendario-dia:hover{
+
+    border-color:#00d4ff;
+
+    transform:translateY(-2px);
+
+}
+
+
+.calendario-dia.indisponivel{
+
+    opacity:.35;
+
+    cursor:not-allowed;
+
+}
+
+
+.calendario-dia.disponivel{
+
+    border-color:#22c55e;
+
+}
+
+
+.calendario-dia.selecionado{
+
+    background:#00d4ff;
+
+    color:#06101a;
+
+    border-color:#00d4ff;
+
+}
+
+
+.calendario-dia .dia-numero{
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+
+.calendario-dia .dia-nome{
+
+    display:block;
+
+    font-size:11px;
+
+    margin-top:4px;
+
+}
+
+
+/* HORÁRIOS */
+
+.horarios-aula{
+
+    margin-top:30px;
+
+}
+
+
+.dia-selecionado{
+
+    color:#22c55e;
+
+    font-weight:bold;
+
+}
+
+
+.lista-horarios{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(100px,1fr));
+
+    gap:10px;
+
+    margin-top:15px;
+
+}
+
+
+.horario-btn{
+
+    padding:13px;
+
+    border-radius:8px;
+
+    border:1px solid #263449;
+
+    background:#111827;
+
+    color:#fff;
+
+    cursor:pointer;
+
+}
+
+
+.horario-btn:hover{
+
+    border-color:#00d4ff;
+
+}
+
+
+.horario-btn.selecionado{
+
+    background:#00d4ff;
+
+    color:#06101a;
+
+    font-weight:bold;
+
+}
+
+
+/* CONFIRMAÇÃO */
+
+.confirmacao-aula-box{
+
+    margin-top:25px;
+
+    padding:20px;
+
+    background:#111827;
+
+    border:1px solid #263449;
+
+    border-radius:12px;
+
+}
+
+
+.confirmacao-aula-box h3{
+
+    color:#fff;
+
+}
+
+
+.confirmacao-aula-box p{
+
+    color:#94a3b8;
+
+}
+
+
+/* AULA CONFIRMADA */
+
+.aula-confirmada{
+
+    text-align:center;
+
+    padding:40px 20px;
+
+}
+
+
+.aula-confirmada-icone{
+
+    font-size:60px;
+
+    margin-bottom:15px;
+
+}
+
+
+.aula-confirmada h2{
+
+    color:#22c55e;
+
+}
+
+
+.aula-confirmada p{
+
+    color:#cbd5e1;
+
+    line-height:1.8;
+
+}
+
+
+@media(max-width:600px){
+
+    .modal-sessoes-conteudo{
+
+        padding:20px;
+
+    }
+
+    .calendario-aulas{
+
+        gap:5px;
+
+    }
+
+    .calendario-dia{
+
+        min-height:55px;
+
+    }
+
+}
+
+/* ========================================
+   MODAL - ANÁLISE DE CONFIG
+======================================== */
+
+.modal-analise-config{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:10000;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.78);
+
+    backdrop-filter:blur(7px);
+
+}
+
+
+.modal-analise-conteudo{
+
+    position:relative;
+
+    width:min(720px,100%);
+
+    max-height:90vh;
+
+    overflow-y:auto;
+
+    padding:35px;
+
+    border-radius:18px;
+
+    background:#0b111c;
+
+    border:1px solid #263449;
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.6);
+
+}
+
+
+.modal-analise-fechar{
+
+    position:absolute;
+
+    right:18px;
+
+    top:15px;
+
+    width:38px;
+
+    height:38px;
+
+    border:0;
+
+    border-radius:50%;
+
+    background:#1f2937;
+
+    color:#fff;
+
+    font-size:25px;
+
+    cursor:pointer;
+
+}
+
+
+.modal-analise-fechar:hover{
+
+    background:#ef4444;
+
+}
+
+
+.config-etapa{
+
+    text-align:center;
+
+}
+
+
+.config-bot-icon{
+
+    width:65px;
+
+    height:65px;
+
+    margin:0 auto 15px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:16px;
+
+    background:#172333;
+
+    font-size:32px;
+
+}
+
+
+.config-etapa h2{
+
+    margin:0 0 10px;
+
+    color:#fff;
+
+    font-size:25px;
+
+}
+
+
+.config-etapa h3{
+
+    margin-top:30px;
+
+    color:#fff;
+
+}
+
+
+.config-etapa > p{
+
+    color:#94a3b8;
+
+    line-height:1.6;
+
+}
+
+
+/* ESTILOS */
+
+.config-estilos{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:15px;
+
+    margin-top:25px;
+
+}
+
+
+.config-estilo-btn{
+
+    min-height:190px;
+
+    padding:25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    border:1px solid #263449;
+
+    border-radius:14px;
+
+    background:#111827;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+
+.config-estilo-btn:hover{
+
+    transform:translateY(-4px);
+
+    border-color:#00d4ff;
+
+    box-shadow:
+        0 10px 30px rgba(0,212,255,.12);
+
+}
+
+
+.config-estilo-btn span{
+
+    font-size:40px;
+
+}
+
+
+.config-estilo-btn strong{
+
+    font-size:18px;
+
+}
+
+
+.config-estilo-btn small{
+
+    color:#94a3b8;
+
+    line-height:1.5;
+
+}
+
+
+/* FORMULÁRIO */
+
+.config-form{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:16px;
+
+    margin-top:25px;
+
+    text-align:left;
+
+}
+
+
+.config-form label{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:7px;
+
+    color:#cbd5e1;
+
+    font-size:14px;
+
+}
+
+
+.config-form input,
+.config-form select{
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    padding:12px;
+
+    border-radius:8px;
+
+    border:1px solid #263449;
+
+    outline:none;
+
+    background:#111827;
+
+    color:#fff;
+
+}
+
+
+.config-form input:focus,
+.config-form select:focus{
+
+    border-color:#00d4ff;
+
+}
+
+
+/* BOTÃO */
+
+.config-btn-principal{
+
+    width:100%;
+
+    margin-top:25px;
+
+    padding:14px;
+
+    border:0;
+
+    border-radius:9px;
+
+    background:#00d4ff;
+
+    color:#06101a;
+
+    font-weight:bold;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+
+.config-btn-principal:hover{
+
+    transform:translateY(-2px);
+
+    filter:brightness(1.1);
+
+}
+
+
+/* RESULTADO */
+
+.resultado-config{
+
+    margin-top:25px;
+
+    text-align:left;
+
+}
+
+
+.config-resultado-card{
+
+    padding:22px;
+
+    margin-bottom:15px;
+
+    border-radius:12px;
+
+    background:#111827;
+
+    border:1px solid #263449;
+
+}
+
+
+.config-resultado-card h3{
+
+    margin:0 0 12px;
+
+}
+
+
+.config-score{
+
+    margin:20px 0;
+
+}
+
+
+.config-score-bar{
+
+    width:100%;
+
+    height:12px;
+
+    margin-top:8px;
+
+    overflow:hidden;
+
+    border-radius:20px;
+
+    background:#1f2937;
+
+}
+
+
+.config-score-fill{
+
+    height:100%;
+
+    border-radius:20px;
+
+    background:#00d4ff;
+
+}
+
+
+.config-recomendacao{
+
+    padding:15px;
+
+    border-radius:9px;
+
+    background:#172333;
+
+    color:#cbd5e1;
+
+    line-height:1.6;
+
+}
+
+.config-ok{
+
+    color:#22c55e;
+
+    font-weight:bold;
+
+}
+
+.config-warning{
+
+    color:#f59e0b;
+
+    font-weight:bold;
+
+}
+
+@media(max-width:600px){
+
+    .modal-analise-conteudo{
+
+        padding:22px;
+
+    }
+
+    .config-estilos{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .config-form{
+
+        grid-template-columns:1fr;
+
+    }
+}
+
+/* ========================================
+   VOD REVIEW
+======================================== */
+
+.modal-vod-review{
+
+    position:fixed;
+
+    inset:0;
+
+    z-index:10001;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,.78);
+
+    backdrop-filter:blur(7px);
+
+}
+
+
+.modal-vod-conteudo{
+
+    position:relative;
+
+    width:min(850px,100%);
+
+    max-height:90vh;
+
+    overflow-y:auto;
+
+    padding:30px;
+
+    border-radius:18px;
+
+    background:#0b111c;
+
+    border:1px solid #263449;
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.6);
+
+}
+
+.modal-vod-fechar{
+
+    position:absolute;
+    top:15px;
+    right:18px;
+    width:38px;
+    height:38px;
+    border:0;
+    border-radius:50%;
+    background:#1f2937;
+    color:#fff;
+    font-size:25px;
+    cursor:pointer;
+    z-index:2;
+
+}
+
+.modal-vod-fechar:hover{
+    background:#ef4444;
+
+}
+
+.vod-header{
+
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:25px;
+
+}
+
+.vod-icone{
+
+    width:55px;
+    height:55px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    background:#172333;
+    font-size:28px;
+
+}
+
+.vod-header h2{
+
+    margin:0;
+    color:#fff;
+
+}
+
+.vod-header p{
+
+    margin:5px 0 0;
+    color:#94a3b8;
+
+}
+
+.vod-video{
+
+    width:100%;
+    aspect-ratio:16/9;
+    overflow:hidden;
+    border-radius:12px;
+    background:#05080d;
+
+}
+
+.vod-video iframe{
+
+    width:100%;
+    height:100%;
+    border:0;
+
+}
+
+
+.vod-info{
+
+    margin-top:20px;
+    padding:20px;
+    border-radius:12px;
+    background:#111827;
+    border:1px solid #263449;
+
+}
+
+.vod-tag{
+
+    display:inline-block;
+    margin-bottom:10px;
+    padding:5px 9px;
+    border-radius:6px;
+    background:#172333;
+    color:#00d4ff;
+    font-size:11px;
+    font-weight:bold;
+
+}
+
+
+.vod-info h3{
+
+    margin:0 0 8px;
+    color:#fff;
+
+}
+
+.vod-info p{
+
+    margin:0;
+    color:#94a3b8;
+    line-height:1.6;
+
+}
+
+.vod-btn{
+
+    width:100%;
+    margin-top:18px;
+    padding:14px;
+    border:0;
+    border-radius:9px;
+    background:#00d4ff;
+    color:#06101a;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+
+}
+
+.vod-btn:hover{
+
+    transform:translateY(-2px);
+    filter:brightness(1.1);
+
+}
+
+@media(max-width:600px){
+
+    .modal-vod-conteudo{
+        padding:20px;
+
+    }
+}
+

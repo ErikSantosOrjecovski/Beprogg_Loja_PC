@@ -1121,25 +1121,75 @@ function inicializarPagamento(){
 
         msg.innerText=data.mensagem||data.message||"✅ Pedido realizado com sucesso!";
 
-        const planoSelecionado=JSON.parse(localStorage.getItem("planoSelecionado"));
+
+const planoSelecionado = JSON.parse(
+    localStorage.getItem("planoSelecionado")
+);
 
 if(planoSelecionado){
-    const usuario=JSON.parse(localStorage.getItem("usuario"));
+
+    const usuario = JSON.parse(
+        localStorage.getItem("usuario")
+    );
 
     if(usuario?.email){
-        const resPlano=await fetch("http://localhost:3000/ativar-plano",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                email:usuario.email,
-                plano:planoSelecionado.nome.toLowerCase()
-            })
-        });
 
-        if(resPlano.ok){
-            localStorage.setItem("planoAtivo",planoSelecionado.nome);
-            localStorage.removeItem("planoSelecionado");
+        const plano = planoSelecionado.chave ||
+            normalizarPlano(planoSelecionado.nome);
+
+        const resPlano = await fetch(
+            "http://localhost:3000/ativar-plano",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    email: usuario.email,
+                    plano: plano
+                })
+            }
+        );
+
+        let respostaPlano = {};
+
+        try {
+            respostaPlano = await resPlano.json();
+        } catch(e) {}
+
+        if(!resPlano.ok){
+
+            throw new Error(
+                respostaPlano.mensagem ||
+                respostaPlano.message ||
+                "Não foi possível ativar o plano."
+            );
         }
+
+        localStorage.setItem(
+            "planoAtivo",
+            plano
+        );
+
+        localStorage.removeItem(
+            "planoSelecionado"
+        );
+
+        const nomePlano = nomePlanoBonito(plano);
+
+        msg.innerHTML = `
+            <span style="color:#22c55e;font-weight:bold;">
+                ✅ Pagamento confirmado! Plano ${nomePlano} ativo!
+            </span>
+        `;
+
+        await carregarPlano();
+
+        setTimeout(() => {
+            trocarAba("plano");
+        }, 1200);
     }
 }
 
@@ -1154,6 +1204,25 @@ if(planoSelecionado){
         console.error("Erro ao finalizar pedido:",error);
         msg.innerText="❌ Erro ao finalizar pedido: "+error.message;
     }
+}
+
+function abrirMeuPlano(){
+
+    const logado =
+        localStorage.getItem("usuarioLogado") === "true";
+
+    if(!logado){
+
+        alert("Você precisa estar logado para acessar seu plano.");
+
+        trocarAba("login");
+
+        return;
+    }
+
+    trocarAba("plano");
+
+    carregarPlano();
 }
 
 async function carregarPedidos(){
@@ -2226,51 +2295,98 @@ adicionarAoCarrinho(modelo,preco);
 alert(`🚀 Setup de ${nomesJogos[jogoChave]} adicionado ao carrinho!`);
 }
 
-const playersData=[
-{
-nome:"👑 Pro Player: Blackoutz",
-jogo:"FORTNITE",
-imagem:"imagens/blackoutzx.jpg",
-preco:"R$ 150,00",
-descricao:"Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa."
-},
-{
-nome:"👑 Pro Player: Fallen",
-jogo:"COUNTER STRIKE 2",
-imagem:"imagens/Fallen.jpg",
-preco:"R$ 200,00",
-descricao:"Aprenda controle de mapa, posicionamento de AWP e setups de granadas."
-},
-{
-nome:"👑 Pro Player: Faker",
-jogo:"LEAGUE OF LEGENDS",
-imagem:"imagens/Faker.jpg",
-preco:"R$ 300,00",
-descricao:"Domine controle de wave, visão de mapa e decisões macro."
-},
-{
-nome:"👑 Pro Player: Neskwga",
-jogo:"RAINBOW SIX SIEGE",
-imagem:"imagens/Neskwga.jpg",
-preco:"R$ 180,00",
-descricao:"Estratégias avançadas de ataque, defesa e comunicação."
-},
-{
-nome:"👑 Pro Player: FRTT",
-jogo:"VALORANT",
-imagem:"imagens/FRTT.jpg",
-preco:"R$ 160,00",
-descricao:"Uso avançado de agentes, clutch e movimentação tática."
-},
-{
-nome:"👑 Pro Player: TonyBoy",
-jogo:"CALL OF DUTY: WARZONE",
-imagem:"imagens/tonyBOy.jpg",
-preco:"R$ 140,00",
-descricao:"Movimentação avançada, loadouts e rotações."
-}
-];
+const playersData = [
 
+    {
+        nome: "👑 Pro Player: Blackoutz",
+        jogo: "FORTNITE",
+        jogoChave: "fortnite",
+        imagem: "imagens/blackoutzx.jpg",
+        preco: "R$ 150,00",
+        descricao: "Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa.",
+
+        videos: {
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_BLACKOUTZ",
+            aula: "COLOQUE_ID_VIDEO_AULA_BLACKOUTZ",
+            vod: "COLOQUE_ID_VIDEO_VOD_BLACKOUTZ"
+        }
+    },
+
+    {
+        nome: "👑 Pro Player: Fallen",
+        jogo: "COUNTER STRIKE 2",
+        jogoChave: "cs2",
+        imagem: "imagens/Fallen.jpg",
+        preco: "R$ 200,00",
+        descricao: "Aprenda controle de mapa, posicionamento de AWP e setups de granadas.",
+
+        videos: {
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_FALLEN",
+            aula: "COLOQUE_ID_VIDEO_AULA_FALLEN",
+            vod: "COLOQUE_ID_VIDEO_VOD_FALLEN"
+        }
+    },
+
+    {
+        nome: "👑 Pro Player: Faker",
+        jogo: "LEAGUE OF LEGENDS",
+        jogoChave: "lol",
+        imagem: "imagens/Faker.jpg",
+        preco: "R$ 300,00",
+        descricao: "Domine controle de wave, visão de mapa e decisões macro.",
+
+        videos: {
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_FAKER",
+            aula: "COLOQUE_ID_VIDEO_AULA_FAKER",
+            vod: "COLOQUE_ID_VIDEO_VOD_FAKER"
+        }
+    },
+
+    {
+        nome: "👑 Pro Player: Neskwga",
+        jogo: "RAINBOW SIX SIEGE",
+        jogoChave: "rainbow",
+        imagem: "imagens/Neskwga.jpg",
+        preco: "R$ 180,00",
+        descricao: "Estratégias avançadas de ataque, defesa e comunicação.",
+
+        videos: {
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_NESKWGA",
+            aula: "COLOQUE_ID_VIDEO_AULA_NESKWGA",
+            vod: "COLOQUE_ID_VIDEO_VOD_NESKWGA"
+        }
+    },
+
+    {
+        nome: "👑 Pro Player: FRTT",
+        jogo: "VALORANT",
+        jogoChave: "valorant",
+        imagem: "imagens/FRTT.jpg",
+        preco: "R$ 160,00",
+        descricao: "Uso avançado de agentes, clutch e movimentação tática.",
+
+        videos: {
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_FRTT",
+            aula: "COLOQUE_ID_VIDEO_AULA_FRTT",
+            vod: "COLOQUE_ID_VIDEO_VOD_FRTT"
+        }
+    },
+
+    {
+        nome: "👑 Pro Player: TonyBoy",
+        jogo: "CALL OF DUTY: WARZONE",
+        jogoChave: "warzone",
+        imagem: "imagens/tonyBOy.jpg",
+        preco: "R$ 140,00",
+        descricao: "Movimentação avançada, loadouts e rotações.",
+
+        videos: {
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_TONYBOY",
+            aula: "COLOQUE_ID_VIDEO_AULA_TONYBOY",
+            vod: "COLOQUE_ID_VIDEO_VOD_TONYBOY"
+        }
+    }
+];
 let playerIndexAtual=0;
 
 function mudarPlayer(direcao){
@@ -2313,13 +2429,40 @@ const modal=document.getElementById("modal-planos");
 if(modal)modal.style.display="none";
 }
 
-function assinarPlano(nomePlano,preco){
-    localStorage.setItem("planoSelecionado",JSON.stringify({
-        nome:nomePlano,
-        preco:preco
+function normalizarPlano(nomePlano){
+    return String(nomePlano || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+}
+
+function nomePlanoBonito(plano){
+    const nomes = {
+        basico: "Básico",
+        pro: "Pro",
+        champion: "Champion"
+    };
+
+    return nomes[plano] || plano;
+}
+
+function assinarPlano(nomePlano, preco){
+
+    const planoNormalizado = normalizarPlano(nomePlano);
+
+    localStorage.setItem("planoSelecionado", JSON.stringify({
+        nome: nomePlano,
+        chave: planoNormalizado,
+        preco: Number(preco)
     }));
 
-    adicionarAoCarrinho(`Aulas Pro Player (Plano ${nomePlano})`,preco);
+    adicionarAoCarrinho(
+        `Aulas Pro Player (Plano ${nomePlano})`,
+        preco
+
+    );
+
     fecharModalPlanos();
     trocarAba("carrinho");
 }
@@ -2647,44 +2790,77 @@ trocarAba("inicio");
 console.log("✅ BePro JS carregado com sucesso");
 
 async function carregarPlano(){
-    const usuario=JSON.parse(localStorage.getItem("usuario"));
 
-    if(!usuario?.email)return;
+    const usuario = JSON.parse(
+        localStorage.getItem("usuario")
+    );
+
+    const box = document.getElementById("plano-ativo");
+    const titulo = document.getElementById("plano-titulo");
+    const beneficios = document.getElementById("plano-beneficios");
+    const semPlano = document.getElementById("sem-plano");
+
+    if(!usuario?.email){
+
+        if(box) box.style.display = "none";
+        if(semPlano) semPlano.style.display = "block";
+
+        return;
+    }
 
     try{
-        const res=await fetch(`http://localhost:3000/meu-plano?email=${encodeURIComponent(usuario.email)}`);
-        const plano=await res.json();
 
-        const box=document.getElementById("plano-ativo");
-        const titulo=document.getElementById("plano-titulo");
-        const beneficios=document.getElementById("plano-beneficios");
+        const res = await fetch(
+            `http://localhost:3000/meu-plano?email=${encodeURIComponent(usuario.email)}`
+        );
 
-        if(!plano.ativo){
-            box.style.display="none";
+        if(!res.ok){
+
+            throw new Error(
+                "Não foi possível consultar o plano."
+            );
+        }
+
+        const plano = await res.json();
+        const chavePlano = normalizarPlano(
+            plano?.plano
+        );
+
+        if(!plano?.ativo){
+
+            if(box) box.style.display = "none";
+            if(semPlano) semPlano.style.display = "block";
+
             return;
         }
 
-        const dados={
-            basico:{
-                nome:"🌱 Plano Básico",
-                beneficios:[
+        const planos = {
+
+            basico: {
+                nome: "🌱 Plano Básico",
+                beneficios: [
                     "1 Sessão de VOD Review (Replay)",
                     "Guia em PDF de Rotinas de Treino",
                     "Acesso ao Discord de Alunos"
                 ]
             },
-            pro:{
-                nome:"🔥 Plano Pro",
-                beneficios:[
+
+            pro: {
+                nome: "🔥 Plano Pro",
+
+                beneficios: [
                     "3 Sessões Ao Vivo (1h cada)",
                     "Análise de Sensibilidade/Config",
                     "Tudo do Plano Básico",
                     "Grupo VIP de Discussão Tática"
                 ]
             },
-            champion:{
-                nome:"👑 Plano Champion",
-                beneficios:[
+
+            champion: {
+
+                nome: "👑 Plano Champion",
+
+                beneficios: [
                     "Acompanhamento Semanal 1-on-1",
                     "Partidas Duo In-Game com o Pro",
                     "Suporte VIP via WhatsApp",
@@ -2693,18 +2869,1329 @@ async function carregarPlano(){
             }
         };
 
-        const info=dados[plano.plano];
+        const info = planos[chavePlano];
 
         if(!info){
-            box.style.display="none";
+
+            if(box) box.style.display = "none";
+            if(semPlano) semPlano.style.display = "block";
+
             return;
         }
 
-        titulo.innerText=info.nome;
-        beneficios.innerHTML=info.beneficios.map(b=>`<li>✅ ${b}</li>`).join("");
-        box.style.display="block";
+        titulo.innerText = info.nome;
+
+
+// ========================================
+// CARDS DOS BENEFÍCIOS
+// ========================================
+
+const beneficiosCards = {
+
+    vod: {
+        titulo: "🎥 VOD Review",
+        descricao: "Assista a uma aula de VOD Review e veja como o coach analisa uma gameplay.",
+        botao: "Assistir Aula",
+        acao: "abrirVODReview()"
+    },
+
+    guia: {
+        titulo: "📄 Guia de Treino",
+        descricao: "Acesse seu guia em PDF com rotinas e exercícios de treino.",
+        botao: "Abrir Guia",
+        acao: "abrirGuiaTreino()"
+    },
+
+    discord: {
+        titulo: "💬 Discord de Alunos",
+        descricao: "Entre no Discord exclusivo dos alunos Bepro.gg.",
+        botao: "Entrar no Discord",
+        acao: "abrirDiscordAlunos()"
+    },
+
+    sessoes: {
+        titulo: "🎮 3 Sessões Ao Vivo",
+        descricao: "Marque suas sessões individuais com o coach.",
+        botao: "Marcar Aula",
+        acao: "abrirSessoesAoVivo()"
+    },
+
+    config: {
+        titulo: "⚙️ Análise de Config",
+        descricao: "Analise sua sensibilidade e configurações de acordo com seu estilo de jogo.",
+        botao: "Analisar Config",
+        acao: "abrirAnaliseConfig()"
+    },
+
+    vip: {
+        titulo: "💬 Grupo VIP",
+        descricao: "Acesse o grupo VIP para participar das discussões táticas.",
+        botao: "Acessar Grupo",
+        acao: "abrirGrupoVIP()"
+    },
+
+    acompanhamento: {
+        titulo: "👑 Acompanhamento 1-on-1",
+        descricao: "Acompanhamento individual semanal com o coach.",
+        botao: "Acessar",
+        acao: "abrirAcompanhamento()"
+    },
+
+    duo: {
+        titulo: "🎮 Duo In-Game",
+        descricao: "Jogue partidas Duo com o Pro Player.",
+        botao: "Agendar Duo",
+        acao: "abrirDuoInGame()"
+    },
+
+    whatsapp: {
+        titulo: "📱 Suporte VIP",
+        descricao: "Tenha suporte exclusivo pelo WhatsApp.",
+        botao: "Abrir WhatsApp",
+        acao: "abrirWhatsAppVIP()"
+    },
+
+    relatorio: {
+        titulo: "📊 Relatório Mensal",
+        descricao: "Veja seu relatório de evolução e desempenho.",
+        botao: "Ver Relatório",
+        acao: "abrirRelatorioMensal()"
+    }
+
+};
+
+
+// ========================================
+// BENEFÍCIOS DE CADA PLANO
+// ========================================
+
+const beneficiosPorPlano = {
+
+    basico: [
+        "vod",
+        "guia",
+        "discord"
+    ],
+
+    pro: [
+        "vod",
+        "guia",
+        "discord",
+        "sessoes",
+        "config",
+        "vip"
+    ],
+
+    champion: [
+        "vod",
+        "guia",
+        "discord",
+        "sessoes",
+        "config",
+        "vip",
+        "acompanhamento",
+        "duo",
+        "whatsapp",
+        "relatorio"
+    ]
+
+};
+
+
+// ========================================
+// MONTA OS CARDS
+// ========================================
+
+const listaBeneficios =
+    beneficiosPorPlano[chavePlano] || [];
+
+
+beneficios.innerHTML = listaBeneficios
+    .map(chave => {
+
+        const beneficio = beneficiosCards[chave];
+
+        return `
+            <div
+                class="beneficio-card"
+            >
+
+                <div class="beneficio-card-icone">
+                    ${beneficio.titulo.split(" ")[0]}
+                </div>
+
+                <h3>
+                    ${sanitizarTexto(
+                        beneficio.titulo.substring(
+                            beneficio.titulo.indexOf(" ") + 1
+                        )
+                    )}
+                </h3>
+
+                <p>
+                    ${sanitizarTexto(
+                        beneficio.descricao
+                    )}
+                </p>
+
+                <div class="beneficio-status">
+                    ✓ LIBERADO
+                </div>
+
+                <button
+                    class="beneficio-btn"
+                    onclick="${beneficio.acao}"
+                >
+                    ${beneficio.botao}
+                </button>
+
+            </div>
+        `;
+
+    })
+    .join("");
+
+        box.style.display = "block";
+
+        if(semPlano){
+            semPlano.style.display = "none";
+        }
+
+        localStorage.setItem(
+            "planoAtivo",
+            chavePlano
+        );
 
     }catch(error){
-        console.error("Erro ao carregar plano:",error);
+        console.error(
+            "Erro ao carregar plano:",
+            error
+        );
     }
 }
+
+// ========================================
+// FUNÇÕES DOS BENEFÍCIOS
+// ========================================
+
+// 🎥 VOD REVIEW
+function abrirVODReview(){
+
+    const modal =
+        document.getElementById("modal-vod-review");
+
+    if(!modal){
+        console.error("Modal VOD Review não encontrado.");
+        return;
+    }
+
+    modal.style.display = "flex";
+
+}
+
+// 📄 GUIA DE TREINO
+function abrirGuiaTreino(){
+
+    alert("📄 Aqui vai abrir o Guia de Treino em PDF.");
+
+}
+
+// 💬 DISCORD
+function abrirDiscordAlunos(){
+
+    alert("💬 Aqui vai abrir o Discord dos alunos.");
+
+}
+
+// 🎮 SESSÕES AO VIVO
+function abrirSessoesAoVivo(){
+
+    const modal = document.getElementById("modal-sessoes");
+
+    if(!modal){
+        console.error("Modal de sessões não encontrado.");
+        return;
+    }
+
+    modal.style.display = "flex";
+
+    carregarCalendarioAulas();
+
+}
+
+function abrirAnaliseConfig(){
+
+    const modal =
+        document.getElementById("modal-analise-config");
+
+    if(!modal){
+        console.error("Modal de análise não encontrado.");
+        return;
+    }
+
+    modal.style.display = "flex";
+
+    mostrarEtapaConfig("estilo");
+
+}
+
+// 💬 GRUPO VIP
+function abrirGrupoVIP(){
+
+    alert("💬 Aqui vai abrir o Grupo VIP.");
+
+}
+
+// 👑 ACOMPANHAMENTO
+function abrirAcompanhamento(){
+
+    alert("👑 Aqui vai abrir seu acompanhamento 1-on-1.");
+
+}
+
+// 🎮 DUO
+function abrirDuoInGame(){
+
+    alert("🎮 Aqui você poderá agendar sua partida Duo com o Pro.");
+
+}
+
+// 📱 WHATSAPP
+function abrirWhatsAppVIP(){
+
+    alert("📱 Aqui vai abrir o suporte VIP.");
+
+}
+
+// 📊 RELATÓRIO
+function abrirRelatorioMensal(){
+
+    alert("📊 Aqui vai abrir seu relatório mensal.");
+
+}
+
+// ========================================
+// SESSÕES AO VIVO
+// ========================================
+
+let aulaSelecionada = {
+    data: null,
+    horario: null
+};
+
+
+// FECHAR MODAL
+
+function fecharSessoesAoVivo(){
+
+    const modal = document.getElementById(
+        "modal-sessoes"
+    );
+
+    if(modal){
+        modal.style.display = "none";
+    }
+
+}
+
+
+// ABRIR CALENDÁRIO
+
+function mostrarCalendarioSessoes(){
+
+    document.getElementById(
+        "sessao-etapa-video"
+    ).style.display = "none";
+
+    document.getElementById(
+        "sessao-etapa-calendario"
+    ).style.display = "block";
+
+    carregarCalendarioAulas();
+
+}
+
+
+async function carregarCalendarioAulas(){
+
+    const calendario =
+        document.getElementById(
+            "calendario-aulas"
+        );
+
+    if(!calendario) return;
+
+    calendario.innerHTML = `
+        <p style="color:#94a3b8;">
+            ⏳ Carregando dias disponíveis...
+        </p>
+    `;
+
+    try{
+
+        const resposta = await fetch(
+            "http://localhost:3000/dias-disponiveis"
+        );
+
+        const diasDisponiveis =
+            await resposta.json();
+
+        if(!resposta.ok){
+
+            throw new Error(
+                diasDisponiveis.error ||
+                "Erro ao buscar dias."
+            );
+        }
+
+        calendario.innerHTML = "";
+
+        if(!diasDisponiveis.length){
+
+            calendario.innerHTML = `
+                <p style="color:#94a3b8;">
+                    Nenhum dia disponível no momento.
+                </p>
+            `;
+
+            return;
+
+        }
+
+        diasDisponiveis.forEach(item => {
+
+            const dataString =
+                String(item.data)
+                    .substring(0,10);
+
+            const data =
+                new Date(
+                    dataString + "T12:00:00"
+                );
+
+            const botao =
+                document.createElement(
+                    "button"
+                );
+
+            botao.className =
+                "calendario-dia disponivel";
+
+            const nomesDias = [
+                "Dom",
+                "Seg",
+                "Ter",
+                "Qua",
+                "Qui",
+                "Sex",
+                "Sáb"
+            ];
+
+            botao.innerHTML = `
+
+                <span class="dia-numero">
+                    ${data.getDate()}
+                </span>
+
+                <span class="dia-nome">
+                    ${nomesDias[data.getDay()]}
+                </span>
+
+            `;
+
+            botao.onclick = () => {
+
+                selecionarDiaAula(
+                    data,
+                    botao
+                );
+            };
+
+            calendario.appendChild(
+                botao
+            );
+        });
+
+    }catch(error){
+
+        console.error(
+            "Erro ao carregar calendário:",
+            error
+        );
+
+        calendario.innerHTML = `
+            <p style="color:#ef4444;">
+                ❌ Erro ao carregar calendário.
+            </p>
+        `;
+    }
+}
+
+// SELECIONAR DIA
+
+function selecionarDiaAula(
+    data,
+    elemento
+){
+
+    document
+        .querySelectorAll(
+            ".calendario-dia"
+        )
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "selecionado"
+            );
+
+        });
+
+
+    elemento.classList.add(
+        "selecionado"
+    );
+
+
+    const dataFormatada =
+        data.toLocaleDateString(
+            "pt-BR"
+        );
+
+
+    aulaSelecionada.data =
+        data.toISOString().split("T")[0];
+
+
+    aulaSelecionada.horario =
+        null;
+
+
+    document.getElementById(
+        "dia-selecionado"
+    ).innerText =
+        `📅 ${dataFormatada}`;
+
+
+    document.getElementById(
+        "horarios-aula"
+    ).style.display = "block";
+
+
+    carregarHorariosAula();
+
+}
+
+
+// HORÁRIOS DISPONÍVEIS
+
+async function carregarHorariosAula(){
+
+    const lista =
+        document.getElementById(
+            "lista-horarios"
+        );
+
+    if(!aulaSelecionada.data){
+
+        return;
+
+    }
+
+    lista.innerHTML = `
+        <p style="color:#94a3b8;">
+            ⏳ Carregando horários disponíveis...
+        </p>
+    `;
+
+    try{
+
+        const resposta = await fetch(
+            `http://localhost:3000/horarios-disponiveis?data=${encodeURIComponent(
+                aulaSelecionada.data
+            )}`
+        );
+
+        const horarios = await resposta.json();
+
+
+        if(!resposta.ok){
+
+            throw new Error(
+                horarios.error ||
+                "Erro ao buscar horários."
+            );
+        }
+
+        if(!horarios.length){
+
+            lista.innerHTML = `
+                <p style="color:#ef4444;">
+                    ❌ Não existem horários disponíveis
+                    para este dia.
+                </p>
+            `;
+
+            document.getElementById(
+                "confirmacao-aula"
+            ).style.display = "none";
+
+            return;
+
+        }
+
+        lista.innerHTML = "";
+
+        horarios.forEach(item => {
+            const botao =
+                document.createElement(
+                    "button"
+                );
+
+            botao.className =
+                "horario-btn";
+
+            // MySQL TIME pode vir como "14:00:00"
+            const horario =
+                String(item.horario)
+                    .substring(0,5);
+
+            botao.innerText =
+                horario;
+
+            botao.onclick = () => {
+
+                selecionarHorario(
+                    horario,
+                    botao
+                );
+            };
+
+            lista.appendChild(
+                botao
+            );
+        });
+
+
+    }catch(error){
+
+        console.error(
+            "Erro ao carregar horários:",
+            error
+        );
+
+        lista.innerHTML = `
+            <p style="color:#ef4444;">
+                ❌ Não foi possível carregar
+                os horários.
+            </p>
+        `;
+    }
+}
+
+
+// SELECIONAR HORÁRIO
+
+function selecionarHorario(
+    horario,
+    elemento
+){
+
+    document
+        .querySelectorAll(
+            ".horario-btn"
+        )
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "selecionado"
+            );
+
+        });
+
+
+    elemento.classList.add(
+        "selecionado"
+    );
+
+
+    aulaSelecionada.horario =
+        horario;
+
+
+    document.getElementById(
+        "confirmacao-aula"
+    ).style.display = "block";
+
+
+    const data =
+        new Date(
+            aulaSelecionada.data +
+            "T12:00:00"
+        );
+
+
+    document.getElementById(
+        "resumo-aula"
+    ).innerHTML = `
+        📅 <strong>Data:</strong>
+        ${data.toLocaleDateString("pt-BR")}
+        <br>
+
+        🕐 <strong>Horário:</strong>
+        ${horario}
+        <br><br>
+
+        Confira os dados antes de confirmar.
+    `;
+
+}
+// CONFIRMAR AULA
+
+async function confirmarAula(){
+
+    if(
+        !aulaSelecionada.data ||
+        !aulaSelecionada.horario
+    ){
+
+        alert(
+            "Selecione uma data e um horário."
+        );
+
+        return;
+
+    }
+
+    const usuario =
+        JSON.parse(
+            localStorage.getItem("usuario")
+        );
+
+    if(!usuario?.email){
+
+        alert(
+            "Você precisa estar logado."
+        );
+
+        return;
+
+    }
+
+    try{
+
+        const resposta = await fetch(
+            "http://localhost:3000/agendar-aula",
+            {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    email:
+                        usuario.email,
+
+                    data:
+                        aulaSelecionada.data,
+
+                    horario:
+                        aulaSelecionada.horario
+
+                })
+            }
+        );
+
+        const resultado =
+            await resposta.json();
+
+        if(!resposta.ok){
+
+            throw new Error(
+                resultado.error ||
+                "Não foi possível agendar a aula."
+            );
+        }
+
+        const data =
+            new Date(
+                aulaSelecionada.data +
+                "T12:00:00"
+            );
+
+        document.getElementById(
+            "sessao-etapa-calendario"
+        ).style.display = "none";
+
+        document.getElementById(
+            "sessao-aula-confirmada"
+        ).style.display = "block";
+
+        document.getElementById(
+            "aula-confirmada-info"
+        ).innerHTML = `
+
+            📅 <strong>Data:</strong>
+            ${data.toLocaleDateString("pt-BR")}
+
+            <br>
+
+            🕐 <strong>Horário:</strong>
+            ${aulaSelecionada.horario}
+
+            <br><br>
+
+            🎮 Sua sessão foi registrada
+            com sucesso.
+
+        `;
+
+    }catch(error){
+
+        console.error(
+            "Erro ao confirmar aula:",
+            error
+        );
+
+        alert(
+            "❌ " + error.message
+        );
+    }
+}
+
+// ========================================
+// 🤖 ANÁLISE DE CONFIGURAÇÃO
+// ========================================
+
+let configAnalise = {
+    estilo: null
+};
+
+
+// FECHAR
+
+function fecharAnaliseConfig(){
+
+    const modal =
+        document.getElementById(
+            "modal-analise-config"
+        );
+
+    if(modal){
+        modal.style.display = "none";
+    }
+
+}
+// MOSTRAR ETAPA
+
+function mostrarEtapaConfig(etapa){
+
+    const etapas = [
+        "estilo",
+        "dados",
+        "resultado"
+    ];
+
+    etapas.forEach(nome => {
+
+        const elemento =
+            document.getElementById(
+                `config-etapa-${nome}`
+            );
+
+        if(elemento){
+
+            elemento.style.display =
+                nome === etapa
+                ? "block"
+                : "none";
+        }
+    });
+}
+// ESCOLHER ESTILO
+function selecionarEstiloConfig(estilo){
+
+    configAnalise.estilo =
+        estilo;
+
+    mostrarEtapaConfig("dados");
+
+}
+// ANALISAR
+function analisarConfiguracao(){
+
+    const sensX =
+        parseFloat(
+            document.getElementById(
+                "config-sens-x"
+            ).value
+        );
+
+    const sensY =
+        parseFloat(
+            document.getElementById(
+                "config-sens-y"
+            ).value
+        );
+
+    const dpi =
+        parseInt(
+            document.getElementById(
+                "config-dpi"
+            ).value
+        );
+
+    const fov =
+        parseInt(
+            document.getElementById(
+                "config-fov"
+            ).value
+        );
+
+    const polling =
+        parseInt(
+            document.getElementById(
+                "config-polling"
+            ).value
+        );
+
+    if(
+        !Number.isFinite(sensX) ||
+        !Number.isFinite(sensY) ||
+        !Number.isFinite(dpi) ||
+        !Number.isFinite(fov) ||
+        !Number.isFinite(polling)
+    ){
+
+        alert(
+            "Preencha todas as configurações."
+        );
+
+        return;
+
+    }
+
+    if(
+        sensX <= 0 ||
+        sensY <= 0 ||
+        dpi <= 0
+    ){
+
+        alert(
+            "Digite valores válidos."
+        );
+
+        return;
+
+    }
+
+    const resultado =
+        calcularAnaliseConfig({
+
+            sensX,
+            sensY,
+            dpi,
+            fov,
+            polling,
+
+            estilo:
+                configAnalise.estilo
+
+        });
+
+    mostrarResultadoConfig(
+        resultado
+    );
+}
+// ========================================
+// CÁLCULO DA ANÁLISE
+// ========================================
+
+function calcularAnaliseConfig(config){
+
+    let score = 100;
+
+    const avisos = [];
+
+    const recomendacoes = [];
+    /*
+        eDPI = DPI × sensibilidade
+
+        Essa métrica nos ajuda a avaliar
+        o nível geral de sensibilidade.
+    */
+    const edpi =
+        config.dpi *
+        ((config.sensX + config.sensY) / 2);
+
+
+    // ====================================
+    // ESTILO RÁPIDO
+    // ====================================
+
+    if(config.estilo === "rapido"){
+
+        if(edpi < 200){
+
+            score -= 20;
+
+            avisos.push(
+                "Sua sensibilidade pode estar baixa para um estilo mais rápido."
+            );
+
+            recomendacoes.push(
+                "Considere aumentar um pouco a sensibilidade para facilitar flicks e movimentos rápidos."
+            );
+        }
+
+        else if(edpi > 1000){
+
+            score -= 15;
+
+            avisos.push(
+                "Sua sensibilidade está muito alta."
+            );
+
+            recomendacoes.push(
+                "Uma sensibilidade um pouco menor pode melhorar o controle sem perder velocidade."
+            );
+        }
+
+        else{
+
+            recomendacoes.push(
+                "Sua sensibilidade está dentro de uma faixa interessante para um estilo mais rápido."
+            );
+        }
+    }
+    // ====================================
+    // ESTILO PRECISO
+    // ====================================
+
+    if(config.estilo === "preciso"){
+
+        if(edpi > 800){
+
+            score -= 20;
+
+            avisos.push(
+                "Sua sensibilidade pode estar alta para um estilo focado em precisão."
+            );
+
+            recomendacoes.push(
+                "Considere reduzir um pouco a sensibilidade para ganhar mais estabilidade nos micro-ajustes."
+            );
+        }
+
+        else if(edpi < 150){
+
+            score -= 10;
+
+            avisos.push(
+                "Sua sensibilidade está bastante baixa."
+            );
+
+            recomendacoes.push(
+                "Uma pequena elevação pode facilitar correções rápidas de mira."
+            );
+        }
+
+        else{
+
+            recomendacoes.push(
+                "Sua sensibilidade está em uma faixa interessante para um estilo mais preciso."
+            );
+        }
+    }
+    // ====================================
+    // POLLING RATE
+    // ====================================
+
+    if(config.polling < 500){
+
+        score -= 8;
+
+        recomendacoes.push(
+            "Seu polling rate está abaixo de 500 Hz. Se seu mouse permitir, considere testar 1000 Hz."
+        );
+
+    }
+
+    else if(config.polling >= 1000){
+
+        recomendacoes.push(
+            "Seu polling rate está adequado para uma configuração moderna."
+        );
+    }
+    // ====================================
+    // FOV
+    // ====================================
+
+    if(config.fov < 90){
+
+        score -= 8;
+
+        recomendacoes.push(
+            "Seu FOV está relativamente baixo. Vale testar um campo de visão maior se o jogo permitir."
+        );
+    }
+
+    if(config.fov > 120){
+
+        score -= 8;
+
+        recomendacoes.push(
+            "Seu FOV está bastante alto. Teste valores menores se estiver tendo dificuldade para identificar alvos distantes."
+        );
+    }
+
+    score =
+        Math.max(
+            0,
+            Math.min(100, score)
+        );
+
+    let classificacao;
+
+    if(score >= 85){
+
+        classificacao =
+            "Excelente";
+    }
+
+    else if(score >= 70){
+
+        classificacao =
+            "Boa";
+    }
+
+    else if(score >= 50){
+
+        classificacao =
+            "Pode melhorar";
+    }
+
+    else{
+
+        classificacao =
+            "Precisa de ajustes";
+    }
+
+    return {
+
+        score,
+        classificacao,
+        edpi,
+        avisos,
+        recomendacoes,
+        estilo:
+            config.estilo === "rapido"
+            ? "⚡ Mais rápido"
+            : "🎯 Mais preciso"
+    };
+}
+
+function mostrarResultadoConfig(resultado){
+
+    const container =
+        document.getElementById(
+            "resultado-config"
+        );
+
+
+    const statusClass =
+        resultado.score >= 70
+        ? "config-ok"
+        : "config-warning";
+
+
+    const avisosHTML =
+        resultado.avisos.length
+
+        ?
+
+        `
+            <div class="config-resultado-card">
+
+                <h3>
+                    ⚠️ Pontos de atenção
+                </h3>
+
+                ${resultado.avisos
+                    .map(aviso => `
+                        <p>
+                            ${sanitizarTexto(aviso)}
+                        </p>
+                    `)
+                    .join("")
+                }
+
+            </div>
+        `
+
+        :
+
+        `
+            <div class="config-resultado-card">
+
+                <h3 class="config-ok">
+                    ✅ Nenhum problema importante encontrado
+                </h3>
+
+            </div>
+        `;
+
+
+    const recomendacoesHTML =
+        resultado.recomendacoes
+            .map(recomendacao => `
+                <p>
+                    💡 ${sanitizarTexto(recomendacao)}
+                </p>
+            `)
+            .join("");
+
+
+    container.innerHTML = `
+
+        <div class="config-resultado-card">
+
+            <h3>
+                ${resultado.estilo}
+            </h3>
+
+            <p>
+                Sua configuração foi classificada como:
+            </p>
+
+            <h2 class="${statusClass}">
+                ${resultado.classificacao}
+            </h2>
+
+
+            <div class="config-score">
+
+                <strong>
+                    Compatibilidade:
+                    ${resultado.score}%
+                </strong>
+
+                <div class="config-score-bar">
+
+                    <div
+                        class="config-score-fill"
+                        style="width:${resultado.score}%"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <p>
+                <strong>eDPI:</strong>
+                ${Math.round(resultado.edpi)}
+            </p>
+
+        </div>
+
+
+        ${avisosHTML}
+
+
+        <div class="config-resultado-card">
+
+            <h3>
+                💡 Recomendações
+            </h3>
+
+            <div class="config-recomendacao">
+
+                ${recomendacoesHTML}
+
+            </div>
+
+        </div>
+
+    `;
+
+    mostrarEtapaConfig(
+        "resultado"
+    );
+}
+
+// NOVA ANÁLISE
+
+function novaAnaliseConfig(){
+
+    configAnalise = {
+        estilo:null
+    };
+
+    document.getElementById(
+        "config-sens-x"
+    ).value = "";
+
+    document.getElementById(
+        "config-sens-y"
+    ).value = "";
+
+    document.getElementById(
+        "config-dpi"
+    ).value = "";
+
+    document.getElementById(
+        "config-fov"
+    ).value = "";
+
+    document.getElementById(
+        "config-polling"
+    ).value = "";
+
+    mostrarEtapaConfig(
+        "estilo"
+    );
+}
+
+// ========================================
+// 🎥 VOD REVIEW
+// ========================================
+
+function fecharVODReview(){
+
+    const modal =
+        document.getElementById(
+            "modal-vod-review"
+        );
+
+    if(modal){
+
+        modal.style.display = "none";
+
+    }
+}
+
+// ========================================
+// ABRIR VÍDEO
+// ========================================
+
+function abrirVideoVOD(){
+
+    /*
+        Coloque aqui o link do vídeo
+        que você quiser abrir.
+    */
+
+    const video =
+        "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI";
+
+
+    window.open(
+        video,
+        "_blank"
+    );
+}
+

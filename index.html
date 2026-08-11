@@ -70,6 +70,18 @@
         <span style="display: block; width: 100%; text-align: center;">Coach/Aulas</span>
     </div>
 
+    <div class="aba" onclick="abrirMeuPlano()">
+
+    <div style="display: block; width: 100%; text-align: center;">
+        <i data-lucide="trophy" class="menu-icone"></i>
+    </div>
+
+    <span style="display: block; width: 100%; text-align: center;">
+        Meu Plano
+    </span>
+
+</div>
+
     <div id="menu-pedidos" class="aba" onclick="trocarAba('pedidos')" style="display:none;">
         <div style="display: block; width: 100%; text-align: center;"><i data-lucide="package" class="menu-icone"></i></div>
         <span style="display: block; width: 100%; text-align: center;">Meus Pedidos</span>
@@ -592,6 +604,106 @@
         </div>
     </section>
 
+    <section id="plano" class="conteudo">
+
+    <h2 class="section-title">
+        🏆 Meu Plano
+    </h2>
+
+    <div
+        id="plano-ativo"
+        class="card"
+        style="
+            max-width:700px;
+            margin:25px auto;
+            padding:30px;
+            display:none;
+        "
+    >
+
+        <h3
+            id="plano-titulo"
+            style="
+                color:#00d4ff;
+                font-size:28px;
+                margin-bottom:10px;
+            "
+        ></h3>
+
+        <p
+            id="plano-status"
+            style="
+                color:#22c55e;
+                font-weight:bold;
+            "
+        >
+            ● Plano ativo
+        </p>
+
+        <p
+            style="
+                color:#94a3b8;
+                margin-bottom:20px;
+            "
+        >
+            Confira abaixo todos os benefícios liberados para você.
+        </p>
+
+        <div
+            style="
+                background:#0d1117;
+                border:1px solid #1f293d;
+                border-radius:10px;
+                padding:20px;
+            "
+        >
+
+            <h4 style="color:#fff;margin-top:0;">
+                🎁 Benefícios do seu plano
+            </h4>
+
+            <div
+    id="plano-beneficios"
+    style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+        gap:18px;
+        margin-top:20px;
+    "
+></div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="sem-plano"
+        class="card"
+        style="
+            max-width:700px;
+            margin:25px auto;
+            padding:35px;
+            text-align:center;
+        "
+    >
+
+        <h3 style="color:#fff;">
+            Você ainda não possui um plano ativo.
+        </h3>
+
+        <p style="color:#94a3b8;margin:15px 0;">
+            Escolha um plano de coaching para liberar seus benefícios.
+        </p>
+
+        <button onclick="trocarAba('coach');abrirModalPlanos();">
+            🏆 Escolher Plano
+        </button>
+
+    </div>
+
+</section>
+
     <section id="perfil" class="conteudo">
 
     <h2 class="section-title">👤 Minha Conta</h2>
@@ -620,11 +732,6 @@
 
     </div>
 
-    <div id="plano-ativo" class="card" style="max-width:700px;margin:25px auto;display:none;">
-    <h3 id="plano-titulo" style="color:#00d4ff;"></h3>
-    <p id="plano-status" style="color:#22c55e;font-weight:bold;">● Plano ativo</p>
-    <ul id="plano-beneficios" style="color:#cbd5e1;line-height:2;text-align:left;"></ul>
-</div>
 
 </section>
 
@@ -648,5 +755,546 @@
     }
 </script>
 <script src="script.js"></script>
+<!-- ========================================
+     MODAL - SESSÕES AO VIVO
+======================================== -->
+
+<div
+    id="modal-sessoes"
+    class="modal-sessoes"
+    style="display:none;"
+>
+
+    <div class="modal-sessoes-conteudo">
+
+        <!-- BOTÃO FECHAR -->
+
+        <button
+            class="modal-sessoes-fechar"
+            onclick="fecharSessoesAoVivo()"
+        >
+            ×
+        </button>
+
+
+        <!-- TÍTULO -->
+
+        <div class="sessao-header">
+
+            <div class="sessao-icone">
+                🎮
+            </div>
+
+            <div>
+
+                <h2>
+                    3 Sessões Ao Vivo
+                </h2>
+
+                <p>
+                    Marque sua sessão individual com o coach.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ETAPA 1 -->
+
+        <div id="sessao-etapa-video">
+
+            <h3>
+                🎥 Antes de marcar sua aula
+            </h3>
+
+            <p class="sessao-descricao">
+                Assista ao vídeo abaixo para conhecer
+                como funciona uma sessão ao vivo.
+            </p>
+
+
+            <div class="video-aula-exemplo">
+
+                <!--
+                    TROQUE O LINK DO VÍDEO AQUI
+                -->
+
+                <iframe
+                    src="https://www.youtube.com/embed/SEU_VIDEO_AQUI"
+                    title="Exemplo de aula"
+                    frameborder="0"
+                    allowfullscreen
+                ></iframe>
+
+            </div>
+
+
+            <button
+                class="sessao-btn-principal"
+                onclick="mostrarCalendarioSessoes()"
+            >
+                📅 Marcar minha aula
+            </button>
+
+        </div>
+
+
+        <!-- ETAPA 2 -->
+
+        <div
+            id="sessao-etapa-calendario"
+            style="display:none;"
+        >
+
+            <h3>
+                📅 Escolha o dia da sua aula
+            </h3>
+
+            <p class="sessao-descricao">
+                Selecione um dos dias disponíveis.
+            </p>
+
+
+            <div
+                id="calendario-aulas"
+                class="calendario-aulas"
+            ></div>
+
+
+            <div
+                id="horarios-aula"
+                class="horarios-aula"
+                style="display:none;"
+            >
+
+                <h3>
+                    🕐 Escolha o horário
+                </h3>
+
+                <p
+                    id="dia-selecionado"
+                    class="dia-selecionado"
+                ></p>
+
+
+                <div
+                    id="lista-horarios"
+                    class="lista-horarios"
+                ></div>
+
+            </div>
+
+
+            <div
+                id="confirmacao-aula"
+                style="display:none;"
+            >
+
+                <div class="confirmacao-aula-box">
+
+                    <h3>
+                        ✅ Confirmar aula
+                    </h3>
+
+                    <p id="resumo-aula"></p>
+
+                    <button
+                        class="sessao-btn-principal"
+                        onclick="confirmarAula()"
+                    >
+                        ✅ Confirmar Aula
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ETAPA 3 -->
+
+        <div
+            id="sessao-aula-confirmada"
+            style="display:none;"
+        >
+
+            <div class="aula-confirmada">
+
+                <div class="aula-confirmada-icone">
+                    ✅
+                </div>
+
+                <h2>
+                    Aula marcada com sucesso!
+                </h2>
+
+                <p id="aula-confirmada-info"></p>
+
+                <button
+                    class="sessao-btn-principal"
+                    onclick="fecharSessoesAoVivo()"
+                >
+                    Fechar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================
+     MODAL - ANÁLISE DE CONFIG
+======================================== -->
+
+<div
+    id="modal-analise-config"
+    class="modal-analise-config"
+    style="display:none;"
+>
+
+    <div class="modal-analise-conteudo">
+
+        <button
+            class="modal-analise-fechar"
+            onclick="fecharAnaliseConfig()"
+        >
+            ×
+        </button>
+
+
+        <!-- ================================
+             ETAPA 1 - ESTILO
+        ================================= -->
+
+        <div
+            id="config-etapa-estilo"
+            class="config-etapa"
+        >
+
+            <div class="config-bot-icon">
+                🤖
+            </div>
+
+            <h2>
+                Análise de Config
+            </h2>
+
+            <p>
+                Vamos descobrir se sua configuração
+                combina com o seu estilo de jogo.
+            </p>
+
+            <h3>
+                Qual estilo você prefere?
+            </h3>
+
+
+            <div class="config-estilos">
+
+                <button
+                    class="config-estilo-btn"
+                    onclick="selecionarEstiloConfig('rapido')"
+                >
+
+                    <span>
+                        ⚡
+                    </span>
+
+                    <strong>
+                        Mais rápido
+                    </strong>
+
+                    <small>
+                        Prefiro movimentos rápidos,
+                        flicks e respostas ágeis.
+                    </small>
+
+                </button>
+
+
+                <button
+                    class="config-estilo-btn"
+                    onclick="selecionarEstiloConfig('preciso')"
+                >
+
+                    <span>
+                        🎯
+                    </span>
+
+                    <strong>
+                        Mais preciso
+                    </strong>
+
+                    <small>
+                        Prefiro controle,
+                        estabilidade e precisão.
+                    </small>
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================
+             ETAPA 2 - CONFIGURAÇÕES
+        ================================= -->
+
+        <div
+            id="config-etapa-dados"
+            class="config-etapa"
+            style="display:none;"
+        >
+
+            <div class="config-bot-icon">
+                ⚙️
+            </div>
+
+            <h2>
+                Suas configurações
+            </h2>
+
+            <p>
+                Informe suas configurações atuais
+                para fazermos a análise.
+            </p>
+
+
+            <div class="config-form">
+
+                <label>
+                    Sensibilidade X
+
+                    <input
+                        type="number"
+                        id="config-sens-x"
+                        step="0.01"
+                        placeholder="Ex: 0.35"
+                    >
+
+                </label>
+
+
+                <label>
+                    Sensibilidade Y
+
+                    <input
+                        type="number"
+                        id="config-sens-y"
+                        step="0.01"
+                        placeholder="Ex: 0.35"
+                    >
+
+                </label>
+
+
+                <label>
+                    DPI
+
+                    <input
+                        type="number"
+                        id="config-dpi"
+                        placeholder="Ex: 800"
+                    >
+
+                </label>
+
+
+                <label>
+                    FOV
+
+                    <input
+                        type="number"
+                        id="config-fov"
+                        placeholder="Ex: 103"
+                    >
+
+                </label>
+
+
+                <label>
+                    Polling Rate
+
+                    <select id="config-polling">
+
+                        <option value="">
+                            Selecione
+                        </option>
+
+                        <option value="125">
+                            125 Hz
+                        </option>
+
+                        <option value="250">
+                            250 Hz
+                        </option>
+
+                        <option value="500">
+                            500 Hz
+                        </option>
+
+                        <option value="1000">
+                            1000 Hz
+                        </option>
+
+                        <option value="2000">
+                            2000 Hz
+                        </option>
+
+                        <option value="4000">
+                            4000 Hz
+                        </option>
+
+                        <option value="8000">
+                            8000 Hz
+                        </option>
+
+                    </select>
+
+                </label>
+
+            </div>
+
+
+            <button
+                class="config-btn-principal"
+                onclick="analisarConfiguracao()"
+            >
+                🤖 Analisar minha configuração
+            </button>
+
+        </div>
+
+
+        <!-- ================================
+             ETAPA 3 - RESULTADO
+        ================================= -->
+
+        <div
+            id="config-etapa-resultado"
+            class="config-etapa"
+            style="display:none;"
+        >
+
+            <div class="config-bot-icon">
+                🤖
+            </div>
+
+            <h2>
+                Resultado da análise
+            </h2>
+
+            <div
+                id="resultado-config"
+                class="resultado-config"
+            ></div>
+
+            <button
+                class="config-btn-principal"
+                onclick="novaAnaliseConfig()"
+            >
+                🔄 Fazer nova análise
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================
+     MODAL - VOD REVIEW
+======================================== -->
+
+<div
+    id="modal-vod-review"
+    class="modal-vod-review"
+    style="display:none;"
+>
+
+    <div class="modal-vod-conteudo">
+
+        <button
+            class="modal-vod-fechar"
+            onclick="fecharVODReview()"
+        >
+            ×
+        </button>
+
+
+        <div class="vod-header">
+
+            <div class="vod-icone">
+                🎥
+            </div>
+
+            <div>
+
+                <h2>
+                    VOD Review
+                </h2>
+
+                <p>
+                    Analise uma gameplay com o método Bepro.gg.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- VÍDEO -->
+
+        <div class="vod-video">
+
+            <iframe
+                id="vod-video-player"
+                src="https://www.youtube.com/embed/SEU_VIDEO_AQUI"
+                title="VOD Review Bepro.gg"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+            ></iframe>
+
+        </div>
+
+
+        <!-- INFORMAÇÕES -->
+
+        <div class="vod-info">
+
+            <span class="vod-tag">
+                🎯 VOD REVIEW
+            </span>
+
+            <h3 id="vod-titulo">
+                Análise de Gameplay
+            </h3>
+
+            <p id="vod-descricao">
+                Assista à análise completa e observe
+                os principais pontos destacados pelo coach.
+            </p>
+
+        </div>
+
+
+        <button
+            class="vod-btn"
+            onclick="abrirVideoVOD()"
+        >
+            ▶ Assistir VOD
+        </button>
+
+    </div>
+
+</div>
+
 </body>
 </html>

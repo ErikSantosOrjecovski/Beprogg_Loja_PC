@@ -327,41 +327,313 @@ app.get("/meu-plano",(req,res)=>{
 });
 
 // ==========================================
-// 🎓 BUSCAR PLANO ATIVO DO USUÁRIO
+// 🎮 SISTEMA DE AGENDAMENTO DE AULAS
 // ==========================================
-app.get("/meu-plano",(req,res)=>{
-    const email=req.query.email;
 
-    if(!email){
-        return res.status(400).json({error:"E-mail não informado."});
+
+// ==========================================
+// 📅 BUSCAR DIAS DISPONÍVEIS
+// ==========================================
+
+app.get("/dias-disponiveis", (req, res) => {
+
+    const query = `
+        SELECT DISTINCT data
+        FROM disponibilidade_coach
+        WHERE disponivel = TRUE
+        AND data >= CURDATE()
+        ORDER BY data ASC
+    `;
+
+    db.query(query, (err, results) => {
+
+        if (err) {
+
+            console.error(
+                "Erro ao buscar dias disponíveis:",
+                err.message
+            );
+
+            return res.status(500).json({
+                error: "Erro ao buscar dias disponíveis."
+            });
+        }
+
+        res.json(results);
+
+    });
+
+});
+
+
+// ==========================================
+// 🕐 BUSCAR HORÁRIOS DE UM DIA
+// ==========================================
+
+app.get("/horarios-disponiveis", (req, res) => {
+
+    const { data } = req.query;
+
+
+    if (!isNonEmptyString(data)) {
+
+        return res.status(400).json({
+            error: "Data obrigatória."
+        });
+
     }
 
-    const query=`
-        SELECT plano,ativo,data_ativacao,data_expiracao
-        FROM planos_usuarios
-        WHERE usuario_email=?
+
+    const query = `
+        SELECT
+            dc.horario
+        FROM disponibilidade_coach dc
+
+        LEFT JOIN aulas_agendadas aa
+            ON aa.data = dc.data
+            AND aa.horario = dc.horario
+            AND aa.status = 'confirmada'
+
+        WHERE dc.data = ?
+        AND dc.disponivel = TRUE
+        AND aa.id IS NULL
+
+        ORDER BY dc.horario ASC
+    `;
+
+
+    db.query(
+        query,
+        [data],
+        (err, results) => {
+
+            if (err) {
+
+                console.error(
+                    "Erro ao buscar horários:",
+                    err.message
+                );
+
+                return res.status(500).json({
+                    error: "Erro ao buscar horários disponíveis."
+                });
+
+            }
+
+
+            res.json(results);
+
+        }
+    );
+
+});
+
+
+// ==========================================
+// 📌 AGENDAR AULA
+// ==========================================
+
+app.post("/agendar-aula", (req, res) => {
+
+    const {
+        email,
+        data,
+        horario
+    } = req.body;
+
+
+    if (
+        !isNonEmptyString(email) ||
+        !isNonEmptyString(data) ||
+        !isNonEmptyString(horario)
+    ) {
+
+        return res.status(400).json({
+            error: "E-mail, data e horário são obrigatórios."
+        });
+
+    }
+
+
+    // Primeiro verificamos se o horário
+    // realmente está disponível.
+
+    const verificarQuery = `
+
+        SELECT dc.id
+
+        FROM disponibilidade_coach dc
+
+        LEFT JOIN aulas_agendadas aa
+            ON aa.data = dc.data
+            AND aa.horario = dc.horario
+            AND aa.status = 'confirmada'
+
+        WHERE dc.data = ?
+        AND dc.horario = ?
+        AND dc.disponivel = TRUE
+        AND aa.id IS NULL
+
         LIMIT 1
     `;
 
-    db.query(query,[email],(err,results)=>{
-        if(err){
-            console.error("Erro ao buscar plano:",err.message);
-            return res.status(500).json({error:"Erro ao buscar plano."});
+
+    db.query(
+        verificarQuery,
+        [data, horario],
+        (err, results) => {
+
+            if (err) {
+
+                console.error(
+                    "Erro ao verificar horário:",
+                    err.message
+                );
+
+                return res.status(500).json({
+                    error: "Erro ao verificar horário."
+                });
+
+            }
+
+
+            if (!results.length) {
+
+                return res.status(409).json({
+                    error:
+                        "Esse horário não está mais disponível."
+                });
+
+            }
+
+
+            // ======================================
+            // SALVAR AGENDAMENTO
+            // ======================================
+
+            const inserirQuery = `
+
+                INSERT INTO aulas_agendadas
+                (
+                    usuario_email,
+                    data,
+                    horario,
+                    status
+                )
+
+                VALUES (?, ?, ?, 'confirmada')
+
+            `;
+
+
+            db.query(
+                inserirQuery,
+                [
+                    email.trim(),
+                    data,
+                    horario
+                ],
+                (err, result) => {
+
+                    if (err) {
+
+                        // Se outra pessoa pegou
+                        // o horário antes desta requisição
+
+                        if (err.code === "ER_DUP_ENTRY") {
+
+                            return res.status(409).json({
+                                error:
+                                    "Esse horário acabou de ser reservado por outra pessoa."
+                            });
+
+                        }
+
+
+                        console.error(
+                            "Erro ao agendar aula:",
+                            err.message
+                        );
+
+                        return res.status(500).json({
+                            error:
+                                "Erro ao salvar agendamento."
+                        });
+
+                    }
+
+
+                    res.status(201).json({
+
+                        message:
+                            "Aula agendada com sucesso!",
+
+                        id: result.insertId,
+
+                        data: data,
+
+                        horario: horario
+
+                    });
+
+                }
+            );
+
         }
+    );
 
-        if(!results.length){
-            return res.json({ativo:false});
-        }
+});
 
-        const plano=results[0];
 
-        res.json({
-            ativo:Boolean(plano.ativo),
-            plano:plano.plano,
-            data_ativacao:plano.data_ativacao,
-            data_expiracao:plano.data_expiracao
+// ==========================================
+// 📋 MINHAS AULAS
+// ==========================================
+
+app.get("/minhas-aulas", (req, res) => {
+    const { email } = req.query;
+
+    if (!isNonEmptyString(email)) {
+
+        return res.status(400).json({
+            error: "E-mail obrigatório."
         });
-    });
+
+    }
+
+    const query = `
+
+        SELECT
+            id,
+            data,
+            horario,
+            status,
+            data_agendamento
+        FROM aulas_agendadas
+        WHERE usuario_email = ?
+        ORDER BY data ASC, horario ASC
+
+    `;
+
+    db.query(
+        query,
+        [email.trim()],
+        (err, results) => {
+
+            if (err) {
+
+                console.error(
+                    "Erro ao buscar aulas:",
+                    err.message
+                );
+
+                return res.status(500).json({
+                    error: "Erro ao buscar aulas."
+                });
+            }
+
+            res.json(results);
+        }
+    );
 });
 
 // ==========================================
