@@ -1953,7 +1953,7 @@ function filtrarCategoria(categoria,elemento){
         if(titulo)titulo.innerText="📦 Todos os Produtos";
 
     }else if(categoria==="promocao"){
-        lista=todosProdutos.filter(p=>p.preco<1000);
+        lista = todosProdutos.filter(p => Number(p.preco_promocional) < Number(p.preco_original) && Number(p.preco_promocional) > 0);
         if(titulo)titulo.innerText="🏷️ Promoções";
 
     }else if(busca[categoria]){
@@ -1972,21 +1972,44 @@ function filtrarCategoria(categoria,elemento){
 }
 
 
-function renderizarProdutos(lista, container) {
+function renderizarProdutos(Lista, container) {
     container.innerHTML = "";
 
-    if (!lista.length) {
+    if (!Lista.length) {
         container.innerHTML = "Nenhum produto encontrado.";
         return;
     }
 
-    lista.forEach(p => {
+    Lista.forEach(p => {
         const img = obterCaminhoImagem(p.nome);
         const fav = isFavorito(p.id);
 
+        // Lógica para verificar e calcular o desconto
+        const precoOriginal = Number(p.preco_original || p.preco);
+        const precoPromocional = Number(p.preco_promocional || 0);
+        const temDesconto = precoPromocional < precoOriginal && precoPromocional > 0;
+
+        let descontoPercentual = 0;
+        if (temDesconto) {
+            descontoPercentual = Math.round(((precoOriginal - precoPromocional) / precoOriginal) * 100);
+        }
+
+        // Tag visual de desconto (-20%)
+        const badgeHTML = temDesconto ? `<span class="badge-desconto">-${descontoPercentual}%</span>` : '';
+
+        // Exibição de preço riscado x preço atual
+        const precoHTML = temDesconto
+            ? `<div class="preco-box">
+                 <span class="preco-antigo">R$ ${precoOriginal.toFixed(2)}</span>
+                 <span class="preco-promocional">R$ ${precoPromocional.toFixed(2)}</span>
+               </div>`
+            : `<span class="preco-unico">R$ ${precoOriginal.toFixed(2)}</span>`;
+
+        // Preço final usado para o botão de adicionar ao carrinho
+        const precoFinal = temDesconto ? precoPromocional : precoOriginal;
+
         container.innerHTML += `
             <div class="card-produto-loja" onclick="abrirDetalhesProduto(${p.id})">
-
                 <button class="btn-favorito" onclick="toggleFavorito(${p.id}, event)">
                     <i class="${fav ? "fa-solid" : "fa-regular"} fa-heart"
                        style="${fav ? "color:#ff4757" : ""}">
@@ -1994,6 +2017,7 @@ function renderizarProdutos(lista, container) {
                 </button>
 
                 <div class="card-produto-img-box">
+                    ${badgeHTML}
                     <img
                         src="${img}"
                         alt="${sanitizarTexto(p.nome)}"
@@ -2001,19 +2025,16 @@ function renderizarProdutos(lista, container) {
                         onerror="this.src='imagens/logo-bepro.png.jpeg'"
                     >
                 </div>
-                <div class="card-produto-detalhes">
 
-                    <h3 class="card-produto-titulo">
-                        ${sanitizarTexto(p.nome)}
-                    </h3>
-                    <p class="card-produto-preco">
-                        R$ ${p.preco}
-                    </p>
+                <div class="card-produto-detalhes">
+                    <h3 class="card-produto-titulo">${sanitizarTexto(p.nome)}</h3>
+                    <div class="card-produto-preco">
+                        ${precoHTML}
+                    </div>
 
                     <button
                         class="btn-card-comprar"
-                        onclick="event.stopPropagation(); adicionarAoCarrinho('${p.nome.replace(/'/g, "\\'")}', ${p.preco})"
-                    >
+                        onclick="event.stopPropagation(); adicionarAoCarrinho('${p.nome.replace(/'/g, "\\'")}', ${precoFinal})">
                         Adicionar ao Carrinho
                     </button>
                 </div>
@@ -4195,3 +4216,35 @@ function abrirVideoVOD(){
     );
 }
 
+function abrirPromocao() {
+    // 1. Pega o container onde os produtos são renderizados no seu HTML
+    const container = document.getElementById("lista-produtos") || document.querySelector(".produtos-grid");
+
+    // 2. Filtra apenas os produtos que realmente têm preço promocional menor que o original
+    const ofertas = todosProdutos.filter(p => Number(p.preco_promocional) < Number(p.preco_original) && Number(p.preco_promocional) > 0);
+
+    // 3. Usa a SUA função real (renderizarProdutos) passando os parâmetros certos
+    if (container) {
+        if (ofertas.length > 0) {
+            renderizarProdutos(ofertas, container);
+        } else {
+            renderizarProdutos(todosProdutos, container);
+        }
+
+        // 4. Rola a tela suavemente
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+    // Procura o container dos produtos
+    const secaoProdutos = document.getElementById("lista-produtos") || document.querySelector(".produtos") || document.querySelector("main");
+    
+    if (secaoProdutos) {
+        secaoProdutos.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+
+// Mantém um alias para caso o HTML chame por verOfertas
+window.verOfertas = abrirPromocao;

@@ -192,3 +192,26 @@ INSERT INTO aulas_coach (titulo, descricao) VALUES
 SELECT user, host, plugin FROM mysql.user;
 
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+
+USE beprogg;
+
+-- Produtos com 5% OFF (Ex: ID 2 e 3)
+UPDATE produtos 
+SET preco_promocional = preco_original * 0.95 
+WHERE id IN (2, 3);
+
+-- Produtos com 10% OFF (Ex: ID 4 e 5)
+UPDATE produtos 
+SET preco_promocional = preco_original * 0.90 
+WHERE id IN (4, 5);
+
+-- Produtos com 15% OFF (Ex: ID 6 e 8)
+UPDATE produtos 
+SET preco_promocional = preco_original * 0.85 
+WHERE id IN (6, 8);
+
+-- Produtos com 25% OFF (Ex: ID 9 e 10)
+UPDATE produtos 
+SET preco_promocional = preco_original * 0.75 
+WHERE id IN (9, 10);
+
