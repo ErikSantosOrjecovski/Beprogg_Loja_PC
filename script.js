@@ -8,44 +8,61 @@ function exibirNomeUsuario(nome){
     if(elemento)elemento.textContent=nome;
 }
 
-function trocarAba(id){
-    document.querySelectorAll(".conteudo").forEach(sec=>sec.classList.remove("ativo"));
-    const aba=document.getElementById(id);
-    if(aba)aba.classList.add("ativo");
+function trocarAba(id) {
+  // Oculta todas as seções escondendo o display
+  document.querySelectorAll(".conteudo").forEach(sec => {
+    sec.classList.remove("ativo");
+    sec.style.display = "none";
+  });
 
-    atualizarCarrinhoUI();
-    atualizarResumoPagamento();
+  // Exibe apenas a aba clicada
+  const aba = document.getElementById(id);
+  if (aba) {
+    aba.classList.add("ativo");
+    aba.style.display = "block";
+  }
 
-    if(id==="pedidos")carregarPedidos();
-    if(id==="loja")carregarProdutos();
+  // Atualiza os dados das abas dinâmicas
+  if (typeof atualizarCarrinhoUI === "function") atualizarCarrinhoUI();
+  if (typeof atualizarFavoritosUI === "function") atualizarFavoritosUI();
+  if (typeof atualizarResumoPagamento === "function") atualizarResumoPagamento();
+
+  if (id === "pedidos" && typeof carregarPedidos === "function") carregarPedidos();
+  if (id === "loja" && typeof carregarProdutos === "function") carregarProdutos();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 let carrinho=JSON.parse(localStorage.getItem("carrinho"))||[];
 
-function adicionarAoCarrinho(nomeOuId,preco=null){
-    let nome=nomeOuId;
-    let valor=preco;
+function adicionarAoCarrinho(nomeOuId, preco = null) {
+  let nome = nomeOuId;
+  let valor = preco;
+  let id = nomeOuId;
 
-    if(typeof nomeOuId==="number"||!isNaN(nomeOuId)){
-        const prod=todosProdutos.find(p=>Number(p.id)===Number(nomeOuId));
-        if(prod){
-            nome=prod.nome;
-            valor=prod.preco;
-        }
+  if (typeof nomeOuId === "number" || !isNaN(nomeOuId)) {
+    const prod = todosProdutos.find(p => Number(p.id) === Number(nomeOuId));
+    if (prod) {
+      id = prod.id;
+      nome = prod.nome;
+      valor = prod.preco;
     }
+  }
 
-    const item={
-        nome:String(nome),
-        preco:valor!==null?Number(valor):0
-    };
+  const item = {
+    id: String(id),
+    nome: String(nome),
+    preco: valor != null ? Number(valor) : 0
+  };
 
-    carrinho.push(item);
-    salvarCarrinho();
-    atualizarCarrinhoUI();
-    atualizarResumoPagamento();
-    atualizarBadges?.();
-    mostrarNotificacaoCarrinho(item.nome);
+  carrinho.push(item);
 
+  // O QUE FALTAVA: Salvar a lista atualizada no navegador!
+  localStorage.setItem("carrinho", JSON.stringify(carrinho));
+
+  // Atualiza contadores e telas
+  if (typeof atualizarBadges === "function") atualizarBadges();
+  if (typeof atualizarCarrinhoUI === "function") atualizarCarrinhoUI();
 }
 
 function mostrarNotificacaoCarrinho(nome) {
@@ -76,35 +93,49 @@ function mostrarNotificacaoCarrinho(nome) {
     }, 2200);
 }
 
-function atualizarCarrinhoUI(){
-    const lista=document.getElementById("lista-carrinho");
-    const total=document.getElementById("total-carrinho");
+function atualizarCarrinhoUI() {
+  const container = document.getElementById("lista-carrinho");
+  const totalEl = document.getElementById("total-carrinho");
+  const footerEl = document.getElementById("carrinho-footer");
+  if (!container) return;
 
-    if(!lista||!total)return;
+const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
 
-    lista.innerHTML="";
-    let soma=0;
+  // Se o carrinho estiver vazio
+  if (!carrinho || carrinho.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 60px 0; color: #fff;">
+        <div style="font-size: 3rem; margin-bottom: 10px;">🛒</div>
+        <p style="color: #94a3b8; font-size: 1.1rem; margin: 0;">Seu carrinho está vazio.</p>
+      </div>`;
+    if (footerEl) footerEl.style.display = "none";
+    return;
+  }
 
-    if(!carrinho.length){
-        lista.innerHTML="<p style='color:#94a3b8'>Seu carrinho está vazio.</p>";
-        total.innerText="Total: R$ 0";
-        return;
-    }
+  // Se houver produtos no carrinho
+  if (footerEl) footerEl.style.display = "block";
 
-    carrinho.forEach((item,index)=>{
-        soma+=Number(item.preco);
+  let total = 0;
+  container.innerHTML = carrinho.map((item, index) => {
+    total += Number(item.preco || 0);
+    return `
+      <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; margin-bottom: 12px; background: rgba(0, 20, 40, 0.75); border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 10px;">
+        <div style="text-align: left;">
+          <h4 style="margin: 0; font-size: 1rem; color: #fff;">${item.nome}</h4>
+          <span style="color: #00e5ff; font-weight: bold; font-size: 0.95rem;">R$ ${Number(item.preco).toFixed(2)}</span>
+        </div>
+        <button 
+          onclick="removerItem(${index})"
+          style="background: #ff4d4d; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;"
+        >
+          Remover
+        </button>
+      </div>
+    `;
+  }).join("");
 
-        lista.innerHTML+=`
-        <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:15px;margin-bottom:10px;background:#0d1117;border:1px solid #1f293d">
-            <div>
-                <h4 style="color:#fff;margin:0">${sanitizarTexto(item.nome)}</h4>
-                <p style="color:#00d4ff;font-weight:bold;margin:5px 0 0">R$ ${item.preco}</p>
-            </div>
-            <button onclick="removerItem(${index})" style="background:#ff4d4d;color:white;border:0;padding:6px 12px;border-radius:4px">Remover</button>
-        </div>`;
-    });
+  if (totalEl) totalEl.textContent = `Total: R$ ${total.toFixed(2)}`;
 
-    total.innerText="Total: R$ "+soma;
 }
 
 function removerItem(index){
@@ -143,7 +174,7 @@ function selecionarPerfil(nomePerfil,classeIcone){
     if(dropdown)dropdown.style.display="none";
 }
 
-document.addEventListener("click",e=>{
+window.addEventListener("click",e=>{
     const container=document.querySelector(".perfil-container");
     const dropdown=document.getElementById("perfil-dropdown");
 
@@ -161,7 +192,7 @@ function abrirPerfil(){
 
     trocarAba("perfil");
     carregarPerfil?.();
-    carregarPlano?.();
+     carregarPlano?.();
 }
 
 async function gerarRecomendacao(){
@@ -294,134 +325,48 @@ async function gerarRecomendacao(){
 }
 
 
-/* =========================================================
-   CADASTRO E LOGIN
-   Agora conversam com o backend (/cadastro e /login), que
-   persiste os usuários no banco de dados MySQL. O localStorage
-   passa a guardar apenas a sessão do navegador (quem está
-   logado agora), nunca a lista de contas nem a senha.
-   ========================================================= */
-
-async function fazerCadastro(event){
+function fazerCadastro(event){
     event.preventDefault();
 
-    const nome=document.getElementById("nome").value.trim();
-    const email=document.getElementById("email").value.trim();
-    const senha=document.getElementById("senha").value.trim();
-    const confirmaSenhaEl=document.getElementById("confirma-senha");
-    const confirmaSenha=confirmaSenhaEl?confirmaSenhaEl.value.trim():null;
-    const cpf=document.getElementById("cpf").value.trim();
-    const telefone=document.getElementById("cadastro-tel").value.trim();
+    const usuario={
+        nome:document.getElementById("nome").value.trim(),
+        email:document.getElementById("email").value.trim(),
+        senha:document.getElementById("senha").value.trim(),
+        cpf:document.getElementById("cpf").value.trim(),
+        telefone:document.getElementById("cadastro-tel").value.trim()
+    };
 
     const msg=document.getElementById("msg-cadastro");
 
-    if(!msg)return;
-
-    msg.style.color="#ff4d4d";
-
-    if(!nome||!email||!senha||!cpf||!telefone){
+    if(Object.values(usuario).some(v=>!v)){
         msg.innerText="❗ Preencha todos os campos!";
         return;
     }
 
-    if(senha.length<6){
-        msg.innerText="❗ A senha deve ter no mínimo 6 caracteres.";
-        return;
-    }
+    localStorage.setItem("usuario",JSON.stringify(usuario));
+    localStorage.setItem("usuarioLogado","true");
 
-    if(confirmaSenhaEl&&senha!==confirmaSenha){
-        msg.innerText="❗ As senhas não coincidem.";
-        return;
-    }
+    msg.innerText="✅ Conta criada! Logando...";
+    atualizarStatusLogin();
 
-    msg.style.color="#00d4ff";
-    msg.innerText="⏳ Criando sua conta...";
-
-    try{
-        const res=await fetch("http://localhost:3000/cadastro",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({nome,email,senha,cpf,telefone})
-        });
-
-        let data={};
-        try{
-            data=await res.json();
-        }catch(e){
-            data={};
-        }
-
-        if(!res.ok){
-            msg.style.color="#ff4d4d";
-            msg.innerText="❗ "+(data.error||data.message||"Não foi possível criar a conta.");
-            return;
-        }
-
-        localStorage.setItem("usuario",JSON.stringify(data.usuario));
-        localStorage.setItem("usuarioLogado","true");
-
-        msg.style.color="#00d4ff";
-        msg.innerText="✅ Conta criada! Logando...";
-        atualizarStatusLogin();
-
-        setTimeout(()=>trocarAba("inicio"),1500);
-
-    }catch(error){
-        console.error("Erro ao cadastrar:",error);
-        msg.style.color="#ff4d4d";
-        msg.innerText="❌ Erro de conexão com o servidor. Verifique se ele está rodando.";
-    }
+    setTimeout(()=>trocarAba("inicio"),1500);
 }
 
 
-async function fazerLogin(){
+function fazerLogin(){
     const email=document.getElementById("login-email").value.trim();
     const senha=document.getElementById("login-senha").value.trim();
     const msg=document.getElementById("msg-login");
 
-    if(!msg)return;
+    const usuario=JSON.parse(localStorage.getItem("usuario"));
 
-    if(!email||!senha){
-        msg.innerText="❗ Preencha e-mail e senha.";
-        return;
-    }
-
-    msg.style.color="#00d4ff";
-    msg.innerText="⏳ Entrando...";
-
-    try{
-        const res=await fetch("http://localhost:3000/login",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({email,senha})
-        });
-
-        let data={};
-        try{
-            data=await res.json();
-        }catch(e){
-            data={};
-        }
-
-        if(!res.ok){
-            msg.style.color="#ff4d4d";
-            msg.innerText="❌ "+(data.error||data.message||"Credenciais inválidas!");
-            return;
-        }
-
-        localStorage.setItem("usuario",JSON.stringify(data.usuario));
+    if(usuario&&usuario.email===email&&usuario.senha===senha){
         localStorage.setItem("usuarioLogado","true");
-
-        msg.style.color="#00d4ff";
         msg.innerText="✅ Login realizado!";
         atualizarStatusLogin();
-
         setTimeout(()=>trocarAba("inicio"),1500);
-
-    }catch(error){
-        console.error("Erro ao entrar:",error);
-        msg.style.color="#ff4d4d";
-        msg.innerText="❌ Erro de conexão com o servidor. Verifique se ele está rodando.";
+    }else{
+        msg.innerText="❌ Credenciais inválidas!";
     }
 }
 
@@ -459,199 +404,450 @@ function atualizarResumoPagamento(){
 
 
 /* =========================================================
-   SISTEMA DE PAGAMENTO
-   (versão única — as duplicidades de obterTotalCarrinho,
-   atualizarCamposPagamento e inicializarPagamento que
-   existiam nos dois arquivos originais foram unificadas
-   aqui, mantendo a versão que efetivamente prevalecia)
+   PAGAMENTO
    ========================================================= */
 
 function obterTotalCarrinho(){
-    return carrinho.reduce((total,item)=>{
-        return total + (Number(item.preco) || 0);
-    },0);
+
+    return carrinho.reduce(
+        (total,item)=>
+            total+(Number(item.preco)||0),
+        0
+    );
 }
 
+
+/* =========================================================
+   CRIAR ÁREA DOS DETALHES
+   ========================================================= */
+
+function criarAreaDetalhesPagamento(){
+
+    const select =
+        document.getElementById("forma-pagamento");
+
+    if(!select)return null;
+
+    let area =
+        document.getElementById("detalhes-pagamento");
+
+    if(!area){
+
+        area=document.createElement("div");
+
+        area.id="detalhes-pagamento";
+
+        select.parentNode.insertBefore(
+            area,
+            select.nextSibling
+        );
+    }
+
+    return area;
+}
+
+
+/* =========================================================
+   CAMPO
+   ========================================================= */
+
+function campoPagamento(
+    id,
+    label,
+    type="text",
+    placeholder=""
+){
+
+    return `
+
+        <label
+            for="${id}"
+            style="
+                display:block;
+                margin:10px 0 5px;
+                color:#cbd5e1;
+                font-weight:600;
+            "
+        >
+            ${label}
+        </label>
+
+        <input
+            id="${id}"
+            type="${type}"
+            placeholder="${placeholder}"
+            autocomplete="off"
+
+            style="
+                width:100%;
+                box-sizing:border-box;
+                padding:11px;
+                border-radius:7px;
+                border:1px solid #263449;
+                background:#0d1117;
+                color:#fff;
+            "
+        >
+    `;
+}
+
+
+/* =========================================================
+   MOSTRAR CAMPOS DO PAGAMENTO
+   ========================================================= */
+
 function atualizarCamposPagamento(){
-    const select=document.getElementById("forma-pagamento");
-    const area=document.getElementById("detalhes-pagamento");
+
+    const select =
+        document.getElementById("forma-pagamento");
+
+    const area =
+        criarAreaDetalhesPagamento();
 
     if(!select || !area)return;
 
-    const pagamento=select.value;
+    const metodo =
+        String(select.value||"").toLowerCase();
+
     area.innerHTML="";
 
-    /* PIX */
-    if(pagamento==="pix"){
+
+    /* =========================
+       PIX
+       ========================= */
+
+    if(metodo==="pix"){
+
         area.innerHTML=`
-            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
-                <h4 style="color:#00d4ff;margin-top:0;">💠 Pagamento via PIX</h4>
-                <p style="color:#cbd5e1;">Escolha como deseja pagar:</p>
 
-                <label style="color:#fff;">Chave PIX</label>
+            <div
+                style="
+                    padding:15px;
+                    margin-bottom:15px;
+                    border:1px solid #1f3b52;
+                    border-radius:8px;
+                    background:#0d1722;
+                "
+            >
 
-                <input
-                    id="pix-chave"
-                    type="text"
-                    placeholder="Digite sua chave PIX"
-                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                <h4
+                    style="
+                        margin:0 0 10px;
+                        color:#00d4ff;
+                    "
                 >
+                    💠 Pagamento via PIX
+                </h4>
 
-                <div id="pix-resultado" style="margin-top:15px;text-align:center;"></div>
+                <p
+                    style="
+                        color:#cbd5e1;
+                        margin-bottom:10px;
+                    "
+                >
+                    Informe uma chave PIX ou gere o
+                    pagamento através do QR Code.
+                </p>
+
+                ${campoPagamento(
+                    "pix-chave",
+                    "Chave PIX",
+                    "text",
+                    "CPF, e-mail, telefone ou chave aleatória"
+                )}
+
+                <div
+                    id="pix-resultado"
+                    style="
+                        margin-top:15px;
+                        text-align:center;
+                    "
+                ></div>
+
             </div>
         `;
+
         return;
     }
 
-    /* CARTÃO */
-    if(pagamento==="cartao"){
-        const total=obterTotalCarrinho();
-        let parcelas="";
+
+    /* =========================
+       CARTÃO
+       ========================= */
+
+    if(
+        metodo==="cartao" ||
+        metodo==="cartao_credito" ||
+        metodo==="credito"
+    ){
+
+        const total =
+            obterTotalCarrinho();
+
+        let parcelasHTML="";
 
         for(let i=1;i<=12;i++){
-            parcelas+=`
+
+            const valor=
+                total/i;
+
+            parcelasHTML+=`
+
                 <option value="${i}">
-                    ${i}x de ${moeda(total/i)}
+                    ${i}x de ${moeda(valor)}
                 </option>
+
             `;
         }
 
+
         area.innerHTML=`
-            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
-                <h4 style="color:#00d4ff;margin-top:0;">💳 Cartão de crédito</h4>
 
-                <label style="color:#fff;">Número do cartão</label>
-                <input
-                    id="cartao-numero"
-                    type="text"
-                    placeholder="0000 0000 0000 0000"
-                    maxlength="19"
-                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+            <div
+                style="
+                    padding:15px;
+                    margin-bottom:15px;
+                    border:1px solid #1f3b52;
+                    border-radius:8px;
+                    background:#0d1722;
+                "
+            >
+
+                <h4
+                    style="
+                        margin:0 0 10px;
+                        color:#00d4ff;
+                    "
+                >
+                    💳 Cartão de crédito
+                </h4>
+
+
+                ${campoPagamento(
+                    "cartao-numero",
+                    "Número do cartão",
+                    "text",
+                    "0000 0000 0000 0000"
+                )}
+
+
+                ${campoPagamento(
+                    "cartao-nome",
+                    "Nome no cartão",
+                    "text",
+                    "NOME COMPLETO"
+                )}
+
+
+                <div
+                    style="
+                        display:grid;
+                        grid-template-columns:1fr 1fr;
+                        gap:10px;
+                    "
                 >
 
-                <label style="color:#fff;">Nome no cartão</label>
-                <input
-                    id="cartao-nome"
-                    type="text"
-                    placeholder="NOME COMPLETO"
-                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                >
-
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                     <div>
-                        <label style="color:#fff;">Validade</label>
-                        <input
-                            id="cartao-validade"
-                            type="text"
-                            placeholder="MM/AA"
-                            maxlength="5"
-                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                        >
+
+                        ${campoPagamento(
+                            "cartao-validade",
+                            "Validade",
+                            "text",
+                            "MM/AA"
+                        )}
+
                     </div>
 
+
                     <div>
-                        <label style="color:#fff;">CVV</label>
-                        <input
-                            id="cartao-cvv"
-                            type="password"
-                            placeholder="123"
-                            maxlength="4"
-                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                        >
+
+                        ${campoPagamento(
+                            "cartao-cvv",
+                            "CVV",
+                            "password",
+                            "123"
+                        )}
+
                     </div>
+
                 </div>
 
-                <label for="cartao-parcelas" style="display:block;color:#fff;margin-top:15px;">
+
+                <label
+                    for="cartao-parcelas"
+                    style="
+                        display:block;
+                        margin:10px 0 5px;
+                        color:#cbd5e1;
+                        font-weight:600;
+                    "
+                >
                     Parcelas
                 </label>
 
+
                 <select
                     id="cartao-parcelas"
-                    style="width:96%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+
+                    style="
+                        width:100%;
+                        padding:11px;
+                        border-radius:7px;
+                        border:1px solid #263449;
+                        background:#0d1117;
+                        color:#fff;
+                    "
                 >
-                    ${parcelas}
+
+                    ${parcelasHTML}
+
                 </select>
+
             </div>
         `;
 
-        configurarCartao();
+
+        configurarMascaraCartao();
+
         return;
     }
 
-    /* BOLETO */
-    if(pagamento==="boleto"){
-        area.innerHTML=`
-            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
-                <h4 style="color:#00d4ff;margin-top:0;">🧾 Pagamento via Boleto</h4>
 
-                <p style="color:#cbd5e1;">
-                    Informe o CPF do pagador.
+    /* =========================
+       BOLETO
+       ========================= */
+
+    if(metodo==="boleto"){
+
+        area.innerHTML=`
+
+            <div
+                style="
+                    padding:15px;
+                    margin-bottom:15px;
+                    border:1px solid #1f3b52;
+                    border-radius:8px;
+                    background:#0d1722;
+                "
+            >
+
+                <h4
+                    style="
+                        margin:0 0 10px;
+                        color:#00d4ff;
+                    "
+                >
+                    🧾 Pagamento via boleto
+                </h4>
+
+
+                <p
+                    style="
+                        color:#cbd5e1;
+                        margin-bottom:10px;
+                    "
+                >
+                    Informe o CPF do pagador para gerar
+                    o boleto.
                 </p>
 
-                <label style="color:#fff;">CPF</label>
 
-                <input
-                    id="boleto-cpf"
-                    type="text"
-                    placeholder="000.000.000-00"
-                    maxlength="14"
-                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                >
+                ${campoPagamento(
+                    "boleto-cpf",
+                    "CPF do pagador",
+                    "text",
+                    "000.000.000-00"
+                )}
 
-                <div id="boleto-resultado"></div>
+
+                <div
+                    id="boleto-resultado"
+                    style="margin-top:15px;"
+                ></div>
+
             </div>
-        `;
 
-        configurarCartao();
+        `;
     }
 }
 
 
 /* =========================================================
-   MÁSCARAS
+   MÁSCARA CARTÃO
    ========================================================= */
 
-function configurarCartao(){
-    const numero=document.getElementById("cartao-numero");
-    const validade=document.getElementById("cartao-validade");
-    const cvv=document.getElementById("cartao-cvv");
-    const cpf=document.getElementById("boleto-cpf");
+function configurarMascaraCartao(){
+
+    const numero =
+        document.getElementById("cartao-numero");
+
+    const validade =
+        document.getElementById("cartao-validade");
+
+    const cvv =
+        document.getElementById("cartao-cvv");
+
 
     if(numero){
-        numero.addEventListener("input",()=>{
-            let valor=numero.value.replace(/\D/g,"").slice(0,16);
-            numero.value=valor.replace(/(\d{4})(?=\d)/g,"$1 ");
-        });
+
+        numero.addEventListener(
+            "input",
+            ()=>{
+
+                let valor=
+                    numero.value
+                    .replace(/\D/g,"")
+                    .slice(0,16);
+
+                numero.value=
+                    valor
+                    .replace(
+                        /(\d{4})(?=\d)/g,
+                        "$1 "
+                    )
+                    .trim();
+            }
+        );
     }
+
 
     if(validade){
-        validade.addEventListener("input",()=>{
-            let valor=validade.value.replace(/\D/g,"").slice(0,4);
 
-            if(valor.length>2){
-                valor=valor.slice(0,2)+"/"+valor.slice(2);
+        validade.addEventListener(
+            "input",
+            ()=>{
+
+                let valor=
+                    validade.value
+                    .replace(/\D/g,"")
+                    .slice(0,4);
+
+                if(valor.length>2){
+
+                    valor=
+                        valor.slice(0,2)
+                        +"/"+
+                        valor.slice(2);
+                }
+
+                validade.value=valor;
             }
-
-            validade.value=valor;
-        });
+        );
     }
+
 
     if(cvv){
-        cvv.addEventListener("input",()=>{
-            cvv.value=cvv.value.replace(/\D/g,"").slice(0,4);
-        });
-    }
 
-    if(cpf){
-        cpf.addEventListener("input",()=>{
-            let valor=cpf.value.replace(/\D/g,"").slice(0,11);
+        cvv.addEventListener(
+            "input",
+            ()=>{
 
-            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
-            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
-            valor=valor.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
-
-            cpf.value=valor;
-        });
+                cvv.value=
+                    cvv.value
+                    .replace(/\D/g,"")
+                    .slice(0,4);
+            }
+        );
     }
 }
 
@@ -847,11 +1043,15 @@ function validarPagamento(){
    ========================================================= */
 
 function inicializarPagamento(){
-    const select=document.getElementById("forma-pagamento");
+
+    const select =
+        document.getElementById("forma-pagamento");
 
     if(!select)return;
 
+
     if(!select.dataset.pagamentoConfigurado){
+
         select.addEventListener(
             "change",
             atualizarCamposPagamento
@@ -859,6 +1059,7 @@ function inicializarPagamento(){
 
         select.dataset.pagamentoConfigurado="true";
     }
+
 
     atualizarCamposPagamento();
 }
@@ -1135,6 +1336,216 @@ async function carregarPedidos(){
         `;
     }
 }
+
+/* =========================================================
+   SISTEMA DE PAGAMENTO
+   ========================================================= */
+
+function obterTotalCarrinho(){
+    return carrinho.reduce((total,item)=>{
+        return total + (Number(item.preco) || 0);
+    },0);
+}
+
+function atualizarCamposPagamento(){
+    const select=document.getElementById("forma-pagamento");
+    const area=document.getElementById("detalhes-pagamento");
+
+    if(!select || !area)return;
+
+    const pagamento=select.value;
+    area.innerHTML="";
+
+    /* PIX */
+    if(pagamento==="pix"){
+        area.innerHTML=`
+            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
+                <h4 style="color:#00d4ff;margin-top:0;">💠 Pagamento via PIX</h4>
+                <p style="color:#cbd5e1;">Escolha como deseja pagar:</p>
+
+                <label style="color:#fff;">Chave PIX</label>
+
+                <input
+                    id="pix-chave"
+                    type="text"
+                    placeholder="Digite sua chave PIX"
+                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+
+                <div id="pix-resultado" style="margin-top:15px;text-align:center;"></div>
+            </div>
+        `;
+        return;
+    }
+
+    /* CARTÃO */
+    if(pagamento==="cartao"){
+        const total=obterTotalCarrinho();
+        let parcelas="";
+
+        for(let i=1;i<=12;i++){
+            parcelas+=`
+                <option value="${i}">
+                    ${i}x de ${moeda(total/i)}
+                </option>
+            `;
+        }
+
+        area.innerHTML=`
+            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
+                <h4 style="color:#00d4ff;margin-top:0;">💳 Cartão de crédito</h4>
+
+                <label style="color:#fff;">Número do cartão</label>
+                <input
+                    id="cartao-numero"
+                    type="text"
+                    placeholder="0000 0000 0000 0000"
+                    maxlength="19"
+                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+
+                <label style="color:#fff;">Nome no cartão</label>
+                <input
+                    id="cartao-nome"
+                    type="text"
+                    placeholder="NOME COMPLETO"
+                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div>
+                        <label style="color:#fff;">Validade</label>
+                        <input
+                            id="cartao-validade"
+                            type="text"
+                            placeholder="MM/AA"
+                            maxlength="5"
+                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                        >
+                    </div>
+
+                    <div>
+                        <label style="color:#fff;">CVV</label>
+                        <input
+                            id="cartao-cvv"
+                            type="password"
+                            placeholder="123"
+                            maxlength="4"
+                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                        >
+                    </div>
+                </div>
+
+                <label for="cartao-parcelas" style="display:block;color:#fff;margin-top:15px;">
+                    Parcelas
+                </label>
+
+                <select
+                    id="cartao-parcelas"
+                    style="width:96%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+                    ${parcelas}
+                </select>
+            </div>
+        `;
+
+        configurarCartao();
+        return;
+    }
+
+    /* BOLETO */
+    if(pagamento==="boleto"){
+        area.innerHTML=`
+            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
+                <h4 style="color:#00d4ff;margin-top:0;">🧾 Pagamento via Boleto</h4>
+
+                <p style="color:#cbd5e1;">
+                    Informe o CPF do pagador.
+                </p>
+
+                <label style="color:#fff;">CPF</label>
+
+                <input
+                    id="boleto-cpf"
+                    type="text"
+                    placeholder="000.000.000-00"
+                    maxlength="14"
+                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+
+                <div id="boleto-resultado"></div>
+            </div>
+        `;
+
+        configurarCartao();
+    }
+}
+
+
+/* =========================================================
+   MÁSCARAS
+   ========================================================= */
+
+function configurarCartao(){
+    const numero=document.getElementById("cartao-numero");
+    const validade=document.getElementById("cartao-validade");
+    const cvv=document.getElementById("cartao-cvv");
+    const cpf=document.getElementById("boleto-cpf");
+
+    if(numero){
+        numero.addEventListener("input",()=>{
+            let valor=numero.value.replace(/\D/g,"").slice(0,16);
+            numero.value=valor.replace(/(\d{4})(?=\d)/g,"$1 ");
+        });
+    }
+
+    if(validade){
+        validade.addEventListener("input",()=>{
+            let valor=validade.value.replace(/\D/g,"").slice(0,4);
+
+            if(valor.length>2){
+                valor=valor.slice(0,2)+"/"+valor.slice(2);
+            }
+
+            validade.value=valor;
+        });
+    }
+
+    if(cvv){
+        cvv.addEventListener("input",()=>{
+            cvv.value=cvv.value.replace(/\D/g,"").slice(0,4);
+        });
+    }
+
+    if(cpf){
+        cpf.addEventListener("input",()=>{
+            let valor=cpf.value.replace(/\D/g,"").slice(0,11);
+
+            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
+            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
+            valor=valor.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+
+            cpf.value=valor;
+        });
+    }
+}
+
+
+/* =========================================================
+   INICIALIZAR PAGAMENTO
+   ========================================================= */
+
+function inicializarPagamento(){
+    const select=document.getElementById("forma-pagamento");
+
+    if(!select)return;
+
+    select.addEventListener(
+        "change",
+        atualizarCamposPagamento
+    );
+}
+
 
 let todosProdutos=[];
 
@@ -1742,6 +2153,12 @@ if(menuPedidos)menuPedidos.style.display="none";
 }
 }
 
+window.onload=()=>{
+atualizarCarrinhoUI();
+atualizarResumoPagamento();
+atualizarStatusLogin();
+};
+
 const tabelaPrecosSetup={
 "AMD Ryzen 7 7800X3D (O Rei do FPS)":2499,
 "AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)":2499,
@@ -1941,9 +2358,9 @@ const playersData = [
         descricao: "Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa.",
 
         videos: {
-            preview: "https://youtu.be/oM5tIUEec4o?si=M5k7aj0qmKkE8Z5",
-            aula: "https://youtu.be/5DnF_3mgI5I?si=1PpZTG1dWPyxOiDQ",
-            vod: "https://youtu.be/CauKbyWHzJQ?si=kFxdRMkrgB9w3W5N"
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_BLACKOUTZ",
+            aula: "COLOQUE_ID_VIDEO_AULA_BLACKOUTZ",
+            vod: "COLOQUE_ID_VIDEO_VOD_BLACKOUTZ"
         }
     },
 
@@ -1953,12 +2370,12 @@ const playersData = [
         jogoChave: "cs2",
         imagem: "imagens/Fallen.jpg",
         preco: "R$ 200,00",
-        descricao: "Aprenda controle de mapa, posicionamento de AWP e setups de granadas com o lendario Professor.",
+        descricao: "Aprenda controle de mapa, posicionamento de AWP e setups de granadas.",
 
         videos: {
-            preview: "https://youtu.be/UbJSEpoTbOA?si=-UAgQC7bvaIqr6pQ",
-            aula: "https://youtu.be/gB6Lw5ZaUa8?si=DprFkbuKqdh8Qe8p",
-            vod: "https://youtu.be/9dKasbByBYY?si=m3uB3EV-YaPk-f8V"
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_FALLEN",
+            aula: "COLOQUE_ID_VIDEO_AULA_FALLEN",
+            vod: "COLOQUE_ID_VIDEO_VOD_FALLEN"
         }
     },
 
@@ -1968,12 +2385,12 @@ const playersData = [
         jogoChave: "lol",
         imagem: "imagens/Faker.jpg",
         preco: "R$ 300,00",
-        descricao: "Domine controle de wave, visão de mapa e decisões macro com o maior da historia de LoL.",
+        descricao: "Domine controle de wave, visão de mapa e decisões macro.",
 
         videos: {
-            preview: "https://youtu.be/tYXJI26nrNc?si=b55rnP7vl_GRwCr9",
-            aula: "https://youtu.be/tZgs8X7GFas?si=94cIbyMUxMh-26GT",
-            vod: "https://youtu.be/W2DfA6UEiIw?si=tCrnaKL9mmjTN28q"
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_FAKER",
+            aula: "COLOQUE_ID_VIDEO_AULA_FAKER",
+            vod: "COLOQUE_ID_VIDEO_VOD_FAKER"
         }
     },
 
@@ -1986,9 +2403,9 @@ const playersData = [
         descricao: "Estratégias avançadas de ataque, defesa e comunicação.",
 
         videos: {
-            preview: "https://youtu.be/18DtB0TUa-c?si=NOl6e1ruLjySaFG2",
-            aula: "https://youtu.be/JdNg3076-zg?si=JTB2WJFGecwTPlsB",
-            vod: "https://youtu.be/jjxLYeOSovU?si=Ko6KVp2tc-XLqLR3"
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_NESKWGA",
+            aula: "COLOQUE_ID_VIDEO_AULA_NESKWGA",
+            vod: "COLOQUE_ID_VIDEO_VOD_NESKWGA"
         }
     },
 
@@ -2001,9 +2418,9 @@ const playersData = [
         descricao: "Uso avançado de agentes, clutch e movimentação tática.",
 
         videos: {
-            preview: "https://youtu.be/zVqC85OwWRE?si=vos0s6s3OmUAxqqH",
-            aula: "https://youtu.be/D-o3jTxT4Ck?si=E3Av6Xf6n5sOLuMi",
-            vod: "https://youtu.be/Epq1V-L1WmA?si=bk3lj_yrX5aSPbrT"
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_FRTT",
+            aula: "COLOQUE_ID_VIDEO_AULA_FRTT",
+            vod: "COLOQUE_ID_VIDEO_VOD_FRTT"
         }
     },
 
@@ -2016,9 +2433,9 @@ const playersData = [
         descricao: "Movimentação avançada, loadouts e rotações.",
 
         videos: {
-            preview: "https://youtu.be/sa5PxNTcuLs?si=65xsiBpc14AkHFVG",
-            aula: "https://youtu.be/QUpZw_F0JLg?si=aASapcRJiAblk5I7",
-            vod: "https://youtu.be/veYz6MRPzS0?si=ojQPY9vH883qyMfs"
+            preview: "COLOQUE_ID_VIDEO_PREVIEW_TONYBOY",
+            aula: "COLOQUE_ID_VIDEO_AULA_TONYBOY",
+            vod: "COLOQUE_ID_VIDEO_VOD_TONYBOY"
         }
     }
 ];
@@ -2037,11 +2454,6 @@ if(playerIndexAtual>=playersData.length)playerIndexAtual=0;
 if(playerIndexAtual<0)playerIndexAtual=playersData.length-1;
 
 const player=playersData[playerIndexAtual];
-
-localStorage.setItem(
-    "proPlayerSelecionado",
-    JSON.stringify(player)
-);
 
 const nome=document.getElementById("player-nome");
 const jogo=document.getElementById("player-jogo");
@@ -2109,6 +2521,34 @@ function assinarPlano(nomePlano, preco){
 
 function getFavoritos(){
 return JSON.parse(localStorage.getItem("bepro_favoritos"))||[];
+}
+
+function toggleFavorito(id, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    id = Number(id);
+
+    let favoritos = getFavoritos();
+
+    if (favoritos.includes(id)) {
+        favoritos = favoritos.filter(item => item !== id);
+    } else {
+        favoritos.push(id);
+    }
+
+    localStorage.setItem("bepro_favoritos", JSON.stringify(favoritos));
+
+    atualizarBadges();
+
+    // Atualiza os produtos da tela
+    if (document.getElementById("titulo-categoria-atual")?.innerText.includes("Favoritos")) {
+        verFavoritos();
+    } else {
+        renderizarProdutos();
+    }
 }
 
 function isFavorito(id){
@@ -2190,56 +2630,173 @@ function mostrarNotificacaoFavorito(nome,adicionado){
     },2200);
 }
 
-/* =========================================================
-   ❤️ VER FAVORITOS (CORRIGIDO)
-   Antes: chamava trocarAba("loja"), que dispara carregarProdutos()
-   de forma assíncrona (fetch). Esse fetch terminava alguns
-   milissegundos depois e substituía a lista de favoritos pela
-   lista completa de produtos — causando o "pisca e recarrega".
-   Agora: trocamos a aba manualmente (sem re-buscar produtos toda
-   vez) e só buscamos produtos se ainda não tiverem sido carregados.
-   ========================================================= */
-async function verFavoritos(event){
-    if(event){
+function verFavoritos(event) {
+
+    if (event) {
         event.preventDefault();
         event.stopPropagation();
     }
 
-    // Troca a aba manualmente (sem chamar trocarAba, que dispararia carregarProdutos)
-    document.querySelectorAll(".conteudo").forEach(sec=>sec.classList.remove("ativo"));
-    const aba=document.getElementById("loja");
-    if(aba)aba.classList.add("ativo");
+    // Esconde todas as telas
+    document.querySelectorAll(".conteudo").forEach(secao => {
+        secao.classList.remove("ativo");
+    });
 
-    atualizarCarrinhoUI();
-    atualizarResumoPagamento();
+    // Mostra favoritos
+    const favoritosArea = document.getElementById("favoritos");
 
-    // Só busca produtos do servidor se ainda não tiverem sido carregados
-    if(!todosProdutos.length){
-        await carregarProdutos();
-    }
-
-    const container=document.getElementById("lista-produtos");
-    if(!container)return;
-
-    const favoritos=getFavoritos();
-
-    const titulo=document.getElementById("titulo-categoria-atual");
-    if(titulo)titulo.innerText="❤️ Meus Produtos Favoritos";
-
-    if(favoritos.length===0){
-        container.innerHTML=`
-        <div style="grid-column:1/-1;text-align:center;padding:40px">
-        <h3>Você ainda não possui favoritos!</h3>
-        <p>Clique no coração dos produtos para salvar.</p>
-        </div>`;
+    if (!favoritosArea) {
+        console.error("ERRO: #favoritos não existe no HTML.");
         return;
     }
 
-    const produtos=todosProdutos.filter(p=>favoritos.includes(Number(p.id)));
+    favoritosArea.classList.add("ativo");
 
-    // Reaproveita o mesmo card usado na loja (mantém clique de detalhes,
-    // botão de coração funcional e "Adicionar ao Carrinho" consistentes)
-    renderizarProdutos(produtos, container);
+    const container = document.getElementById("lista-favoritos");
+
+    if (!container) {
+        console.error("ERRO: #lista-favoritos não existe.");
+        return;
+    }
+
+    const favoritos = getFavoritos();
+
+    // Nenhum favorito
+    if (favoritos.length === 0) {
+
+        container.innerHTML = `
+            <div style="
+                width:100%;
+                text-align:center;
+                padding:80px 20px;
+                box-sizing:border-box;
+            ">
+
+                <div style="
+                    font-size:70px;
+                    margin-bottom:20px;
+                ">
+                    ❤️
+                </div>
+
+                <h3 style="
+                    color:#ffffff;
+                    margin-bottom:10px;
+                ">
+                    Nenhum favorito ainda
+                </h3>
+
+                <p style="
+                    color:#94a3b8;
+                ">
+                    Clique no coração ❤️ dos produtos
+                    para adicioná-los aos favoritos.
+                </p>
+
+            </div>
+        `;
+
+        atualizarBadges();
+        return;
+    }
+
+    // Produtos favoritos
+    const produtos = todosProdutos.filter(p =>
+        favoritos.includes(Number(p.id))
+    );
+
+    container.innerHTML = "";
+
+    if (produtos.length === 0) {
+
+        container.innerHTML = `
+            <div style="
+                width:100%;
+                text-align:center;
+                padding:80px 20px;
+            ">
+
+                <div style="font-size:60px;">
+                    😕
+                </div>
+
+                <h3 style="color:white;">
+                    Produto não encontrado
+                </h3>
+
+            </div>
+        `;
+
+        atualizarBadges();
+        return;
+    }
+
+    produtos.forEach(p => {
+
+        const img = obterCaminhoImagem(p.nome);
+
+        const preco = Number(
+            p.preco_promocional > 0
+                ? p.preco_promocional
+                : p.preco
+        );
+
+        container.innerHTML += `
+            <div class="card-produto-loja">
+
+                <button
+                    class="btn-favorito"
+                    data-id="${p.id}"
+                    onclick="toggleFavorito(${p.id}, event)"
+                    title="Remover dos favoritos"
+                >
+                    <i
+                        class="fa-solid fa-heart"
+                        style="color:#ff4757;"
+                    ></i>
+                </button>
+
+                <div class="card-produto-img-box">
+
+                    <img
+                        src="${img}"
+                        alt="${sanitizarTexto(p.nome)}"
+                        class="card-produto-img"
+                        onerror="this.src='imagens/logo-bepro.png.jpeg'"
+                    >
+
+                </div>
+
+                <div class="card-produto-detalhes">
+
+                    <h3 class="card-produto-titulo">
+                        ${sanitizarTexto(p.nome)}
+                    </h3>
+
+                    <div class="card-produto-preco">
+                        R$ ${preco.toFixed(2)}
+                    </div>
+
+                    <button
+                        class="btn-card-comprar"
+                        onclick="
+                            event.stopPropagation();
+                            adicionarAoCarrinho(
+                                '${p.nome.replace(/'/g, "\\'")}',
+                                ${preco}
+                            );
+                        "
+                    >
+                        🛒 Adicionar ao Carrinho
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+    });
+
+    atualizarBadges();
 }
 
 function atualizarBadges(){
@@ -2255,11 +2812,6 @@ atualizarCarrinhoUI();
 atualizarResumoPagamento();
 atualizarBadges();
 inicializarPagamento();
-
-localStorage.setItem(
-    "proPlayerSelecionado",
-    JSON.stringify(playersData[playerIndexAtual])
-);
 
 const btn=document.getElementById("btnDropdownCat");
 const menu=document.getElementById("menuDropdownCat");
@@ -2278,46 +2830,6 @@ menu.classList.remove("ativo");
 }
 });
 
-function renderizarFavoritos(){
-const container=document.getElementById("lista-produtos");
-if(!container)return;
-
-const favoritos=getFavoritos();
-
-if(!favoritos.length){
-container.innerHTML=`
-<div style="grid-column:1/-1;text-align:center;padding:40px">
-<h3>Nenhum favorito salvo.</h3>
-</div>`;
-return;
-}
-
-const produtos=todosProdutos.filter(p=>favoritos.includes(Number(p.id)));
-
-container.innerHTML="";
-
-produtos.forEach(p=>{
-container.innerHTML+=`
-<div class="card-produto-loja">
-<button class="btn-favorito" onclick="toggleFavorito(${p.id},event)">
-<i class="fa-solid fa-heart" style="color:#ff4757"></i>
-</button>
-
-<div class="card-produto-img-box">
-<img src="${obterCaminhoImagem(p.nome)}">
-</div>
-
-<div class="card-produto-detalhes">
-<h3>${sanitizarTexto(p.nome)}</h3>
-<p>R$ ${p.preco}</p>
-
-<button onclick="adicionarAoCarrinho('${p.nome}',${p.preco})">
-Adicionar ao Carrinho
-</button>
-</div>
-</div>`;
-});
-}
 
 function inicializarSistema(){
 atualizarCarrinhoUI();
@@ -2339,6 +2851,26 @@ atualizarStatusLogin();
 trocarAba("inicio");
 }
 
+function abrirPerfil(){
+const logado=localStorage.getItem("usuarioLogado")==="true";
+
+if(!logado){
+trocarAba("login");
+return;
+}
+
+trocarAba("perfil");
+
+if(typeof carregarPerfil==="function"){
+carregarPerfil();
+}
+}
+
+function exibirNomeUsuario(nome){
+const el=document.getElementById("nome-usuario");
+if(el)el.textContent=nome;
+}
+
 function carregarPerfil(){
 const usuario=JSON.parse(localStorage.getItem("usuario"));
 
@@ -2357,6 +2889,15 @@ function fecharDropdownPerfil(){
 const dropdown=document.getElementById("perfil-dropdown");
 if(dropdown)dropdown.style.display="none";
 }
+
+document.addEventListener("click",e=>{
+const container=document.querySelector(".perfil-container");
+const dropdown=document.getElementById("perfil-dropdown");
+
+if(container&&dropdown&&!container.contains(e.target)){
+dropdown.style.display="none";
+}
+});
 
 function moeda(valor){
 return Number(valor).toLocaleString("pt-BR",{
@@ -2444,10 +2985,6 @@ async function carregarPlano(){
 
             if(box) box.style.display = "none";
             if(semPlano) semPlano.style.display = "block";
-
-            localStorage.removeItem(
-                "planoAtivoConfirmado"
-            );
 
             return;
         }
@@ -2680,11 +3217,6 @@ beneficios.innerHTML = listaBeneficios
             chavePlano
         );
 
-        localStorage.setItem(
-            "planoAtivoConfirmado",
-            "true"
-        );
-
     }catch(error){
         console.error(
             "Erro ao carregar plano:",
@@ -2696,6 +3228,21 @@ beneficios.innerHTML = listaBeneficios
 // ========================================
 // FUNÇÕES DOS BENEFÍCIOS
 // ========================================
+
+// 🎥 VOD REVIEW
+function abrirVODReview(){
+
+    const modal =
+        document.getElementById("modal-vod-review");
+
+    if(!modal){
+        console.error("Modal VOD Review não encontrado.");
+        return;
+    }
+
+    modal.style.display = "flex";
+
+}
 
 // 📄 GUIA DE TREINO
 function abrirGuiaTreino(){
@@ -2709,10 +3256,6 @@ function abrirDiscordAlunos(){
 
     alert("💬 Aqui vai abrir o Discord dos alunos.");
 
-    window.open(
-        "https://discord.gg/exemplo",
-        "_blank"
-    );
 }
 
 // 🎮 SESSÕES AO VIVO
@@ -2752,10 +3295,6 @@ function abrirGrupoVIP(){
 
     alert("💬 Aqui vai abrir o Grupo VIP.");
 
-    window.open(
-        "https://discord.gg/grupovip-exemplo",
-        "_blank"
-    );
 }
 
 // 👑 ACOMPANHAMENTO
@@ -2770,20 +3309,6 @@ function abrirDuoInGame(){
 
     alert("🎮 Aqui você poderá agendar sua partida Duo com o Pro.");
 
-    const modal =
-        document.getElementById("modal-sessoes");
-
-    if(!modal){
-        console.error(
-            "Modal de sessões não encontrado."
-        );
-        return;
-    }
-
-    modal.style.display = "flex";
-
-    carregarCalendarioAulas();
-
 }
 
 // 📱 WHATSAPP
@@ -2791,10 +3316,6 @@ function abrirWhatsAppVIP(){
 
     alert("📱 Aqui vai abrir o suporte VIP.");
 
-    window.open(
-        "https://wa.me/5500000000000",
-        "_blank"
-    );
 }
 
 // 📊 RELATÓRIO
@@ -2802,27 +3323,6 @@ function abrirRelatorioMensal(){
 
     alert("📊 Aqui vai abrir seu relatório mensal.");
 
-    const modal = document.getElementById(
-        "modal-relatorio-mensal"
-    );
-
-    if(!modal){
-        alert("Relatório mensal indisponível.");
-        return;
-    }
-
-    modal.style.display = "flex";
-}
-
-function fecharRelatorioMensal(){
-
-    const modal = document.getElementById(
-        "modal-relatorio-mensal"
-    );
-
-    if(modal){
-        modal.style.display = "none";
-    }
 }
 
 // ========================================
@@ -3204,20 +3704,6 @@ function selecionarHorario(
 
 async function confirmarAula(){
 
-    const playerSelecionado =
-        playersData[playerIndexAtual];
-
-    if(!playerSelecionado){
-        alert("Erro: Pro Player não encontrado.");
-        return;
-    }
-
-    // Salva a aula que o cliente está tentando comprar
-    localStorage.setItem(
-        "aulaSelecionada",
-        JSON.stringify(playerSelecionado)
-    );
-
     if(
         !aulaSelecionada.data ||
         !aulaSelecionada.horario
@@ -3240,10 +3726,6 @@ async function confirmarAula(){
 
         alert(
             "Você precisa estar logado."
-        );
-
-        localStorage.removeItem(
-            "planoAtivoConfirmado"
         );
 
         return;
@@ -3833,78 +4315,6 @@ function novaAnaliseConfig(){
 // 🎥 VOD REVIEW
 // ========================================
 
-function extrairYoutubeId(url){
-
-    if(!url) return null;
-
-    const match = String(url).match(
-        /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&/]+)/
-    );
-
-    return match ? match[1] : null;
-}
-
-function abrirVODReview(){
-
-    const playerSalvo =
-        localStorage.getItem("proPlayerSelecionado");
-
-    if(!playerSalvo){
-        alert("Nenhum Pro Player selecionado.");
-        return;
-    }
-
-    const aula =
-        JSON.parse(playerSalvo);
-
-    const video =
-        aula.videos?.vod;
-
-    if(!video){
-        alert("O VOD desse Pro Player ainda não foi configurado.");
-        return;
-    }
-
-    const videoId =
-        extrairYoutubeId(video);
-
-    if(!videoId){
-        alert("URL da VOD inválida.");
-        return;
-    }
-
-    const titulo =
-        document.getElementById("vod-titulo");
-
-    if(titulo){
-        titulo.textContent =
-            `VOD Review — ${aula.nome.replace("👑 Pro Player: ", "")}`;
-    }
-
-    const descricao =
-        document.getElementById("vod-descricao");
-
-    if(descricao){
-        descricao.textContent =
-            `Análise de gameplay de ${aula.nome.replace("👑 Pro Player: ", "")} — ${aula.jogo}.`;
-    }
-
-    const player =
-        document.getElementById("vod-video-player");
-
-    if(player){
-        player.src =
-            `https://www.youtube.com/embed/${videoId}`;
-    }
-
-    const modal =
-        document.getElementById("modal-vod-review");
-
-    if(modal){
-        modal.style.display = "flex";
-    }
-}
-
 function fecharVODReview(){
 
     const modal =
@@ -3913,17 +4323,31 @@ function fecharVODReview(){
         );
 
     if(modal){
+
         modal.style.display = "none";
-    }
 
-    const player =
-        document.getElementById(
-            "vod-video-player"
-        );
-
-    if(player){
-        player.src = "";
     }
+}
+
+// ========================================
+// ABRIR VÍDEO
+// ========================================
+
+function abrirVideoVOD(){
+
+    /*
+        Coloque aqui o link do vídeo
+        que você quiser abrir.
+    */
+
+    const video =
+        "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI";
+
+
+    window.open(
+        video,
+        "_blank"
+    );
 }
 
 function abrirPromocao() {
@@ -3946,5 +4370,25 @@ function abrirPromocao() {
     }
 }
 
-// Mantém um alias para caso o HTML chame por verOfertas
-window.verOfertas = abrirPromocao;
+    // Procura o container dos produtos
+    const secaoProdutos = document.getElementById("lista-produtos") || document.querySelector(".produtos") || document.querySelector("main");
+    
+    if (secaoProdutos) {
+        secaoProdutos.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+
+    function selecionarJogo(valor, elemento) {
+  // Atualiza o valor do input escondido que o seu JS lê
+  document.getElementById('jogo').value = valor;
+
+  // Remove a classe 'active' de todos os cards
+  document.querySelectorAll('.game-card').forEach(card => {
+    card.classList.remove('active');
+  });
+
+  // Adiciona 'active' no card clicado
+  elemento.classList.add('active');
+}

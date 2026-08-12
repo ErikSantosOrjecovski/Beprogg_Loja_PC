@@ -4332,235 +4332,221 @@ html {
     font-size: 1.1em;
 }
 
-/* =========================================================
-   🛒 CARD DEFINITIVO DA LOJA
-   ========================================================= */
+/* Estilo Glassmorphism para o Container */
+.match-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 40px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  text-align: center;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
 
-#lista-produtos {
-    display: grid !important;
-    grid-template-columns: repeat(
-        auto-fill,
-        minmax(260px, 1fr)
-    ) !important;
-    gap: 24px !important;
+/* Grid de Jogos Visuais */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.game-card {
+  background: #111827;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.game-card:hover, .game-card.active {
+  border-color: #00d2ff;
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+}
+
+.game-card img {
+  width: 100%;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+/* Container estilo Card Glassmorphism */
+.match-card-container {
+  max-width: 750px;
+  margin: 40px auto;
+  padding: 40px 30px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(0, 210, 255, 0.25);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.badge-match {
+  display: inline-block;
+  background: rgba(0, 210, 255, 0.1);
+  color: #00d2ff;
+  border: 1px solid #00d2ff;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+/* Grid de Jogos */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.game-card {
+  background: #0f172a;
+  border: 2px solid #1e293b;
+  border-radius: 12px;
+  padding: 18px 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.game-card .game-icon {
+  font-size: 1.8rem;
+}
+
+.game-card:hover {
+  border-color: rgba(0, 210, 255, 0.5);
+  transform: translateY(-3px);
+  color: #fff;
+}
+
+/* Estado Ativo (Jogo Selecionado) */
+.game-card.active {
+  border-color: #00d2ff;
+  background: rgba(0, 210, 255, 0.1);
+  color: #00d2ff;
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+}
+
+/* Botão Analisar */
+.btn-analisar {
+  background: #00d2ff;
+  color: #0b0f19;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 300px;
+}
+
+.btn-analisar:hover {
+  background: #38bdf8;
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+  transform: scale(1.02);
+}
+
+/* ================================
+   FAVORITOS
+================================ */
+
+#favoritos {
     width: 100%;
-    margin: 25px auto 0 !important;
-    padding: 0 !important;
-    align-items: stretch;
-}
-
-.card-produto-loja {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(15, 23, 42, 0.98),
-            rgba(7, 12, 24, 0.98)
-        );
-
-    border: 1px solid rgba(0, 212, 255, 0.12);
-    border-radius: 18px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.28),
-        inset 0 1px 0 rgba(255, 255, 255, 0.025);
-
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
-
-    cursor: pointer;
-}
-
-.card-produto-loja:hover {
-    transform: translateY(-6px);
-
-    border-color: rgba(0, 212, 255, 0.65);
-
-    box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.4),
-        0 0 25px rgba(0, 212, 255, 0.08);
-}
-
-/* IMAGEM */
-
-.card-produto-img-box {
-    position: relative;
-
-    width: 100%;
-    height: 230px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(0, 212, 255, 0.06),
-            transparent 65%
-        ),
-        #050914;
-
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-
-    overflow: hidden;
-}
-
-.card-produto-img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: contain;
-
-    padding: 22px;
+    min-height: 100vh;
+    padding: 30px;
     box-sizing: border-box;
-
-    transition:
-        transform 0.3s ease,
-        filter 0.3s ease;
 }
 
-.card-produto-loja:hover .card-produto-img {
-    transform: scale(1.06);
-    filter:
-        drop-shadow(0 0 12px rgba(0, 212, 255, 0.15));
-}
-
-/* FAVORITO */
-
-.card-produto-loja .btn-favorito {
-    position: absolute !important;
-    top: 14px !important;
-    right: 14px !important;
-    left: auto !important;
-
-    width: 38px;
-    height: 38px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 50%;
-
-    background: rgba(3, 8, 18, 0.82);
-    backdrop-filter: blur(8px);
-
-    color: #cbd5e1;
-
-    cursor: pointer;
-
-    z-index: 5;
-
-    transition: 0.2s ease;
-}
-
-.card-produto-loja .btn-favorito:hover {
-    color: #ff4757;
-    border-color: rgba(255,71,87,0.5);
-    transform: scale(1.08);
-}
-
-/* DETALHES */
-
-.card-produto-detalhes {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-
-    padding: 20px;
-    text-align: left;
-}
-
-.card-produto-categoria {
+#favoritos.ativo {
     display: block;
-
-    margin-bottom: 8px;
-
-    color: #00d4ff;
-
-    font-size: 11px;
-    font-weight: 800;
-
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
 }
 
-.card-produto-titulo {
-    min-height: 50px;
-
-    margin: 0 0 15px;
-
-    color: #f8fafc;
-
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-
-    line-height: 1.25;
-}
-
-.card-produto-preco {
-    margin-top: auto;
-    margin-bottom: 18px;
-
-    color: #22c55e;
-
-    font-size: 23px;
-    font-weight: 900;
-}
-
-.card-produto-detalhes .btn-card-comprar {
+.favoritos-container {
     width: 100%;
-    height: 44px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    border: none;
-    border-radius: 10px;
-
-    background: #00d4ff;
-    color: #001018;
-
-    font-size: 13px;
-    font-weight: 900;
-
-    cursor: pointer;
-
-    transition: 0.2s ease;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.card-produto-detalhes .btn-card-comprar:hover {
-    background: #60f5ff;
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 8px 20px rgba(0, 212, 255, 0.22);
+.favoritos-cabecalho {
+    margin-bottom: 30px;
+    padding: 25px;
+    border-radius: 15px;
+    background: rgba(0, 20, 40, 0.75);
+    border: 1px solid rgba(0, 229, 255, 0.25);
 }
 
-/* RESPONSIVO */
+.favoritos-cabecalho h2 {
+    margin: 0 0 8px;
+    color: #00e5ff;
+    font-size: 1.8rem;
+}
 
-@media (max-width: 700px) {
+.favoritos-cabecalho p {
+    margin: 0;
+    color: #94a3b8;
+}
 
-    #lista-produtos {
-        grid-template-columns:
-            repeat(auto-fill, minmax(220px, 1fr)) !important;
-    }
+#lista-favoritos {
+    width: 100%;
+}
 
-    .card-produto-img-box {
-        height: 200px;
-    }
+/* ================================ 
+   ESTILO DO CARRINHO (IGUAL FAVORITOS)
+   ================================ */
 
+#carrinho {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+#carrinho.ativo {
+    display: block;
+}
+
+.carrinho-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.carrinho-cabecalho {
+    margin-bottom: 30px;
+    padding: 25px;
+    border-radius: 15px;
+    background: rgba(0, 20, 40, 0.75);
+    border: 1px solid rgba(0, 229, 255, 0.25);
+}
+
+.carrinho-cabecalho h2 {
+    margin: 0 0 8px;
+    color: #00e5ff;
+    font-size: 1.8rem;
+}
+
+.carrinho-cabecalho p {
+    margin: 0;
+    color: #94a3b8;
+}
+
+#lista-carrinho {
+    width: 100%;
 }
