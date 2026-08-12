@@ -2327,9 +2327,9 @@ const playersData = [
         descricao: "Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_BLACKOUTZ",
-            aula: "COLOQUE_ID_VIDEO_AULA_BLACKOUTZ",
-            vod: "COLOQUE_ID_VIDEO_VOD_BLACKOUTZ"
+            preview: "https://youtu.be/oM5tIUEec4o?si=M5k7aj0qmKkE8Z5",
+            aula: "https://youtu.be/5DnF_3mgI5I?si=1PpZTG1dWPyxOiDQ",
+            vod: "https://youtu.be/CauKbyWHzJQ?si=kFxdRMkrgB9w3W5N"
         }
     },
 
@@ -2339,12 +2339,12 @@ const playersData = [
         jogoChave: "cs2",
         imagem: "imagens/Fallen.jpg",
         preco: "R$ 200,00",
-        descricao: "Aprenda controle de mapa, posicionamento de AWP e setups de granadas.",
+        descricao: "Aprenda controle de mapa, posicionamento de AWP e setups de granadas com o lendario Professor.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_FALLEN",
-            aula: "COLOQUE_ID_VIDEO_AULA_FALLEN",
-            vod: "COLOQUE_ID_VIDEO_VOD_FALLEN"
+            preview: "https://youtu.be/UbJSEpoTbOA?si=-UAgQC7bvaIqr6pQ",
+            aula: "https://youtu.be/gB6Lw5ZaUa8?si=DprFkbuKqdh8Qe8p",
+            vod: "https://youtu.be/9dKasbByBYY?si=m3uB3EV-YaPk-f8V"
         }
     },
 
@@ -2354,12 +2354,12 @@ const playersData = [
         jogoChave: "lol",
         imagem: "imagens/Faker.jpg",
         preco: "R$ 300,00",
-        descricao: "Domine controle de wave, visão de mapa e decisões macro.",
+        descricao: "Domine controle de wave, visão de mapa e decisões macro com o maior da historia de LoL.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_FAKER",
-            aula: "COLOQUE_ID_VIDEO_AULA_FAKER",
-            vod: "COLOQUE_ID_VIDEO_VOD_FAKER"
+            preview: "https://youtu.be/tYXJI26nrNc?si=b55rnP7vl_GRwCr9",
+            aula: "https://youtu.be/tZgs8X7GFas?si=94cIbyMUxMh-26GT",
+            vod: "https://youtu.be/W2DfA6UEiIw?si=tCrnaKL9mmjTN28q"
         }
     },
 
@@ -2372,9 +2372,9 @@ const playersData = [
         descricao: "Estratégias avançadas de ataque, defesa e comunicação.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_NESKWGA",
-            aula: "COLOQUE_ID_VIDEO_AULA_NESKWGA",
-            vod: "COLOQUE_ID_VIDEO_VOD_NESKWGA"
+            preview: "https://youtu.be/18DtB0TUa-c?si=NOl6e1ruLjySaFG2",
+            aula: "https://youtu.be/JdNg3076-zg?si=JTB2WJFGecwTPlsB",
+            vod: "https://youtu.be/jjxLYeOSovU?si=Ko6KVp2tc-XLqLR3"
         }
     },
 
@@ -2387,9 +2387,9 @@ const playersData = [
         descricao: "Uso avançado de agentes, clutch e movimentação tática.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_FRTT",
-            aula: "COLOQUE_ID_VIDEO_AULA_FRTT",
-            vod: "COLOQUE_ID_VIDEO_VOD_FRTT"
+            preview: "https://youtu.be/zVqC85OwWRE?si=vos0s6s3OmUAxqqH",
+            aula: "https://youtu.be/D-o3jTxT4Ck?si=E3Av6Xf6n5sOLuMi",
+            vod: "https://youtu.be/Epq1V-L1WmA?si=bk3lj_yrX5aSPbrT"
         }
     },
 
@@ -2402,9 +2402,9 @@ const playersData = [
         descricao: "Movimentação avançada, loadouts e rotações.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_TONYBOY",
-            aula: "COLOQUE_ID_VIDEO_AULA_TONYBOY",
-            vod: "COLOQUE_ID_VIDEO_VOD_TONYBOY"
+            preview: "https://youtu.be/sa5PxNTcuLs?si=65xsiBpc14AkHFVG",
+            aula: "https://youtu.be/QUpZw_F0JLg?si=aASapcRJiAblk5I7",
+            vod: "https://youtu.be/veYz6MRPzS0?si=ojQPY9vH883qyMfs"
         }
     }
 ];
@@ -2423,6 +2423,11 @@ if(playerIndexAtual>=playersData.length)playerIndexAtual=0;
 if(playerIndexAtual<0)playerIndexAtual=playersData.length-1;
 
 const player=playersData[playerIndexAtual];
+
+localStorage.setItem(
+    "proPlayerSelecionado",
+    JSON.stringify(player)
+);
 
 const nome=document.getElementById("player-nome");
 const jogo=document.getElementById("player-jogo");
@@ -2639,6 +2644,11 @@ atualizarResumoPagamento();
 atualizarBadges();
 inicializarPagamento();
 
+localStorage.setItem(
+    "proPlayerSelecionado",
+    JSON.stringify(playersData[playerIndexAtual])
+);
+
 const btn=document.getElementById("btnDropdownCat");
 const menu=document.getElementById("menuDropdownCat");
 
@@ -2851,6 +2861,10 @@ async function carregarPlano(){
 
             if(box) box.style.display = "none";
             if(semPlano) semPlano.style.display = "block";
+
+            localStorage.removeItem(
+            "planoAtivoConfirmado"
+        );
 
             return;
         }
@@ -3079,9 +3093,14 @@ beneficios.innerHTML = listaBeneficios
         }
 
         localStorage.setItem(
-            "planoAtivo",
-            chavePlano
-        );
+    "planoAtivo",
+    chavePlano
+);
+
+localStorage.setItem(
+    "planoAtivoConfirmado",
+    "true"
+);
 
     }catch(error){
         console.error(
@@ -3120,8 +3139,10 @@ function abrirGuiaTreino(){
 // 💬 DISCORD
 function abrirDiscordAlunos(){
 
-    alert("💬 Aqui vai abrir o Discord dos alunos.");
-
+    window.open(
+        "https://discord.gg/exemplo",
+        "_blank"
+    );
 }
 
 // 🎮 SESSÕES AO VIVO
@@ -3159,8 +3180,10 @@ function abrirAnaliseConfig(){
 // 💬 GRUPO VIP
 function abrirGrupoVIP(){
 
-    alert("💬 Aqui vai abrir o Grupo VIP.");
-
+    window.open(
+        "https://discord.gg/grupovip-exemplo",
+        "_blank"
+    );
 }
 
 // 👑 ACOMPANHAMENTO
@@ -3173,22 +3196,56 @@ function abrirAcompanhamento(){
 // 🎮 DUO
 function abrirDuoInGame(){
 
-    alert("🎮 Aqui você poderá agendar sua partida Duo com o Pro.");
+    const modal =
+        document.getElementById("modal-sessoes");
+
+    if(!modal){
+        console.error(
+            "Modal de sessões não encontrado."
+        );
+        return;
+    }
+
+    modal.style.display = "flex";
+
+    carregarCalendarioAulas();
 
 }
 
 // 📱 WHATSAPP
 function abrirWhatsAppVIP(){
 
-    alert("📱 Aqui vai abrir o suporte VIP.");
+    window.open(
+        "https://wa.me/5500000000000",
+        "_blank"
+    );
 
 }
 
 // 📊 RELATÓRIO
 function abrirRelatorioMensal(){
 
-    alert("📊 Aqui vai abrir seu relatório mensal.");
+    const modal = document.getElementById(
+        "modal-relatorio-mensal"
+    );
 
+    if(!modal){
+        alert("Relatório mensal indisponível.");
+        return;
+    }
+
+    modal.style.display = "flex";
+}
+
+function fecharRelatorioMensal(){
+
+    const modal = document.getElementById(
+        "modal-relatorio-mensal"
+    );
+
+    if(modal){
+        modal.style.display = "none";
+    }
 }
 
 // ========================================
@@ -3570,6 +3627,20 @@ function selecionarHorario(
 
 async function confirmarAula(){
 
+    const playerSelecionado =
+        playersData[playerIndexAtual];
+
+    if(!playerSelecionado){
+        alert("Erro: Pro Player não encontrado.");
+        return;
+    }
+
+    // Salva a aula que o cliente está tentando comprar
+    localStorage.setItem(
+        "aulaSelecionada",
+        JSON.stringify(playerSelecionado)
+    );
+
     if(
         !aulaSelecionada.data ||
         !aulaSelecionada.horario
@@ -3592,6 +3663,10 @@ async function confirmarAula(){
 
         alert(
             "Você precisa estar logado."
+        );
+
+        localStorage.removeItem(
+        "planoAtivoConfirmado"
         );
 
         return;
@@ -4199,23 +4274,107 @@ function fecharVODReview(){
 // ABRIR VÍDEO
 // ========================================
 
-function abrirVideoVOD(){
+function extrairYoutubeId(url){
 
-    /*
-        Coloque aqui o link do vídeo
-        que você quiser abrir.
-    */
+    if(!url) return null;
 
-    const video =
-        "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI";
-
-
-    window.open(
-        video,
-        "_blank"
+    const match = String(url).match(
+        /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&/]+)/
     );
+
+    return match ? match[1] : null;
 }
 
+function abrirVODReview(){
+
+    const playerSalvo =
+        localStorage.getItem("proPlayerSelecionado");
+
+    if(!playerSalvo){
+        alert("Nenhum Pro Player selecionado.");
+        return;
+    }
+
+    const aula =
+        JSON.parse(playerSalvo);
+
+    const video =
+        aula.videos?.vod;
+
+    if(!video){
+        alert("O VOD desse Pro Player ainda não foi configurado.");
+        return;
+    }
+
+    const match = String(video).match(
+        /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&/]+)/
+    );
+
+    const videoId =
+        match ? match[1] : null;
+
+    if(!videoId){
+        alert("URL da VOD inválida.");
+        return;
+    }
+
+    const titulo =
+        document.getElementById("vod-titulo");
+
+    if(titulo){
+        titulo.textContent =
+            `VOD Review — ${aula.nome.replace("👑 Pro Player: ", "")}`;
+    }
+
+    const descricao =
+        document.getElementById("vod-descricao");
+
+    if(descricao){
+        descricao.textContent =
+            `Análise de gameplay de ${aula.nome.replace("👑 Pro Player: ", "")} — ${aula.jogo}.`;
+    }
+
+    const player =
+        document.getElementById("vod-video-player");
+
+    if(player){
+        player.src =
+            `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    const modal =
+        document.getElementById("modal-vod-review");
+
+    if(modal){
+        modal.style.display = "flex";
+    }
+}
+
+function fecharVODReview(){
+
+    const modal =
+        document.getElementById(
+            "modal-vod-review"
+        );
+
+    if(modal){
+
+        modal.style.display = "none";
+
+    }
+
+    const player =
+        document.getElementById(
+            "vod-video-player"
+        );
+
+    if(player){
+
+        player.src = "";
+
+    }
+
+}
 function abrirPromocao() {
     // 1. Pega o container onde os produtos são renderizados no seu HTML
     const container = document.getElementById("lista-produtos") || document.querySelector(".produtos-grid");
