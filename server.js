@@ -5,6 +5,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const mysql = require("mysql2");
+const bcrypt = require("bcryptjs");
 
 // 1. CRIAR A APLICAÇÃO EXPRESS PRIMEIRO
 const app = express();
@@ -44,6 +45,15 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// Rate limiter mais estrito para login (freio extra contra força bruta de senha)
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 20, // 20 tentativas de login por IP por janela
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Muitas tentativas de login. Tente novamente mais tarde.' }
+});
+
 // Validação de Variáveis de Ambiente Críticas
 const requiredEnv = ['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME'];
 const missingEnv = requiredEnv.filter(key => !process.env[key]);
@@ -57,6 +67,10 @@ if (missingEnv.length) {
 // ==========================================
 function isNonEmptyString(value) {
     return typeof value === 'string' && value.trim().length > 0;
+}
+
+function isValidEmail(value) {
+    return isNonEmptyString(value) && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
 function validatePedido(pedido) {
@@ -93,6 +107,130 @@ db.connect((err) => {
 // Rota inicial de verificação do servidor
 app.get("/", (req, res) => {
     res.status(200).send("Servidor Bepro.gg funcionando 🚀");
+});
+
+// ==========================================
+// 👤 MÓDULO DE AUTENTICAÇÃO (CADASTRO / LOGIN)
+// ==========================================
+
+// ============================
+// 📝 CADASTRAR NOVO USUÁRIO
+// ============================
+app.post("/cadastro", async (req, res) => {
+    const { nome, email, senha, cpf, telefone } = req.body || {};
+
+    if (!isNonEmptyString(nome) || !isValidEmail(email) || !isNonEmptyString(senha) ||
+        !isNonEmptyString(cpf) || !isNonEmptyString(telefone)) {
+        return res.status(400).json({ error: "Preencha todos os campos corretamente." });
+    }
+
+    if (senha.trim().length < 6) {
+        return res.status(400).json({ error: "A senha deve ter no mínimo 6 caracteres." });
+    }
+
+    const emailNormalizado = email.trim().toLowerCase();
+
+    try {
+        // Verifica antecipadamente se o e-mail já existe (mensagem amigável)
+        db.query("SELECT id FROM usuarios WHERE email = ? LIMIT 1", [emailNormalizado], async (err, results) => {
+            if (err) {
+                console.error("Erro ao verificar e-mail existente:", err.message);
+                return res.status(500).json({ error: "Erro interno ao verificar cadastro." });
+            }
+
+            if (results.length) {
+                return res.status(409).json({ error: "Este e-mail já possui uma conta cadastrada." });
+            }
+
+            const senhaHash = await bcrypt.hash(senha.trim(), 10);
+
+            const query = `
+                INSERT INTO usuarios (nome, email, senha_hash, cpf, telefone)
+                VALUES (?, ?, ?, ?, ?)
+            `;
+
+            db.query(query, [
+                nome.trim(),
+                emailNormalizado,
+                senhaHash,
+                cpf.trim(),
+                telefone.trim()
+            ], (err) => {
+                if (err) {
+                    if (err.code === "ER_DUP_ENTRY") {
+                        return res.status(409).json({ error: "Este e-mail já possui uma conta cadastrada." });
+                    }
+
+                    console.error("Erro ao cadastrar usuário:", err.message);
+                    return res.status(500).json({ error: "Erro interno ao criar a conta." });
+                }
+
+                res.status(201).json({
+                    message: "✅ Conta criada com sucesso!",
+                    usuario: {
+                        nome: nome.trim(),
+                        email: emailNormalizado,
+                        cpf: cpf.trim(),
+                        telefone: telefone.trim()
+                    }
+                });
+            });
+        });
+    } catch (error) {
+        console.error("Erro inesperado no cadastro:", error.message);
+        res.status(500).json({ error: "Erro interno ao criar a conta." });
+    }
+});
+
+// ============================
+// 🔑 LOGIN
+// ============================
+app.post("/login", loginLimiter, (req, res) => {
+    const { email, senha } = req.body || {};
+
+    if (!isValidEmail(email) || !isNonEmptyString(senha)) {
+        return res.status(400).json({ error: "Informe e-mail e senha." });
+    }
+
+    const emailNormalizado = email.trim().toLowerCase();
+
+    const query = "SELECT * FROM usuarios WHERE email = ? LIMIT 1";
+
+    db.query(query, [emailNormalizado], async (err, results) => {
+        if (err) {
+            console.error("Erro ao consultar usuário:", err.message);
+            return res.status(500).json({ error: "Erro interno ao efetuar login." });
+        }
+
+        // Mensagem genérica de propósito: não revelamos se foi o e-mail
+        // ou a senha que estava errada (evita enumeração de contas).
+        if (!results.length) {
+            return res.status(401).json({ error: "Credenciais inválidas." });
+        }
+
+        const usuario = results[0];
+
+        try {
+            const senhaConfere = await bcrypt.compare(senha.trim(), usuario.senha_hash);
+
+            if (!senhaConfere) {
+                return res.status(401).json({ error: "Credenciais inválidas." });
+            }
+
+            res.status(200).json({
+                message: "✅ Login realizado!",
+                usuario: {
+                    nome: usuario.nome,
+                    email: usuario.email,
+                    cpf: usuario.cpf,
+                    telefone: usuario.telefone
+                }
+            });
+        } catch (error) {
+            console.error("Erro ao validar senha:", error.message);
+            res.status(500).json({ error: "Erro interno ao efetuar login." });
+        }
+    });
 });
 
 // ==========================================
@@ -655,4 +793,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor rodando com sucesso em http://localhost:${PORT}`);
 });
-

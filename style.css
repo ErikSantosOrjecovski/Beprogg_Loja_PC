@@ -4331,3 +4331,236 @@ html {
     font-weight: 700;
     font-size: 1.1em;
 }
+
+/* =========================================================
+   🛒 CARD DEFINITIVO DA LOJA
+   ========================================================= */
+
+#lista-produtos {
+    display: grid !important;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(260px, 1fr)
+    ) !important;
+    gap: 24px !important;
+    width: 100%;
+    margin: 25px auto 0 !important;
+    padding: 0 !important;
+    align-items: stretch;
+}
+
+.card-produto-loja {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(15, 23, 42, 0.98),
+            rgba(7, 12, 24, 0.98)
+        );
+
+    border: 1px solid rgba(0, 212, 255, 0.12);
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+
+    cursor: pointer;
+}
+
+.card-produto-loja:hover {
+    transform: translateY(-6px);
+
+    border-color: rgba(0, 212, 255, 0.65);
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, 0.4),
+        0 0 25px rgba(0, 212, 255, 0.08);
+}
+
+/* IMAGEM */
+
+.card-produto-img-box {
+    position: relative;
+
+    width: 100%;
+    height: 230px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(0, 212, 255, 0.06),
+            transparent 65%
+        ),
+        #050914;
+
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+
+    overflow: hidden;
+}
+
+.card-produto-img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    padding: 22px;
+    box-sizing: border-box;
+
+    transition:
+        transform 0.3s ease,
+        filter 0.3s ease;
+}
+
+.card-produto-loja:hover .card-produto-img {
+    transform: scale(1.06);
+    filter:
+        drop-shadow(0 0 12px rgba(0, 212, 255, 0.15));
+}
+
+/* FAVORITO */
+
+.card-produto-loja .btn-favorito {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    left: auto !important;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+
+    background: rgba(3, 8, 18, 0.82);
+    backdrop-filter: blur(8px);
+
+    color: #cbd5e1;
+
+    cursor: pointer;
+
+    z-index: 5;
+
+    transition: 0.2s ease;
+}
+
+.card-produto-loja .btn-favorito:hover {
+    color: #ff4757;
+    border-color: rgba(255,71,87,0.5);
+    transform: scale(1.08);
+}
+
+/* DETALHES */
+
+.card-produto-detalhes {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    padding: 20px;
+    text-align: left;
+}
+
+.card-produto-categoria {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #00d4ff;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+.card-produto-titulo {
+    min-height: 50px;
+
+    margin: 0 0 15px;
+
+    color: #f8fafc;
+
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+
+    line-height: 1.25;
+}
+
+.card-produto-preco {
+    margin-top: auto;
+    margin-bottom: 18px;
+
+    color: #22c55e;
+
+    font-size: 23px;
+    font-weight: 900;
+}
+
+.card-produto-detalhes .btn-card-comprar {
+    width: 100%;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #00d4ff;
+    color: #001018;
+
+    font-size: 13px;
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.card-produto-detalhes .btn-card-comprar:hover {
+    background: #60f5ff;
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(0, 212, 255, 0.22);
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 700px) {
+
+    #lista-produtos {
+        grid-template-columns:
+            repeat(auto-fill, minmax(220px, 1fr)) !important;
+    }
+
+    .card-produto-img-box {
+        height: 200px;
+    }
+
+}

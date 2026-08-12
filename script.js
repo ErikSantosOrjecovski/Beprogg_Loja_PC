@@ -143,7 +143,7 @@ function selecionarPerfil(nomePerfil,classeIcone){
     if(dropdown)dropdown.style.display="none";
 }
 
-window.addEventListener("click",e=>{
+document.addEventListener("click",e=>{
     const container=document.querySelector(".perfil-container");
     const dropdown=document.getElementById("perfil-dropdown");
 
@@ -161,7 +161,7 @@ function abrirPerfil(){
 
     trocarAba("perfil");
     carregarPerfil?.();
-     carregarPlano?.();
+    carregarPlano?.();
 }
 
 async function gerarRecomendacao(){
@@ -294,48 +294,134 @@ async function gerarRecomendacao(){
 }
 
 
-function fazerCadastro(event){
+/* =========================================================
+   CADASTRO E LOGIN
+   Agora conversam com o backend (/cadastro e /login), que
+   persiste os usuários no banco de dados MySQL. O localStorage
+   passa a guardar apenas a sessão do navegador (quem está
+   logado agora), nunca a lista de contas nem a senha.
+   ========================================================= */
+
+async function fazerCadastro(event){
     event.preventDefault();
 
-    const usuario={
-        nome:document.getElementById("nome").value.trim(),
-        email:document.getElementById("email").value.trim(),
-        senha:document.getElementById("senha").value.trim(),
-        cpf:document.getElementById("cpf").value.trim(),
-        telefone:document.getElementById("cadastro-tel").value.trim()
-    };
+    const nome=document.getElementById("nome").value.trim();
+    const email=document.getElementById("email").value.trim();
+    const senha=document.getElementById("senha").value.trim();
+    const confirmaSenhaEl=document.getElementById("confirma-senha");
+    const confirmaSenha=confirmaSenhaEl?confirmaSenhaEl.value.trim():null;
+    const cpf=document.getElementById("cpf").value.trim();
+    const telefone=document.getElementById("cadastro-tel").value.trim();
 
     const msg=document.getElementById("msg-cadastro");
 
-    if(Object.values(usuario).some(v=>!v)){
+    if(!msg)return;
+
+    msg.style.color="#ff4d4d";
+
+    if(!nome||!email||!senha||!cpf||!telefone){
         msg.innerText="❗ Preencha todos os campos!";
         return;
     }
 
-    localStorage.setItem("usuario",JSON.stringify(usuario));
-    localStorage.setItem("usuarioLogado","true");
+    if(senha.length<6){
+        msg.innerText="❗ A senha deve ter no mínimo 6 caracteres.";
+        return;
+    }
 
-    msg.innerText="✅ Conta criada! Logando...";
-    atualizarStatusLogin();
+    if(confirmaSenhaEl&&senha!==confirmaSenha){
+        msg.innerText="❗ As senhas não coincidem.";
+        return;
+    }
 
-    setTimeout(()=>trocarAba("inicio"),1500);
+    msg.style.color="#00d4ff";
+    msg.innerText="⏳ Criando sua conta...";
+
+    try{
+        const res=await fetch("http://localhost:3000/cadastro",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({nome,email,senha,cpf,telefone})
+        });
+
+        let data={};
+        try{
+            data=await res.json();
+        }catch(e){
+            data={};
+        }
+
+        if(!res.ok){
+            msg.style.color="#ff4d4d";
+            msg.innerText="❗ "+(data.error||data.message||"Não foi possível criar a conta.");
+            return;
+        }
+
+        localStorage.setItem("usuario",JSON.stringify(data.usuario));
+        localStorage.setItem("usuarioLogado","true");
+
+        msg.style.color="#00d4ff";
+        msg.innerText="✅ Conta criada! Logando...";
+        atualizarStatusLogin();
+
+        setTimeout(()=>trocarAba("inicio"),1500);
+
+    }catch(error){
+        console.error("Erro ao cadastrar:",error);
+        msg.style.color="#ff4d4d";
+        msg.innerText="❌ Erro de conexão com o servidor. Verifique se ele está rodando.";
+    }
 }
 
 
-function fazerLogin(){
+async function fazerLogin(){
     const email=document.getElementById("login-email").value.trim();
     const senha=document.getElementById("login-senha").value.trim();
     const msg=document.getElementById("msg-login");
 
-    const usuario=JSON.parse(localStorage.getItem("usuario"));
+    if(!msg)return;
 
-    if(usuario&&usuario.email===email&&usuario.senha===senha){
+    if(!email||!senha){
+        msg.innerText="❗ Preencha e-mail e senha.";
+        return;
+    }
+
+    msg.style.color="#00d4ff";
+    msg.innerText="⏳ Entrando...";
+
+    try{
+        const res=await fetch("http://localhost:3000/login",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({email,senha})
+        });
+
+        let data={};
+        try{
+            data=await res.json();
+        }catch(e){
+            data={};
+        }
+
+        if(!res.ok){
+            msg.style.color="#ff4d4d";
+            msg.innerText="❌ "+(data.error||data.message||"Credenciais inválidas!");
+            return;
+        }
+
+        localStorage.setItem("usuario",JSON.stringify(data.usuario));
         localStorage.setItem("usuarioLogado","true");
+
+        msg.style.color="#00d4ff";
         msg.innerText="✅ Login realizado!";
         atualizarStatusLogin();
+
         setTimeout(()=>trocarAba("inicio"),1500);
-    }else{
-        msg.innerText="❌ Credenciais inválidas!";
+
+    }catch(error){
+        console.error("Erro ao entrar:",error);
+        msg.style.color="#ff4d4d";
+        msg.innerText="❌ Erro de conexão com o servidor. Verifique se ele está rodando.";
     }
 }
 
@@ -373,450 +459,199 @@ function atualizarResumoPagamento(){
 
 
 /* =========================================================
-   PAGAMENTO
+   SISTEMA DE PAGAMENTO
+   (versão única — as duplicidades de obterTotalCarrinho,
+   atualizarCamposPagamento e inicializarPagamento que
+   existiam nos dois arquivos originais foram unificadas
+   aqui, mantendo a versão que efetivamente prevalecia)
    ========================================================= */
 
 function obterTotalCarrinho(){
-
-    return carrinho.reduce(
-        (total,item)=>
-            total+(Number(item.preco)||0),
-        0
-    );
+    return carrinho.reduce((total,item)=>{
+        return total + (Number(item.preco) || 0);
+    },0);
 }
-
-
-/* =========================================================
-   CRIAR ÁREA DOS DETALHES
-   ========================================================= */
-
-function criarAreaDetalhesPagamento(){
-
-    const select =
-        document.getElementById("forma-pagamento");
-
-    if(!select)return null;
-
-    let area =
-        document.getElementById("detalhes-pagamento");
-
-    if(!area){
-
-        area=document.createElement("div");
-
-        area.id="detalhes-pagamento";
-
-        select.parentNode.insertBefore(
-            area,
-            select.nextSibling
-        );
-    }
-
-    return area;
-}
-
-
-/* =========================================================
-   CAMPO
-   ========================================================= */
-
-function campoPagamento(
-    id,
-    label,
-    type="text",
-    placeholder=""
-){
-
-    return `
-
-        <label
-            for="${id}"
-            style="
-                display:block;
-                margin:10px 0 5px;
-                color:#cbd5e1;
-                font-weight:600;
-            "
-        >
-            ${label}
-        </label>
-
-        <input
-            id="${id}"
-            type="${type}"
-            placeholder="${placeholder}"
-            autocomplete="off"
-
-            style="
-                width:100%;
-                box-sizing:border-box;
-                padding:11px;
-                border-radius:7px;
-                border:1px solid #263449;
-                background:#0d1117;
-                color:#fff;
-            "
-        >
-    `;
-}
-
-
-/* =========================================================
-   MOSTRAR CAMPOS DO PAGAMENTO
-   ========================================================= */
 
 function atualizarCamposPagamento(){
-
-    const select =
-        document.getElementById("forma-pagamento");
-
-    const area =
-        criarAreaDetalhesPagamento();
+    const select=document.getElementById("forma-pagamento");
+    const area=document.getElementById("detalhes-pagamento");
 
     if(!select || !area)return;
 
-    const metodo =
-        String(select.value||"").toLowerCase();
-
+    const pagamento=select.value;
     area.innerHTML="";
 
-
-    /* =========================
-       PIX
-       ========================= */
-
-    if(metodo==="pix"){
-
+    /* PIX */
+    if(pagamento==="pix"){
         area.innerHTML=`
+            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
+                <h4 style="color:#00d4ff;margin-top:0;">💠 Pagamento via PIX</h4>
+                <p style="color:#cbd5e1;">Escolha como deseja pagar:</p>
 
-            <div
-                style="
-                    padding:15px;
-                    margin-bottom:15px;
-                    border:1px solid #1f3b52;
-                    border-radius:8px;
-                    background:#0d1722;
-                "
-            >
+                <label style="color:#fff;">Chave PIX</label>
 
-                <h4
-                    style="
-                        margin:0 0 10px;
-                        color:#00d4ff;
-                    "
+                <input
+                    id="pix-chave"
+                    type="text"
+                    placeholder="Digite sua chave PIX"
+                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
                 >
-                    💠 Pagamento via PIX
-                </h4>
 
-                <p
-                    style="
-                        color:#cbd5e1;
-                        margin-bottom:10px;
-                    "
-                >
-                    Informe uma chave PIX ou gere o
-                    pagamento através do QR Code.
-                </p>
-
-                ${campoPagamento(
-                    "pix-chave",
-                    "Chave PIX",
-                    "text",
-                    "CPF, e-mail, telefone ou chave aleatória"
-                )}
-
-                <div
-                    id="pix-resultado"
-                    style="
-                        margin-top:15px;
-                        text-align:center;
-                    "
-                ></div>
-
+                <div id="pix-resultado" style="margin-top:15px;text-align:center;"></div>
             </div>
         `;
-
         return;
     }
 
-
-    /* =========================
-       CARTÃO
-       ========================= */
-
-    if(
-        metodo==="cartao" ||
-        metodo==="cartao_credito" ||
-        metodo==="credito"
-    ){
-
-        const total =
-            obterTotalCarrinho();
-
-        let parcelasHTML="";
+    /* CARTÃO */
+    if(pagamento==="cartao"){
+        const total=obterTotalCarrinho();
+        let parcelas="";
 
         for(let i=1;i<=12;i++){
-
-            const valor=
-                total/i;
-
-            parcelasHTML+=`
-
+            parcelas+=`
                 <option value="${i}">
-                    ${i}x de ${moeda(valor)}
+                    ${i}x de ${moeda(total/i)}
                 </option>
-
             `;
         }
 
-
         area.innerHTML=`
+            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
+                <h4 style="color:#00d4ff;margin-top:0;">💳 Cartão de crédito</h4>
 
-            <div
-                style="
-                    padding:15px;
-                    margin-bottom:15px;
-                    border:1px solid #1f3b52;
-                    border-radius:8px;
-                    background:#0d1722;
-                "
-            >
-
-                <h4
-                    style="
-                        margin:0 0 10px;
-                        color:#00d4ff;
-                    "
-                >
-                    💳 Cartão de crédito
-                </h4>
-
-
-                ${campoPagamento(
-                    "cartao-numero",
-                    "Número do cartão",
-                    "text",
-                    "0000 0000 0000 0000"
-                )}
-
-
-                ${campoPagamento(
-                    "cartao-nome",
-                    "Nome no cartão",
-                    "text",
-                    "NOME COMPLETO"
-                )}
-
-
-                <div
-                    style="
-                        display:grid;
-                        grid-template-columns:1fr 1fr;
-                        gap:10px;
-                    "
+                <label style="color:#fff;">Número do cartão</label>
+                <input
+                    id="cartao-numero"
+                    type="text"
+                    placeholder="0000 0000 0000 0000"
+                    maxlength="19"
+                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
                 >
 
+                <label style="color:#fff;">Nome no cartão</label>
+                <input
+                    id="cartao-nome"
+                    type="text"
+                    placeholder="NOME COMPLETO"
+                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                     <div>
-
-                        ${campoPagamento(
-                            "cartao-validade",
-                            "Validade",
-                            "text",
-                            "MM/AA"
-                        )}
-
+                        <label style="color:#fff;">Validade</label>
+                        <input
+                            id="cartao-validade"
+                            type="text"
+                            placeholder="MM/AA"
+                            maxlength="5"
+                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                        >
                     </div>
 
-
                     <div>
-
-                        ${campoPagamento(
-                            "cartao-cvv",
-                            "CVV",
-                            "password",
-                            "123"
-                        )}
-
+                        <label style="color:#fff;">CVV</label>
+                        <input
+                            id="cartao-cvv"
+                            type="password"
+                            placeholder="123"
+                            maxlength="4"
+                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                        >
                     </div>
-
                 </div>
 
-
-                <label
-                    for="cartao-parcelas"
-                    style="
-                        display:block;
-                        margin:10px 0 5px;
-                        color:#cbd5e1;
-                        font-weight:600;
-                    "
-                >
+                <label for="cartao-parcelas" style="display:block;color:#fff;margin-top:15px;">
                     Parcelas
                 </label>
 
-
                 <select
                     id="cartao-parcelas"
-
-                    style="
-                        width:100%;
-                        padding:11px;
-                        border-radius:7px;
-                        border:1px solid #263449;
-                        background:#0d1117;
-                        color:#fff;
-                    "
+                    style="width:96%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
                 >
-
-                    ${parcelasHTML}
-
+                    ${parcelas}
                 </select>
-
             </div>
         `;
 
-
-        configurarMascaraCartao();
-
+        configurarCartao();
         return;
     }
 
-
-    /* =========================
-       BOLETO
-       ========================= */
-
-    if(metodo==="boleto"){
-
+    /* BOLETO */
+    if(pagamento==="boleto"){
         area.innerHTML=`
+            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
+                <h4 style="color:#00d4ff;margin-top:0;">🧾 Pagamento via Boleto</h4>
 
-            <div
-                style="
-                    padding:15px;
-                    margin-bottom:15px;
-                    border:1px solid #1f3b52;
-                    border-radius:8px;
-                    background:#0d1722;
-                "
-            >
-
-                <h4
-                    style="
-                        margin:0 0 10px;
-                        color:#00d4ff;
-                    "
-                >
-                    🧾 Pagamento via boleto
-                </h4>
-
-
-                <p
-                    style="
-                        color:#cbd5e1;
-                        margin-bottom:10px;
-                    "
-                >
-                    Informe o CPF do pagador para gerar
-                    o boleto.
+                <p style="color:#cbd5e1;">
+                    Informe o CPF do pagador.
                 </p>
 
+                <label style="color:#fff;">CPF</label>
 
-                ${campoPagamento(
-                    "boleto-cpf",
-                    "CPF do pagador",
-                    "text",
-                    "000.000.000-00"
-                )}
+                <input
+                    id="boleto-cpf"
+                    type="text"
+                    placeholder="000.000.000-00"
+                    maxlength="14"
+                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
+                >
 
-
-                <div
-                    id="boleto-resultado"
-                    style="margin-top:15px;"
-                ></div>
-
+                <div id="boleto-resultado"></div>
             </div>
-
         `;
+
+        configurarCartao();
     }
 }
 
 
 /* =========================================================
-   MÁSCARA CARTÃO
+   MÁSCARAS
    ========================================================= */
 
-function configurarMascaraCartao(){
-
-    const numero =
-        document.getElementById("cartao-numero");
-
-    const validade =
-        document.getElementById("cartao-validade");
-
-    const cvv =
-        document.getElementById("cartao-cvv");
-
+function configurarCartao(){
+    const numero=document.getElementById("cartao-numero");
+    const validade=document.getElementById("cartao-validade");
+    const cvv=document.getElementById("cartao-cvv");
+    const cpf=document.getElementById("boleto-cpf");
 
     if(numero){
-
-        numero.addEventListener(
-            "input",
-            ()=>{
-
-                let valor=
-                    numero.value
-                    .replace(/\D/g,"")
-                    .slice(0,16);
-
-                numero.value=
-                    valor
-                    .replace(
-                        /(\d{4})(?=\d)/g,
-                        "$1 "
-                    )
-                    .trim();
-            }
-        );
+        numero.addEventListener("input",()=>{
+            let valor=numero.value.replace(/\D/g,"").slice(0,16);
+            numero.value=valor.replace(/(\d{4})(?=\d)/g,"$1 ");
+        });
     }
-
 
     if(validade){
+        validade.addEventListener("input",()=>{
+            let valor=validade.value.replace(/\D/g,"").slice(0,4);
 
-        validade.addEventListener(
-            "input",
-            ()=>{
-
-                let valor=
-                    validade.value
-                    .replace(/\D/g,"")
-                    .slice(0,4);
-
-                if(valor.length>2){
-
-                    valor=
-                        valor.slice(0,2)
-                        +"/"+
-                        valor.slice(2);
-                }
-
-                validade.value=valor;
+            if(valor.length>2){
+                valor=valor.slice(0,2)+"/"+valor.slice(2);
             }
-        );
+
+            validade.value=valor;
+        });
     }
 
-
     if(cvv){
+        cvv.addEventListener("input",()=>{
+            cvv.value=cvv.value.replace(/\D/g,"").slice(0,4);
+        });
+    }
 
-        cvv.addEventListener(
-            "input",
-            ()=>{
+    if(cpf){
+        cpf.addEventListener("input",()=>{
+            let valor=cpf.value.replace(/\D/g,"").slice(0,11);
 
-                cvv.value=
-                    cvv.value
-                    .replace(/\D/g,"")
-                    .slice(0,4);
-            }
-        );
+            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
+            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
+            valor=valor.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+
+            cpf.value=valor;
+        });
     }
 }
 
@@ -1012,15 +847,11 @@ function validarPagamento(){
    ========================================================= */
 
 function inicializarPagamento(){
-
-    const select =
-        document.getElementById("forma-pagamento");
+    const select=document.getElementById("forma-pagamento");
 
     if(!select)return;
 
-
     if(!select.dataset.pagamentoConfigurado){
-
         select.addEventListener(
             "change",
             atualizarCamposPagamento
@@ -1028,7 +859,6 @@ function inicializarPagamento(){
 
         select.dataset.pagamentoConfigurado="true";
     }
-
 
     atualizarCamposPagamento();
 }
@@ -1305,216 +1135,6 @@ async function carregarPedidos(){
         `;
     }
 }
-
-/* =========================================================
-   SISTEMA DE PAGAMENTO
-   ========================================================= */
-
-function obterTotalCarrinho(){
-    return carrinho.reduce((total,item)=>{
-        return total + (Number(item.preco) || 0);
-    },0);
-}
-
-function atualizarCamposPagamento(){
-    const select=document.getElementById("forma-pagamento");
-    const area=document.getElementById("detalhes-pagamento");
-
-    if(!select || !area)return;
-
-    const pagamento=select.value;
-    area.innerHTML="";
-
-    /* PIX */
-    if(pagamento==="pix"){
-        area.innerHTML=`
-            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
-                <h4 style="color:#00d4ff;margin-top:0;">💠 Pagamento via PIX</h4>
-                <p style="color:#cbd5e1;">Escolha como deseja pagar:</p>
-
-                <label style="color:#fff;">Chave PIX</label>
-
-                <input
-                    id="pix-chave"
-                    type="text"
-                    placeholder="Digite sua chave PIX"
-                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                >
-
-                <div id="pix-resultado" style="margin-top:15px;text-align:center;"></div>
-            </div>
-        `;
-        return;
-    }
-
-    /* CARTÃO */
-    if(pagamento==="cartao"){
-        const total=obterTotalCarrinho();
-        let parcelas="";
-
-        for(let i=1;i<=12;i++){
-            parcelas+=`
-                <option value="${i}">
-                    ${i}x de ${moeda(total/i)}
-                </option>
-            `;
-        }
-
-        area.innerHTML=`
-            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
-                <h4 style="color:#00d4ff;margin-top:0;">💳 Cartão de crédito</h4>
-
-                <label style="color:#fff;">Número do cartão</label>
-                <input
-                    id="cartao-numero"
-                    type="text"
-                    placeholder="0000 0000 0000 0000"
-                    maxlength="19"
-                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                >
-
-                <label style="color:#fff;">Nome no cartão</label>
-                <input
-                    id="cartao-nome"
-                    type="text"
-                    placeholder="NOME COMPLETO"
-                    style="width:90%;padding:10px;margin-top:6px;margin-bottom:12px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                >
-
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                    <div>
-                        <label style="color:#fff;">Validade</label>
-                        <input
-                            id="cartao-validade"
-                            type="text"
-                            placeholder="MM/AA"
-                            maxlength="5"
-                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                        >
-                    </div>
-
-                    <div>
-                        <label style="color:#fff;">CVV</label>
-                        <input
-                            id="cartao-cvv"
-                            type="password"
-                            placeholder="123"
-                            maxlength="4"
-                            style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                        >
-                    </div>
-                </div>
-
-                <label for="cartao-parcelas" style="display:block;color:#fff;margin-top:15px;">
-                    Parcelas
-                </label>
-
-                <select
-                    id="cartao-parcelas"
-                    style="width:96%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                >
-                    ${parcelas}
-                </select>
-            </div>
-        `;
-
-        configurarCartao();
-        return;
-    }
-
-    /* BOLETO */
-    if(pagamento==="boleto"){
-        area.innerHTML=`
-            <div style="padding:15px;margin-bottom:15px;border:1px solid #1f293d;border-radius:8px;background:#0d1117;">
-                <h4 style="color:#00d4ff;margin-top:0;">🧾 Pagamento via Boleto</h4>
-
-                <p style="color:#cbd5e1;">
-                    Informe o CPF do pagador.
-                </p>
-
-                <label style="color:#fff;">CPF</label>
-
-                <input
-                    id="boleto-cpf"
-                    type="text"
-                    placeholder="000.000.000-00"
-                    maxlength="14"
-                    style="width:90%;padding:10px;margin-top:6px;background:#0d1117;border:1px solid #1f293d;color:white;border-radius:6px;"
-                >
-
-                <div id="boleto-resultado"></div>
-            </div>
-        `;
-
-        configurarCartao();
-    }
-}
-
-
-/* =========================================================
-   MÁSCARAS
-   ========================================================= */
-
-function configurarCartao(){
-    const numero=document.getElementById("cartao-numero");
-    const validade=document.getElementById("cartao-validade");
-    const cvv=document.getElementById("cartao-cvv");
-    const cpf=document.getElementById("boleto-cpf");
-
-    if(numero){
-        numero.addEventListener("input",()=>{
-            let valor=numero.value.replace(/\D/g,"").slice(0,16);
-            numero.value=valor.replace(/(\d{4})(?=\d)/g,"$1 ");
-        });
-    }
-
-    if(validade){
-        validade.addEventListener("input",()=>{
-            let valor=validade.value.replace(/\D/g,"").slice(0,4);
-
-            if(valor.length>2){
-                valor=valor.slice(0,2)+"/"+valor.slice(2);
-            }
-
-            validade.value=valor;
-        });
-    }
-
-    if(cvv){
-        cvv.addEventListener("input",()=>{
-            cvv.value=cvv.value.replace(/\D/g,"").slice(0,4);
-        });
-    }
-
-    if(cpf){
-        cpf.addEventListener("input",()=>{
-            let valor=cpf.value.replace(/\D/g,"").slice(0,11);
-
-            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
-            valor=valor.replace(/(\d{3})(\d)/,"$1.$2");
-            valor=valor.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
-
-            cpf.value=valor;
-        });
-    }
-}
-
-
-/* =========================================================
-   INICIALIZAR PAGAMENTO
-   ========================================================= */
-
-function inicializarPagamento(){
-    const select=document.getElementById("forma-pagamento");
-
-    if(!select)return;
-
-    select.addEventListener(
-        "change",
-        atualizarCamposPagamento
-    );
-}
-
 
 let todosProdutos=[];
 
@@ -2122,12 +1742,6 @@ if(menuPedidos)menuPedidos.style.display="none";
 }
 }
 
-window.onload=()=>{
-atualizarCarrinhoUI();
-atualizarResumoPagamento();
-atualizarStatusLogin();
-};
-
 const tabelaPrecosSetup={
 "AMD Ryzen 7 7800X3D (O Rei do FPS)":2499,
 "AMD Ryzen 7 7800X3D (Estabilidade máxima de 1% Low)":2499,
@@ -2576,58 +2190,56 @@ function mostrarNotificacaoFavorito(nome,adicionado){
     },2200);
 }
 
-function verFavoritos(event){
-if(event){
-event.preventDefault();
-event.stopPropagation();
-}
+/* =========================================================
+   ❤️ VER FAVORITOS (CORRIGIDO)
+   Antes: chamava trocarAba("loja"), que dispara carregarProdutos()
+   de forma assíncrona (fetch). Esse fetch terminava alguns
+   milissegundos depois e substituía a lista de favoritos pela
+   lista completa de produtos — causando o "pisca e recarrega".
+   Agora: trocamos a aba manualmente (sem re-buscar produtos toda
+   vez) e só buscamos produtos se ainda não tiverem sido carregados.
+   ========================================================= */
+async function verFavoritos(event){
+    if(event){
+        event.preventDefault();
+        event.stopPropagation();
+    }
 
-trocarAba("loja");
+    // Troca a aba manualmente (sem chamar trocarAba, que dispararia carregarProdutos)
+    document.querySelectorAll(".conteudo").forEach(sec=>sec.classList.remove("ativo"));
+    const aba=document.getElementById("loja");
+    if(aba)aba.classList.add("ativo");
 
-const container=document.getElementById("lista-produtos");
-if(!container)return;
+    atualizarCarrinhoUI();
+    atualizarResumoPagamento();
 
-const favoritos=getFavoritos();
+    // Só busca produtos do servidor se ainda não tiverem sido carregados
+    if(!todosProdutos.length){
+        await carregarProdutos();
+    }
 
-const titulo=document.getElementById("titulo-categoria-atual");
-if(titulo)titulo.innerText="❤️ Meus Produtos Favoritos";
+    const container=document.getElementById("lista-produtos");
+    if(!container)return;
 
-if(favoritos.length===0){
-container.innerHTML=`
-<div style="grid-column:1/-1;text-align:center;padding:40px">
-<h3>Você ainda não possui favoritos!</h3>
-<p>Clique no coração dos produtos para salvar.</p>
-</div>`;
-return;
-}
+    const favoritos=getFavoritos();
 
-const produtos=todosProdutos.filter(p=>favoritos.includes(Number(p.id)));
+    const titulo=document.getElementById("titulo-categoria-atual");
+    if(titulo)titulo.innerText="❤️ Meus Produtos Favoritos";
 
-container.innerHTML="";
+    if(favoritos.length===0){
+        container.innerHTML=`
+        <div style="grid-column:1/-1;text-align:center;padding:40px">
+        <h3>Você ainda não possui favoritos!</h3>
+        <p>Clique no coração dos produtos para salvar.</p>
+        </div>`;
+        return;
+    }
 
-produtos.forEach(p=>{
-const img=obterCaminhoImagem(p.nome);
+    const produtos=todosProdutos.filter(p=>favoritos.includes(Number(p.id)));
 
-container.innerHTML+=`
-<div class="card-produto-loja">
-<button class="btn-favorito" onclick="toggleFavorito(${p.id},event)">
-<i class="fa-solid fa-heart"></i>
-</button>
-
-<div class="card-produto-img-box">
-<img src="${img}" alt="${sanitizarTexto(p.nome)}">
-</div>
-
-<div class="card-produto-detalhes">
-<h3>${sanitizarTexto(p.nome)}</h3>
-<p>R$ ${p.preco}</p>
-
-<button onclick="adicionarAoCarrinho('${p.nome}',${p.preco})">
-Adicionar ao Carrinho
-</button>
-</div>
-</div>`;
-});
+    // Reaproveita o mesmo card usado na loja (mantém clique de detalhes,
+    // botão de coração funcional e "Adicionar ao Carrinho" consistentes)
+    renderizarProdutos(produtos, container);
 }
 
 function atualizarBadges(){
@@ -2727,26 +2339,6 @@ atualizarStatusLogin();
 trocarAba("inicio");
 }
 
-function abrirPerfil(){
-const logado=localStorage.getItem("usuarioLogado")==="true";
-
-if(!logado){
-trocarAba("login");
-return;
-}
-
-trocarAba("perfil");
-
-if(typeof carregarPerfil==="function"){
-carregarPerfil();
-}
-}
-
-function exibirNomeUsuario(nome){
-const el=document.getElementById("nome-usuario");
-if(el)el.textContent=nome;
-}
-
 function carregarPerfil(){
 const usuario=JSON.parse(localStorage.getItem("usuario"));
 
@@ -2765,15 +2357,6 @@ function fecharDropdownPerfil(){
 const dropdown=document.getElementById("perfil-dropdown");
 if(dropdown)dropdown.style.display="none";
 }
-
-document.addEventListener("click",e=>{
-const container=document.querySelector(".perfil-container");
-const dropdown=document.getElementById("perfil-dropdown");
-
-if(container&&dropdown&&!container.contains(e.target)){
-dropdown.style.display="none";
-}
-});
 
 function moeda(valor){
 return Number(valor).toLocaleString("pt-BR",{
@@ -2863,8 +2446,8 @@ async function carregarPlano(){
             if(semPlano) semPlano.style.display = "block";
 
             localStorage.removeItem(
-            "planoAtivoConfirmado"
-        );
+                "planoAtivoConfirmado"
+            );
 
             return;
         }
@@ -3093,14 +2676,14 @@ beneficios.innerHTML = listaBeneficios
         }
 
         localStorage.setItem(
-    "planoAtivo",
-    chavePlano
-);
+            "planoAtivo",
+            chavePlano
+        );
 
-localStorage.setItem(
-    "planoAtivoConfirmado",
-    "true"
-);
+        localStorage.setItem(
+            "planoAtivoConfirmado",
+            "true"
+        );
 
     }catch(error){
         console.error(
@@ -3114,21 +2697,6 @@ localStorage.setItem(
 // FUNÇÕES DOS BENEFÍCIOS
 // ========================================
 
-// 🎥 VOD REVIEW
-function abrirVODReview(){
-
-    const modal =
-        document.getElementById("modal-vod-review");
-
-    if(!modal){
-        console.error("Modal VOD Review não encontrado.");
-        return;
-    }
-
-    modal.style.display = "flex";
-
-}
-
 // 📄 GUIA DE TREINO
 function abrirGuiaTreino(){
 
@@ -3138,6 +2706,8 @@ function abrirGuiaTreino(){
 
 // 💬 DISCORD
 function abrirDiscordAlunos(){
+
+    alert("💬 Aqui vai abrir o Discord dos alunos.");
 
     window.open(
         "https://discord.gg/exemplo",
@@ -3180,6 +2750,8 @@ function abrirAnaliseConfig(){
 // 💬 GRUPO VIP
 function abrirGrupoVIP(){
 
+    alert("💬 Aqui vai abrir o Grupo VIP.");
+
     window.open(
         "https://discord.gg/grupovip-exemplo",
         "_blank"
@@ -3195,6 +2767,8 @@ function abrirAcompanhamento(){
 
 // 🎮 DUO
 function abrirDuoInGame(){
+
+    alert("🎮 Aqui você poderá agendar sua partida Duo com o Pro.");
 
     const modal =
         document.getElementById("modal-sessoes");
@@ -3215,15 +2789,18 @@ function abrirDuoInGame(){
 // 📱 WHATSAPP
 function abrirWhatsAppVIP(){
 
+    alert("📱 Aqui vai abrir o suporte VIP.");
+
     window.open(
         "https://wa.me/5500000000000",
         "_blank"
     );
-
 }
 
 // 📊 RELATÓRIO
 function abrirRelatorioMensal(){
+
+    alert("📊 Aqui vai abrir seu relatório mensal.");
 
     const modal = document.getElementById(
         "modal-relatorio-mensal"
@@ -3666,7 +3243,7 @@ async function confirmarAula(){
         );
 
         localStorage.removeItem(
-        "planoAtivoConfirmado"
+            "planoAtivoConfirmado"
         );
 
         return;
@@ -4256,24 +3833,6 @@ function novaAnaliseConfig(){
 // 🎥 VOD REVIEW
 // ========================================
 
-function fecharVODReview(){
-
-    const modal =
-        document.getElementById(
-            "modal-vod-review"
-        );
-
-    if(modal){
-
-        modal.style.display = "none";
-
-    }
-}
-
-// ========================================
-// ABRIR VÍDEO
-// ========================================
-
 function extrairYoutubeId(url){
 
     if(!url) return null;
@@ -4306,12 +3865,8 @@ function abrirVODReview(){
         return;
     }
 
-    const match = String(video).match(
-        /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&/]+)/
-    );
-
     const videoId =
-        match ? match[1] : null;
+        extrairYoutubeId(video);
 
     if(!videoId){
         alert("URL da VOD inválida.");
@@ -4358,9 +3913,7 @@ function fecharVODReview(){
         );
 
     if(modal){
-
         modal.style.display = "none";
-
     }
 
     const player =
@@ -4369,12 +3922,10 @@ function fecharVODReview(){
         );
 
     if(player){
-
         player.src = "";
-
     }
-
 }
+
 function abrirPromocao() {
     // 1. Pega o container onde os produtos são renderizados no seu HTML
     const container = document.getElementById("lista-produtos") || document.querySelector(".produtos-grid");
@@ -4394,16 +3945,6 @@ function abrirPromocao() {
         container.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
-
-    // Procura o container dos produtos
-    const secaoProdutos = document.getElementById("lista-produtos") || document.querySelector(".produtos") || document.querySelector("main");
-    
-    if (secaoProdutos) {
-        secaoProdutos.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start'
-        });
-    }
 
 // Mantém um alias para caso o HTML chame por verOfertas
 window.verOfertas = abrirPromocao;
