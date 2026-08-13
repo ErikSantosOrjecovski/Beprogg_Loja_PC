@@ -4550,3 +4550,386 @@ html {
 #lista-carrinho {
     width: 100%;
 }
+
+/* =====================================================
+   SUGESTÕES DA BARRA DE PESQUISA
+   ===================================================== */
+
+.search-container {
+    position: relative;
+}
+
+#sugestoes-pesquisa {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    background: #080d16;
+    border: 1px solid #1c314b;
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 99999;
+    display: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.sugestao-pesquisa {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    color: #dbe7f5;
+    cursor: pointer;
+    transition: 0.15s;
+    font-size: 14px;
+}
+
+.sugestao-pesquisa:hover,
+.sugestao-pesquisa.ativa {
+    background: #101d2d;
+    color: #00d9ff;
+}
+
+.sugestao-icone {
+    color: #00d9ff;
+    width: 18px;
+    text-align: center;
+}
+
+.sugestao-texto {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sugestao-categoria {
+    margin-left: auto;
+    font-size: 11px;
+    color: #718096;
+}
+
+#sugestoes-pesquisa:empty {
+    display: none;
+}
+
+/* ========================================
+   RELATÓRIO MENSAL
+======================================== */
+
+.relatorio-mensal-modal {
+    width: 900px;
+    max-width: 94%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+}
+
+.relatorio-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.relatorio-icone {
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    background: #162235;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 27px;
+}
+
+.relatorio-header h2 {
+    margin: 0;
+}
+
+.relatorio-header p {
+    margin: 5px 0 0;
+    color: #94a3b8;
+}
+
+.relatorio-periodo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 15px 18px;
+
+    background: #0d1420;
+    border-radius: 12px;
+
+    margin-bottom: 15px;
+}
+
+.relatorio-periodo span {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.relatorio-periodo strong {
+    font-size: 14px;
+}
+
+.relatorio-destaque {
+    text-align: center;
+
+    padding: 22px;
+
+    border-radius: 14px;
+
+    background: #101b2c;
+
+    margin-bottom: 18px;
+}
+
+.relatorio-destaque span {
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.relatorio-destaque strong {
+    display: block;
+
+    font-size: 38px;
+
+    margin: 5px 0;
+}
+
+.relatorio-destaque small {
+    color: #94a3b8;
+}
+
+.relatorio-indicadores {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+.relatorio-indicador {
+    background: #0d1420;
+
+    padding: 16px;
+
+    border-radius: 12px;
+}
+
+.relatorio-indicador > div:first-child {
+    display: flex;
+    justify-content: space-between;
+}
+
+.relatorio-indicador span {
+    color: #cbd5e1;
+}
+
+.relatorio-indicador strong {
+    font-size: 18px;
+}
+
+.relatorio-comparacao {
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.relatorio-barra {
+    width: 100%;
+    height: 7px;
+
+    background: #1e293b;
+
+    border-radius: 20px;
+
+    margin-top: 12px;
+
+    overflow: hidden;
+}
+
+.relatorio-barra div {
+    height: 100%;
+
+    border-radius: 20px;
+
+    background: #22c55e;
+}
+
+.relatorio-secao {
+    background: #0d1420;
+
+    padding: 20px;
+
+    border-radius: 12px;
+
+    margin-bottom: 15px;
+}
+
+.relatorio-secao h3,
+.relatorio-box h3,
+.relatorio-feedback h3 {
+    margin-top: 0;
+}
+
+.relatorio-ajuda {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.relatorio-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 130px;
+
+    border: 2px dashed #334155;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    text-align: center;
+
+    gap: 6px;
+}
+
+.relatorio-upload:hover {
+    border-color: #64748b;
+}
+
+.relatorio-upload span {
+    font-size: 28px;
+}
+
+.relatorio-upload small {
+    color: #64748b;
+}
+
+#relatorio-video-preview {
+    margin-top: 15px;
+}
+
+#relatorio-video-player {
+    width: 100%;
+    max-height: 400px;
+
+    border-radius: 10px;
+
+    background: #000;
+}
+
+.relatorio-colunas {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+}
+
+.relatorio-box {
+    background: #0d1420;
+
+    padding: 20px;
+
+    border-radius: 12px;
+}
+
+.relatorio-box ul {
+    margin-bottom: 0;
+
+    padding-left: 20px;
+
+    color: #cbd5e1;
+
+    line-height: 1.8;
+}
+
+.relatorio-feedback {
+    background: #0d1420;
+
+    padding: 20px;
+
+    border-radius: 12px;
+
+    margin-bottom: 15px;
+}
+
+.relatorio-feedback p {
+    color: #cbd5e1;
+
+    line-height: 1.7;
+
+    margin-bottom: 0;
+}
+
+.relatorio-nota {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 18px;
+
+    background: #101b2c;
+
+    border-radius: 12px;
+
+    margin-bottom: 15px;
+}
+
+.relatorio-nota span {
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    font-weight: bold;
+}
+
+.relatorio-nota strong {
+    font-size: 24px;
+}
+
+.relatorio-fechar-btn {
+    width: 100%;
+
+    padding: 13px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+@media (max-width: 650px) {
+
+    .relatorio-indicadores,
+    .relatorio-colunas {
+        grid-template-columns: 1fr;
+    }
+
+    .relatorio-mensal-modal {
+        padding: 18px;
+    }
+
+}

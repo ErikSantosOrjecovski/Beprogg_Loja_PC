@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bepro.gg</title>
+    <link rel="icon" type="image/png" href="imagens/logofavicon-removebg-preview.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
@@ -20,8 +21,13 @@
     </div>
 
     <div class="search-container">
-        <input type="text" placeholder="Buscar produtos...">
-    </div>
+    <input 
+        type="text" 
+        id="barra-pesquisa" 
+        placeholder="Buscar produtos..."
+        autocomplete="off">
+    <div id="sugestoes-pesquisa" class="sugestoes-pesquisa"></div>
+</div>
 
     <div class="header-actions">
         <div class="header-badge-container">
@@ -894,12 +900,14 @@
                     TROQUE O LINK DO VÍDEO AQUI
                 -->
 
-                <iframe
-                    src="https://www.youtube.com/embed/SEU_VIDEO_AQUI"
-                    title="Exemplo de aula"
-                    frameborder="0"
-                    allowfullscreen
-                ></iframe>
+            <iframe
+     id="sessao-video-player"
+     src=""
+        title="Exemplo de aula"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        ></iframe>
 
             </div>
 
@@ -1364,6 +1372,262 @@
             onclick="abrirVideoVOD()"
         >
             ▶ Assistir VOD
+        </button>
+
+    </div>
+
+</div>
+
+<div
+    id="modal-duo"
+    class="modal-sessoes"
+    style="display:none;"
+>
+    <div class="modal-sessoes-conteudo">
+
+        <button
+            class="modal-sessoes-fechar"
+            onclick="fecharDuoInGame()"
+        >
+            ×
+        </button>
+
+        <div class="sessao-header">
+            <div class="sessao-icone">
+                🎮
+            </div>
+
+            <div>
+                <h2>Duo In-Game</h2>
+                <p>
+                    Agende uma partida Duo com seu Pro Player.
+                </p>
+            </div>
+        </div>
+
+        <h3>📅 Escolha o dia</h3>
+
+        <div id="calendario-duo"></div>
+
+        <div
+            id="horarios-duo"
+            style="display:none;"
+        >
+            <h3>🕐 Escolha o horário</h3>
+
+            <p id="dia-selecionado-duo"></p>
+
+            <div id="lista-horarios-duo"></div>
+        </div>
+
+        <div
+    id="confirmacao-duo"
+    style="display:none;"
+>
+    <h3>🎮 Confirmar Duo In-Game</h3>
+
+    <p id="resumo-duo"></p>
+
+    <button
+        class="sessao-btn-principal"
+        onclick="confirmarDuoInGame()"
+    >
+        🎮 Marcar Duo In-Game
+    </button>
+</div>
+
+    </div>
+</div>
+
+<!-- ========================================
+     MODAL - RELATÓRIO MENSAL
+======================================== -->
+<div id="modal-relatorio-mensal" class="modal-overlay" style="display:none;">
+
+    <div class="modal-content relatorio-mensal-modal">
+
+        <button
+            class="modal-fechar"
+            onclick="fecharRelatorioMensal()"
+        >
+            &times;
+        </button>
+
+        <!-- CABEÇALHO -->
+        <div class="relatorio-header">
+
+            <div class="relatorio-icone">
+                📊
+            </div>
+
+            <div>
+                <h2>Relatório de Evolução Mensal</h2>
+
+                <p>
+                    Acompanhamento do seu desempenho
+                </p>
+            </div>
+
+        </div>
+
+
+        <!-- RELATÓRIO PASSADO -->
+        <div class="relatorio-periodo">
+
+            <span>
+                📅 RELATÓRIO MENSAL PASSADO
+            </span>
+
+            <strong id="relatorio-jogo">
+             VALORANT
+            </strong>
+
+        </div>
+
+
+        <!-- EVOLUÇÃO GERAL -->
+        <div class="relatorio-destaque">
+
+            <span>
+                EVOLUÇÃO GERAL
+            </span>
+
+            <strong>
+                +14%
+            </strong>
+
+            <small>
+                em relação ao mês anterior
+            </small>
+
+        </div>
+
+
+       <!-- INDICADORES -->
+<div
+    id="relatorio-indicadores"
+    class="relatorio-indicadores"
+></div>
+
+                <div class="relatorio-comparacao">
+                    70 → 81
+                </div>
+
+                <div class="relatorio-barra">
+                    <div style="width:81%;"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- VÍDEO -->
+        <div class="relatorio-secao">
+
+            <h3>🎥 Seu video desse mês</h3>
+
+            <p class="relatorio-ajuda">
+                Adicione um vídeo para o coach ver sua evolução desse mês.
+            </p>
+
+            <label
+                for="relatorio-video-upload"
+                class="relatorio-upload"
+            >
+
+                <span>📁</span>
+
+                <strong>
+                    Selecionar vídeo
+                </strong>
+
+                <small>
+                    MP4, WebM ou MOV
+                </small>
+
+            </label>
+
+            <input
+                type="file"
+                id="relatorio-video-upload"
+                accept="video/*"
+                style="display:none;"
+                onchange="carregarVideoRelatorio(this)"
+            />
+
+            <div
+                id="relatorio-video-preview"
+                style="display:none;"
+            >
+
+                <video
+                    id="relatorio-video-player"
+                    controls
+                    playsinline
+                ></video>
+
+            </div>
+
+        </div>
+
+
+        <!-- ANÁLISE DO COACH -->
+
+<div class="relatorio-colunas">
+
+    <!-- O QUE MELHOROU -->
+    <div class="relatorio-box">
+
+        <h3>🟢 O que melhorou</h3>
+
+        <ul id="relatorio-melhorias">
+        </ul>
+
+    </div>
+
+
+    <!-- O QUE MELHORAR -->
+    <div class="relatorio-box">
+
+        <h3>🟡 O que melhorar</h3>
+
+        <ul id="relatorio-pontos-melhorar">
+        </ul>
+
+    </div>
+
+</div>
+
+
+<!-- PRÓXIMO FOCO -->
+
+<div class="relatorio-box">
+
+    <h3>🎯 Próximo foco</h3>
+
+    <ul id="relatorio-focos">
+    </ul>
+
+</div>
+
+
+<!-- FEEDBACK -->
+
+<div class="relatorio-feedback">
+
+    <h3>🧠 Feedback do Coach</h3>
+
+    <p id="relatorio-feedback">
+    </p>
+
+</div>
+
+        <button
+            class="relatorio-fechar-btn"
+            onclick="fecharRelatorioMensal()"
+        >
+            Fechar relatório
         </button>
 
     </div>

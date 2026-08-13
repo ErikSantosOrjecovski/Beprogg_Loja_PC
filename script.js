@@ -8,61 +8,44 @@ function exibirNomeUsuario(nome){
     if(elemento)elemento.textContent=nome;
 }
 
-function trocarAba(id) {
-  // Oculta todas as seções escondendo o display
-  document.querySelectorAll(".conteudo").forEach(sec => {
-    sec.classList.remove("ativo");
-    sec.style.display = "none";
-  });
+function trocarAba(id){
+    document.querySelectorAll(".conteudo").forEach(sec=>sec.classList.remove("ativo"));
+    const aba=document.getElementById(id);
+    if(aba)aba.classList.add("ativo");
 
-  // Exibe apenas a aba clicada
-  const aba = document.getElementById(id);
-  if (aba) {
-    aba.classList.add("ativo");
-    aba.style.display = "block";
-  }
+    atualizarCarrinhoUI();
+    atualizarResumoPagamento();
 
-  // Atualiza os dados das abas dinâmicas
-  if (typeof atualizarCarrinhoUI === "function") atualizarCarrinhoUI();
-  if (typeof atualizarFavoritosUI === "function") atualizarFavoritosUI();
-  if (typeof atualizarResumoPagamento === "function") atualizarResumoPagamento();
-
-  if (id === "pedidos" && typeof carregarPedidos === "function") carregarPedidos();
-  if (id === "loja" && typeof carregarProdutos === "function") carregarProdutos();
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
+    if(id==="pedidos")carregarPedidos();
+    if(id==="loja")carregarProdutos();
 }
 
 let carrinho=JSON.parse(localStorage.getItem("carrinho"))||[];
 
-function adicionarAoCarrinho(nomeOuId, preco = null) {
-  let nome = nomeOuId;
-  let valor = preco;
-  let id = nomeOuId;
+function adicionarAoCarrinho(nomeOuId,preco=null){
+    let nome=nomeOuId;
+    let valor=preco;
 
-  if (typeof nomeOuId === "number" || !isNaN(nomeOuId)) {
-    const prod = todosProdutos.find(p => Number(p.id) === Number(nomeOuId));
-    if (prod) {
-      id = prod.id;
-      nome = prod.nome;
-      valor = prod.preco;
+    if(typeof nomeOuId==="number"||!isNaN(nomeOuId)){
+        const prod=todosProdutos.find(p=>Number(p.id)===Number(nomeOuId));
+        if(prod){
+            nome=prod.nome;
+            valor=prod.preco;
+        }
     }
-  }
 
-  const item = {
-    id: String(id),
-    nome: String(nome),
-    preco: valor != null ? Number(valor) : 0
-  };
+    const item={
+        nome:String(nome),
+        preco:valor!==null?Number(valor):0
+    };
 
-  carrinho.push(item);
+    carrinho.push(item);
+    salvarCarrinho();
+    atualizarCarrinhoUI();
+    atualizarResumoPagamento();
+    atualizarBadges?.();
+    mostrarNotificacaoCarrinho(item.nome);
 
-  // O QUE FALTAVA: Salvar a lista atualizada no navegador!
-  localStorage.setItem("carrinho", JSON.stringify(carrinho));
-
-  // Atualiza contadores e telas
-  if (typeof atualizarBadges === "function") atualizarBadges();
-  if (typeof atualizarCarrinhoUI === "function") atualizarCarrinhoUI();
 }
 
 function mostrarNotificacaoCarrinho(nome) {
@@ -93,49 +76,35 @@ function mostrarNotificacaoCarrinho(nome) {
     }, 2200);
 }
 
-function atualizarCarrinhoUI() {
-  const container = document.getElementById("lista-carrinho");
-  const totalEl = document.getElementById("total-carrinho");
-  const footerEl = document.getElementById("carrinho-footer");
-  if (!container) return;
+function atualizarCarrinhoUI(){
+    const lista=document.getElementById("lista-carrinho");
+    const total=document.getElementById("total-carrinho");
 
-const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+    if(!lista||!total)return;
 
-  // Se o carrinho estiver vazio
-  if (!carrinho || carrinho.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; padding: 60px 0; color: #fff;">
-        <div style="font-size: 3rem; margin-bottom: 10px;">🛒</div>
-        <p style="color: #94a3b8; font-size: 1.1rem; margin: 0;">Seu carrinho está vazio.</p>
-      </div>`;
-    if (footerEl) footerEl.style.display = "none";
-    return;
-  }
+    lista.innerHTML="";
+    let soma=0;
 
-  // Se houver produtos no carrinho
-  if (footerEl) footerEl.style.display = "block";
+    if(!carrinho.length){
+        lista.innerHTML="<p style='color:#94a3b8'>Seu carrinho está vazio.</p>";
+        total.innerText="Total: R$ 0";
+        return;
+    }
 
-  let total = 0;
-  container.innerHTML = carrinho.map((item, index) => {
-    total += Number(item.preco || 0);
-    return `
-      <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; margin-bottom: 12px; background: rgba(0, 20, 40, 0.75); border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 10px;">
-        <div style="text-align: left;">
-          <h4 style="margin: 0; font-size: 1rem; color: #fff;">${item.nome}</h4>
-          <span style="color: #00e5ff; font-weight: bold; font-size: 0.95rem;">R$ ${Number(item.preco).toFixed(2)}</span>
-        </div>
-        <button 
-          onclick="removerItem(${index})"
-          style="background: #ff4d4d; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;"
-        >
-          Remover
-        </button>
-      </div>
-    `;
-  }).join("");
+    carrinho.forEach((item,index)=>{
+        soma+=Number(item.preco);
 
-  if (totalEl) totalEl.textContent = `Total: R$ ${total.toFixed(2)}`;
+        lista.innerHTML+=`
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:15px;margin-bottom:10px;background:#0d1117;border:1px solid #1f293d">
+            <div>
+                <h4 style="color:#fff;margin:0">${sanitizarTexto(item.nome)}</h4>
+                <p style="color:#00d4ff;font-weight:bold;margin:5px 0 0">R$ ${item.preco}</p>
+            </div>
+            <button onclick="removerItem(${index})" style="background:#ff4d4d;color:white;border:0;padding:6px 12px;border-radius:4px">Remover</button>
+        </div>`;
+    });
 
+    total.innerText="Total: R$ "+soma;
 }
 
 function removerItem(index){
@@ -1567,6 +1536,464 @@ async function carregarProdutos(){
     }
 }
 
+function pesquisarProdutos() {
+    const input = document.getElementById("barra-pesquisa");
+    const container = document.getElementById("lista-produtos");
+    const titulo = document.getElementById("titulo-categoria-atual");
+
+    if (!input || !container) return;
+
+    const termo = input.value
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+
+    if (!termo) {
+        filtrarCategoria("todos");
+        return;
+    }
+
+    // Palavras que representam cada categoria
+    const categoriasPesquisa = {
+        "placa de video": ["rtx", "rx", "radeon", "geforce"],
+        "placa video": ["rtx", "rx", "radeon", "geforce"],
+        "gpu": ["rtx", "rx", "radeon", "geforce"],
+
+        "placa mae": ["placa mae", "b650", "b550", "a520", "x670", "x570", "z790"],
+        "placa-mae": ["placa mae", "b650", "b550", "a520", "x670", "x570", "z790"],
+
+        "processador": ["ryzen", "intel", "i3", "i5", "i7", "i9"],
+        "cpu": ["ryzen", "intel", "i3", "i5", "i7", "i9"],
+
+        "memoria": ["ddr4", "ddr5", "ram"],
+        "memoria ram": ["ddr4", "ddr5", "ram"],
+        "ram": ["ddr4", "ddr5", "ram"],
+
+        "fonte": ["fonte", "750w", "850w"],
+        "ssd": ["ssd", "nvme"],
+        "armazenamento": ["ssd", "nvme"],
+
+        "teclado": ["teclado", "wooting", "huntsman"],
+        "mouse": ["mouse", "superlight", "razer"],
+        "monitor": ["monitor", "zowie", "xl"],
+        "headset": ["headset", "audeze", "fone"]
+    };
+
+    let resultados;
+
+    // Se for uma pesquisa de categoria
+    if (categoriasPesquisa[termo]) {
+
+        const palavras = categoriasPesquisa[termo];
+
+        resultados = todosProdutos.filter(produto => {
+            const nome = String(produto.nome || "")
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+
+            return palavras.some(palavra => nome.includes(palavra));
+        });
+
+    } else {
+
+        // Pesquisa normal pelo nome
+        resultados = todosProdutos.filter(produto => {
+            const nome = String(produto.nome || "")
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+
+            return nome.includes(termo);
+        });
+    }
+
+    renderizarProdutos(resultados, container);
+
+    if (titulo) {
+        titulo.innerText = resultados.length
+            ? `🔎 Resultados para "${input.value}"`
+            : `❌ Nenhum produto encontrado`;
+    }
+}
+
+// =====================================================
+// SUGESTÕES DA PESQUISA
+// =====================================================
+
+let sugestaoSelecionada = -1;
+
+const categoriasSugestao = {
+    "placa": [
+        "Placa de Vídeo",
+        "Placa Mãe"
+    ],
+
+    "placa de video": [
+        "Placa de Vídeo",
+        "RTX",
+        "RX Radeon"
+    ],
+
+    "placa video": [
+        "Placa de Vídeo",
+        "RTX",
+        "RX Radeon"
+    ],
+
+    "placa mae": [
+        "Placa Mãe",
+        "B650",
+        "B550"
+    ],
+
+    "processador": [
+        "Processador",
+        "Ryzen",
+        "Intel Core"
+    ],
+
+    "cpu": [
+        "Processador",
+        "Ryzen",
+        "Intel Core"
+    ],
+
+    "memoria": [
+        "Memória RAM",
+        "DDR4",
+        "DDR5"
+    ],
+
+    "ram": [
+        "Memória RAM",
+        "DDR4",
+        "DDR5"
+    ],
+
+    "mouse": [
+        "Mouse",
+        "Superlight",
+        "Razer"
+    ],
+
+    "teclado": [
+        "Teclado",
+        "Wooting",
+        "Huntsman"
+    ],
+
+    "monitor": [
+        "Monitor",
+        "Zowie",
+        "360Hz"
+    ],
+
+    "headset": [
+        "Headset",
+        "Audeze",
+        "Fone"
+    ],
+
+    "ssd": [
+        "SSD",
+        "NVMe"
+    ],
+
+    "fonte": [
+        "Fonte",
+        "750W",
+        "850W"
+    ]
+};
+
+
+function normalizarPesquisa(texto) {
+    return String(texto || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+}
+
+
+function gerarSugestoesPesquisa() {
+
+    const input = document.getElementById("barra-pesquisa");
+    const container = document.getElementById("sugestoes-pesquisa");
+
+    if (!input || !container) return;
+
+    const textoOriginal = input.value.trim();
+    const texto = normalizarPesquisa(textoOriginal);
+
+    container.innerHTML = "";
+    sugestaoSelecionada = -1;
+
+    if (!texto) {
+        container.style.display = "none";
+        return;
+    }
+
+    let sugestoes = [];
+
+    // ==========================================
+    // 1. SUGESTÕES DE CATEGORIAS
+    // ==========================================
+
+    Object.keys(categoriasSugestao).forEach(chave => {
+
+        if (chave.includes(texto) || texto.includes(chave)) {
+
+            categoriasSugestao[chave].forEach(sugestao => {
+
+                if (!sugestoes.some(s => s.texto === sugestao)) {
+
+                    sugestoes.push({
+                        texto: sugestao,
+                        tipo: "Categoria"
+                    });
+
+                }
+
+            });
+
+        }
+
+    });
+
+
+    // ==========================================
+    // 2. SUGESTÕES DOS PRODUTOS REAIS
+    // ==========================================
+
+    if (Array.isArray(todosProdutos)) {
+
+        todosProdutos.forEach(produto => {
+
+            const nome = String(produto.nome || "");
+            const nomeNormalizado = normalizarPesquisa(nome);
+
+            if (nomeNormalizado.includes(texto)) {
+
+                if (!sugestoes.some(s => s.texto === nome)) {
+
+                    sugestoes.push({
+                        texto: nome,
+                        tipo: "Produto"
+                    });
+
+                }
+
+            }
+
+        });
+
+    }
+
+
+    // Limita para não ficar uma lista gigante
+    sugestoes = sugestoes.slice(0, 8);
+
+
+    if (!sugestoes.length) {
+        container.style.display = "none";
+        return;
+    }
+
+
+    // ==========================================
+    // 3. CRIA AS SUGESTÕES
+    // ==========================================
+
+    sugestoes.forEach((sugestao, index) => {
+
+        const item = document.createElement("div");
+
+        item.className = "sugestao-pesquisa";
+
+        item.innerHTML = `
+            <span class="sugestao-icone">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+
+            <span class="sugestao-texto">
+                ${sanitizarTexto(sugestao.texto)}
+            </span>
+
+            <span class="sugestao-categoria">
+                ${sugestao.tipo}
+            </span>
+        `;
+
+
+        item.addEventListener("mousedown", function(event) {
+
+            event.preventDefault();
+
+            input.value = sugestao.texto;
+
+            pesquisarProdutos();
+
+            container.style.display = "none";
+
+        });
+
+
+        container.appendChild(item);
+
+    });
+
+
+    container.style.display = "block";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const barraPesquisa = document.getElementById("barra-pesquisa");
+
+    if (!barraPesquisa) return;
+
+    barraPesquisa.addEventListener("input", () => {
+
+        gerarSugestoesPesquisa();
+
+        pesquisarProdutos();
+
+    });
+
+
+    // ==========================================
+    // TECLADO
+    // ==========================================
+
+    barraPesquisa.addEventListener("keydown", (event) => {
+
+        const container = document.getElementById("sugestoes-pesquisa");
+
+        if (!container) return;
+
+        const sugestoes = container.querySelectorAll(".sugestao-pesquisa");
+
+        if (!sugestoes.length) {
+
+            if (event.key === "Enter") {
+                pesquisarProdutos();
+            }
+
+            return;
+        }
+
+
+        // ↓
+        if (event.key === "ArrowDown") {
+
+            event.preventDefault();
+
+            sugestaoSelecionada++;
+
+            if (sugestaoSelecionada >= sugestoes.length) {
+                sugestaoSelecionada = 0;
+            }
+
+            atualizarSugestaoAtiva(sugestoes);
+
+        }
+
+
+        // ↑
+        else if (event.key === "ArrowUp") {
+
+            event.preventDefault();
+
+            sugestaoSelecionada--;
+
+            if (sugestaoSelecionada < 0) {
+                sugestaoSelecionada = sugestoes.length - 1;
+            }
+
+            atualizarSugestaoAtiva(sugestoes);
+
+        }
+
+
+        // ENTER
+        else if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            if (sugestaoSelecionada >= 0) {
+
+                sugestoes[sugestaoSelecionada].dispatchEvent(
+                    new MouseEvent("mousedown")
+                );
+
+            } else {
+
+                pesquisarProdutos();
+
+                container.style.display = "none";
+
+            }
+
+        }
+
+
+        // ESC
+        else if (event.key === "Escape") {
+
+            container.style.display = "none";
+
+            sugestaoSelecionada = -1;
+
+        }
+
+    });
+
+
+    // Fecha quando clicar fora
+    document.addEventListener("click", (event) => {
+
+        if (!event.target.closest(".search-container")) {
+
+            const container =
+                document.getElementById("sugestoes-pesquisa");
+
+            if (container) {
+                container.style.display = "none";
+            }
+
+        }
+
+    });
+
+});
+
+
+function atualizarSugestaoAtiva(sugestoes) {
+
+    sugestoes.forEach((item, index) => {
+
+        item.classList.toggle(
+            "ativa",
+            index === sugestaoSelecionada
+        );
+
+    });
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const barraPesquisa = document.getElementById("barra-pesquisa");
+
+    if (barraPesquisa) {
+        barraPesquisa.addEventListener("input", pesquisarProdutos);
+    }
+
+});
+
 
 function obterCaminhoImagem(nomeProduto) {
     if (!nomeProduto) {
@@ -2358,9 +2785,9 @@ const playersData = [
         descricao: "Aprenda mecânicas avançadas de construção, highground retakes e rotas de mapa.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_BLACKOUTZ",
-            aula: "COLOQUE_ID_VIDEO_AULA_BLACKOUTZ",
-            vod: "COLOQUE_ID_VIDEO_VOD_BLACKOUTZ"
+            preview: "https://youtu.be/oM5tIUEec4o?si=M5k7aj0qmKkE8Z5",
+            aula: "https://youtu.be/5DnF_3mgI5I?si=1PpZTG1dWPyxOiDQ",
+            vod: "https://youtu.be/CauKbyWHzJQ?si=kFxdRMkrgB9w3W5N"
         }
     },
 
@@ -2370,12 +2797,12 @@ const playersData = [
         jogoChave: "cs2",
         imagem: "imagens/Fallen.jpg",
         preco: "R$ 200,00",
-        descricao: "Aprenda controle de mapa, posicionamento de AWP e setups de granadas.",
+        descricao: "Aprenda controle de mapa, posicionamento de AWP e setups de granadas com o lendario Professor.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_FALLEN",
-            aula: "COLOQUE_ID_VIDEO_AULA_FALLEN",
-            vod: "COLOQUE_ID_VIDEO_VOD_FALLEN"
+            preview: "https://youtu.be/UbJSEpoTbOA?si=-UAgQC7bvaIqr6pQ",
+            aula: "https://youtu.be/gB6Lw5ZaUa8?si=DprFkbuKqdh8Qe8p",
+            vod: "https://youtu.be/9dKasbByBYY?si=m3uB3EV-YaPk-f8V"
         }
     },
 
@@ -2385,12 +2812,12 @@ const playersData = [
         jogoChave: "lol",
         imagem: "imagens/Faker.jpg",
         preco: "R$ 300,00",
-        descricao: "Domine controle de wave, visão de mapa e decisões macro.",
+        descricao: "Domine controle de wave, visão de mapa e decisões macro com o maior da historia de LoL.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_FAKER",
-            aula: "COLOQUE_ID_VIDEO_AULA_FAKER",
-            vod: "COLOQUE_ID_VIDEO_VOD_FAKER"
+            preview: "https://youtu.be/tYXJI26nrNc?si=b55rnP7vl_GRwCr9",
+            aula: "https://youtu.be/tZgs8X7GFas?si=94cIbyMUxMh-26GT",
+            vod: "https://youtu.be/W2DfA6UEiIw?si=tCrnaKL9mmjTN28q"
         }
     },
 
@@ -2403,9 +2830,9 @@ const playersData = [
         descricao: "Estratégias avançadas de ataque, defesa e comunicação.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_NESKWGA",
-            aula: "COLOQUE_ID_VIDEO_AULA_NESKWGA",
-            vod: "COLOQUE_ID_VIDEO_VOD_NESKWGA"
+            preview: "https://youtu.be/18DtB0TUa-c?si=NOl6e1ruLjySaFG2",
+            aula: "https://youtu.be/JdNg3076-zg?si=JTB2WJFGecwTPlsB",
+            vod: "https://youtu.be/jjxLYeOSovU?si=Ko6KVp2tc-XLqLR3"
         }
     },
 
@@ -2418,9 +2845,9 @@ const playersData = [
         descricao: "Uso avançado de agentes, clutch e movimentação tática.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_FRTT",
-            aula: "COLOQUE_ID_VIDEO_AULA_FRTT",
-            vod: "COLOQUE_ID_VIDEO_VOD_FRTT"
+            preview: "https://youtu.be/zVqC85OwWRE?si=vos0s6s3OmUAxqqH",
+            aula: "https://youtu.be/D-o3jTxT4Ck?si=E3Av6Xf6n5sOLuMi",
+            vod: "https://youtu.be/Epq1V-L1WmA?si=bk3lj_yrX5aSPbrT"
         }
     },
 
@@ -2433,9 +2860,9 @@ const playersData = [
         descricao: "Movimentação avançada, loadouts e rotações.",
 
         videos: {
-            preview: "COLOQUE_ID_VIDEO_PREVIEW_TONYBOY",
-            aula: "COLOQUE_ID_VIDEO_AULA_TONYBOY",
-            vod: "COLOQUE_ID_VIDEO_VOD_TONYBOY"
+            preview: "https://youtu.be/sa5PxNTcuLs?si=65xsiBpc14AkHFVG",
+            aula: "https://youtu.be/QUpZw_F0JLg?si=aASapcRJiAblk5I7",
+            vod: "https://youtu.be/veYz6MRPzS0?si=ojQPY9vH883qyMfs"
         }
     }
 ];
@@ -2454,6 +2881,11 @@ if(playerIndexAtual>=playersData.length)playerIndexAtual=0;
 if(playerIndexAtual<0)playerIndexAtual=playersData.length-1;
 
 const player=playersData[playerIndexAtual];
+
+localStorage.setItem(
+    "proPlayerSelecionado",
+    JSON.stringify(player)
+);
 
 const nome=document.getElementById("player-nome");
 const jogo=document.getElementById("player-jogo");
@@ -2521,34 +2953,6 @@ function assinarPlano(nomePlano, preco){
 
 function getFavoritos(){
 return JSON.parse(localStorage.getItem("bepro_favoritos"))||[];
-}
-
-function toggleFavorito(id, event) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    id = Number(id);
-
-    let favoritos = getFavoritos();
-
-    if (favoritos.includes(id)) {
-        favoritos = favoritos.filter(item => item !== id);
-    } else {
-        favoritos.push(id);
-    }
-
-    localStorage.setItem("bepro_favoritos", JSON.stringify(favoritos));
-
-    atualizarBadges();
-
-    // Atualiza os produtos da tela
-    if (document.getElementById("titulo-categoria-atual")?.innerText.includes("Favoritos")) {
-        verFavoritos();
-    } else {
-        renderizarProdutos();
-    }
 }
 
 function isFavorito(id){
@@ -2630,173 +3034,58 @@ function mostrarNotificacaoFavorito(nome,adicionado){
     },2200);
 }
 
-function verFavoritos(event) {
+function verFavoritos(event){
+if(event){
+event.preventDefault();
+event.stopPropagation();
+}
 
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
+trocarAba("loja");
 
-    // Esconde todas as telas
-    document.querySelectorAll(".conteudo").forEach(secao => {
-        secao.classList.remove("ativo");
-    });
+const container=document.getElementById("lista-produtos");
+if(!container)return;
 
-    // Mostra favoritos
-    const favoritosArea = document.getElementById("favoritos");
+const favoritos=getFavoritos();
 
-    if (!favoritosArea) {
-        console.error("ERRO: #favoritos não existe no HTML.");
-        return;
-    }
+const titulo=document.getElementById("titulo-categoria-atual");
+if(titulo)titulo.innerText="❤️ Meus Produtos Favoritos";
 
-    favoritosArea.classList.add("ativo");
+if(favoritos.length===0){
+container.innerHTML=`
+<div style="grid-column:1/-1;text-align:center;padding:40px">
+<h3>Você ainda não possui favoritos!</h3>
+<p>Clique no coração dos produtos para salvar.</p>
+</div>`;
+return;
+}
 
-    const container = document.getElementById("lista-favoritos");
+const produtos=todosProdutos.filter(p=>favoritos.includes(Number(p.id)));
 
-    if (!container) {
-        console.error("ERRO: #lista-favoritos não existe.");
-        return;
-    }
+container.innerHTML="";
 
-    const favoritos = getFavoritos();
+produtos.forEach(p=>{
+const img=obterCaminhoImagem(p.nome);
 
-    // Nenhum favorito
-    if (favoritos.length === 0) {
+container.innerHTML+=`
+<div class="card-produto-loja">
+<button class="btn-favorito" onclick="toggleFavorito(${p.id},event)">
+<i class="fa-solid fa-heart"></i>
+</button>
 
-        container.innerHTML = `
-            <div style="
-                width:100%;
-                text-align:center;
-                padding:80px 20px;
-                box-sizing:border-box;
-            ">
+<div class="card-produto-img-box">
+<img src="${img}" alt="${sanitizarTexto(p.nome)}">
+</div>
 
-                <div style="
-                    font-size:70px;
-                    margin-bottom:20px;
-                ">
-                    ❤️
-                </div>
+<div class="card-produto-detalhes">
+<h3>${sanitizarTexto(p.nome)}</h3>
+<p>R$ ${p.preco}</p>
 
-                <h3 style="
-                    color:#ffffff;
-                    margin-bottom:10px;
-                ">
-                    Nenhum favorito ainda
-                </h3>
-
-                <p style="
-                    color:#94a3b8;
-                ">
-                    Clique no coração ❤️ dos produtos
-                    para adicioná-los aos favoritos.
-                </p>
-
-            </div>
-        `;
-
-        atualizarBadges();
-        return;
-    }
-
-    // Produtos favoritos
-    const produtos = todosProdutos.filter(p =>
-        favoritos.includes(Number(p.id))
-    );
-
-    container.innerHTML = "";
-
-    if (produtos.length === 0) {
-
-        container.innerHTML = `
-            <div style="
-                width:100%;
-                text-align:center;
-                padding:80px 20px;
-            ">
-
-                <div style="font-size:60px;">
-                    😕
-                </div>
-
-                <h3 style="color:white;">
-                    Produto não encontrado
-                </h3>
-
-            </div>
-        `;
-
-        atualizarBadges();
-        return;
-    }
-
-    produtos.forEach(p => {
-
-        const img = obterCaminhoImagem(p.nome);
-
-        const preco = Number(
-            p.preco_promocional > 0
-                ? p.preco_promocional
-                : p.preco
-        );
-
-        container.innerHTML += `
-            <div class="card-produto-loja">
-
-                <button
-                    class="btn-favorito"
-                    data-id="${p.id}"
-                    onclick="toggleFavorito(${p.id}, event)"
-                    title="Remover dos favoritos"
-                >
-                    <i
-                        class="fa-solid fa-heart"
-                        style="color:#ff4757;"
-                    ></i>
-                </button>
-
-                <div class="card-produto-img-box">
-
-                    <img
-                        src="${img}"
-                        alt="${sanitizarTexto(p.nome)}"
-                        class="card-produto-img"
-                        onerror="this.src='imagens/logo-bepro.png.jpeg'"
-                    >
-
-                </div>
-
-                <div class="card-produto-detalhes">
-
-                    <h3 class="card-produto-titulo">
-                        ${sanitizarTexto(p.nome)}
-                    </h3>
-
-                    <div class="card-produto-preco">
-                        R$ ${preco.toFixed(2)}
-                    </div>
-
-                    <button
-                        class="btn-card-comprar"
-                        onclick="
-                            event.stopPropagation();
-                            adicionarAoCarrinho(
-                                '${p.nome.replace(/'/g, "\\'")}',
-                                ${preco}
-                            );
-                        "
-                    >
-                        🛒 Adicionar ao Carrinho
-                    </button>
-
-                </div>
-
-            </div>
-        `;
-    });
-
-    atualizarBadges();
+<button onclick="adicionarAoCarrinho('${p.nome}',${p.preco})">
+Adicionar ao Carrinho
+</button>
+</div>
+</div>`;
+});
 }
 
 function atualizarBadges(){
@@ -2812,6 +3101,11 @@ atualizarCarrinhoUI();
 atualizarResumoPagamento();
 atualizarBadges();
 inicializarPagamento();
+
+localStorage.setItem(
+    "proPlayerSelecionado",
+    JSON.stringify(playersData[playerIndexAtual])
+);
 
 const btn=document.getElementById("btnDropdownCat");
 const menu=document.getElementById("menuDropdownCat");
@@ -2830,6 +3124,46 @@ menu.classList.remove("ativo");
 }
 });
 
+function renderizarFavoritos(){
+const container=document.getElementById("lista-produtos");
+if(!container)return;
+
+const favoritos=getFavoritos();
+
+if(!favoritos.length){
+container.innerHTML=`
+<div style="grid-column:1/-1;text-align:center;padding:40px">
+<h3>Nenhum favorito salvo.</h3>
+</div>`;
+return;
+}
+
+const produtos=todosProdutos.filter(p=>favoritos.includes(Number(p.id)));
+
+container.innerHTML="";
+
+produtos.forEach(p=>{
+container.innerHTML+=`
+<div class="card-produto-loja">
+<button class="btn-favorito" onclick="toggleFavorito(${p.id},event)">
+<i class="fa-solid fa-heart" style="color:#ff4757"></i>
+</button>
+
+<div class="card-produto-img-box">
+<img src="${obterCaminhoImagem(p.nome)}">
+</div>
+
+<div class="card-produto-detalhes">
+<h3>${sanitizarTexto(p.nome)}</h3>
+<p>R$ ${p.preco}</p>
+
+<button onclick="adicionarAoCarrinho('${p.nome}',${p.preco})">
+Adicionar ao Carrinho
+</button>
+</div>
+</div>`;
+});
+}
 
 function inicializarSistema(){
 atualizarCarrinhoUI();
@@ -2985,6 +3319,10 @@ async function carregarPlano(){
 
             if(box) box.style.display = "none";
             if(semPlano) semPlano.style.display = "block";
+
+            localStorage.removeItem(
+            "planoAtivoConfirmado"
+        );
 
             return;
         }
@@ -3213,9 +3551,14 @@ beneficios.innerHTML = listaBeneficios
         }
 
         localStorage.setItem(
-            "planoAtivo",
-            chavePlano
-        );
+    "planoAtivo",
+    chavePlano
+);
+
+localStorage.setItem(
+    "planoAtivoConfirmado",
+    "true"
+);
 
     }catch(error){
         console.error(
@@ -3254,8 +3597,10 @@ function abrirGuiaTreino(){
 // 💬 DISCORD
 function abrirDiscordAlunos(){
 
-    alert("💬 Aqui vai abrir o Discord dos alunos.");
-
+    window.open(
+        "https://discord.gg/exemplo",
+        "_blank"
+    );
 }
 
 // 🎮 SESSÕES AO VIVO
@@ -3268,10 +3613,61 @@ function abrirSessoesAoVivo(){
         return;
     }
 
+    const etapaVideo = document.getElementById("sessao-etapa-video");
+    const etapaCalendario = document.getElementById("sessao-etapa-calendario");
+
+    if(etapaVideo) etapaVideo.style.display = "block";
+    if(etapaCalendario) etapaCalendario.style.display = "none";
+
+    const player = document.getElementById("sessao-video-player");
+
+    const playerSalvo =
+        localStorage.getItem("proPlayerSelecionado");
+
+    if(player && playerSalvo){
+
+        try{
+
+            const proPlayer =
+                JSON.parse(playerSalvo);
+
+            const videoUrl =
+                proPlayer.videos?.preview;
+
+            const videoId =
+                extrairYoutubeId(videoUrl);
+
+            if(videoId){
+
+                player.src =
+                    `https://www.youtube.com/embed/${videoId}?rel=0`;
+
+            }else{
+
+                player.src = "";
+
+                console.error(
+                    "Preview do Pro Player inválido:",
+                    videoUrl
+                );
+            }
+
+        }catch(error){
+
+            console.error(
+                "Erro ao carregar Preview:",
+                error
+            );
+
+            player.src = "";
+        }
+
+    }else if(player){
+
+        player.src = "";
+    }
+
     modal.style.display = "flex";
-
-    carregarCalendarioAulas();
-
 }
 
 function abrirAnaliseConfig(){
@@ -3293,8 +3689,10 @@ function abrirAnaliseConfig(){
 // 💬 GRUPO VIP
 function abrirGrupoVIP(){
 
-    alert("💬 Aqui vai abrir o Grupo VIP.");
-
+    window.open(
+        "https://discord.gg/grupovip-exemplo",
+        "_blank"
+    );
 }
 
 // 👑 ACOMPANHAMENTO
@@ -3307,22 +3705,772 @@ function abrirAcompanhamento(){
 // 🎮 DUO
 function abrirDuoInGame(){
 
-    alert("🎮 Aqui você poderá agendar sua partida Duo com o Pro.");
+    const modal = document.getElementById("modal-duo");
 
+    if(!modal){
+        console.error("Modal Duo In-Game não encontrado.");
+        return;
+    }
+
+    modal.style.display = "flex";
+
+    carregarCalendarioDuo();
+}
+
+async function carregarCalendarioDuo(){
+
+    const calendario =
+        document.getElementById("calendario-duo");
+
+    if(!calendario) return;
+
+    calendario.innerHTML = `
+        <p style="color:#94a3b8;">
+            ⏳ Carregando dias disponíveis...
+        </p>
+    `;
+
+    try {
+
+        const resposta = await fetch(
+            "http://localhost:3000/dias-disponiveis"
+        );
+
+        const diasDisponiveis =
+            await resposta.json();
+
+        if(!resposta.ok){
+            throw new Error(
+                diasDisponiveis.error ||
+                "Erro ao buscar dias."
+            );
+        }
+
+        calendario.innerHTML = "";
+
+        if(!diasDisponiveis.length){
+
+            calendario.innerHTML = `
+                <p style="color:#94a3b8;">
+                    Nenhum dia disponível no momento.
+                </p>
+            `;
+
+            return;
+        }
+
+        diasDisponiveis.forEach(item => {
+
+            const dataString =
+                String(item.data).substring(0,10);
+
+            const data =
+                new Date(
+                    dataString + "T12:00:00"
+                );
+
+            const botao =
+                document.createElement("button");
+
+            botao.type = "button";
+            botao.className =
+                "calendario-dia disponivel";
+
+            const nomesDias = [
+                "Dom",
+                "Seg",
+                "Ter",
+                "Qua",
+                "Qui",
+                "Sex",
+                "Sáb"
+            ];
+
+            botao.innerHTML = `
+                <span class="dia-numero">
+                    ${data.getDate()}
+                </span>
+
+                <span class="dia-nome">
+                    ${nomesDias[data.getDay()]}
+                </span>
+            `;
+
+            botao.onclick = () => {
+
+                document
+                    .querySelectorAll(
+                        "#calendario-duo .calendario-dia"
+                    )
+                    .forEach(btn => {
+                        btn.classList.remove("selecionado");
+                    });
+
+                botao.classList.add("selecionado");
+
+                window.duoSelecionado = {
+                    data: dataString,
+                    horario: null
+                };
+
+                carregarHorariosDuo(dataString);
+            };
+
+            calendario.appendChild(botao);
+        });
+
+    } catch(error) {
+
+        console.error(
+            "Erro ao carregar calendário do Duo:",
+            error
+        );
+
+        calendario.innerHTML = `
+            <p style="color:#ef4444;">
+                ❌ Erro ao carregar calendário.
+            </p>
+        `;
+    }
+}
+
+async function confirmarDuoInGame(){
+
+    if(
+        !window.duoSelecionado?.data ||
+        !window.duoSelecionado?.horario
+    ){
+        alert("Selecione um dia e um horário.");
+        return;
+    }
+
+    console.log(
+        "Duo In-Game confirmado:",
+        window.duoSelecionado
+    );
+
+    alert(
+        "🎮 Duo In-Game marcado com sucesso!"
+    );
+
+    fecharDuoInGame();
+}
+
+async function carregarHorariosDuo(data){
+
+    const container =
+        document.getElementById("horarios-duo");
+
+    if(!container) return;
+
+    container.style.display = "block";
+
+    container.innerHTML = `
+        <h3>🕐 Escolha o horário</h3>
+
+        <p>
+            ⏳ Carregando horários disponíveis...
+        </p>
+    `;
+
+    try {
+
+        const resposta = await fetch(
+            `http://localhost:3000/horarios-disponiveis?data=${encodeURIComponent(data)}`
+        );
+
+        const horarios =
+            await resposta.json();
+
+        if(!resposta.ok){
+            throw new Error(
+                horarios.error ||
+                "Erro ao buscar horários."
+            );
+        }
+
+        if(!horarios.length){
+
+            container.innerHTML = `
+                <h3>🕐 Escolha o horário</h3>
+
+                <p style="color:#ef4444;">
+                    ❌ Não existem horários disponíveis para este dia.
+                </p>
+            `;
+
+            return;
+        }
+
+        container.innerHTML = `
+            <h3>🕐 Escolha o horário</h3>
+
+            <div
+                id="lista-horarios-duo"
+                class="lista-horarios"
+            ></div>
+        `;
+
+        const lista =
+            document.getElementById(
+                "lista-horarios-duo"
+            );
+
+        horarios.forEach(item => {
+
+            const horario =
+                String(item.horario).substring(0,5);
+
+            const botao =
+                document.createElement("button");
+
+            botao.type = "button";
+            botao.className = "horario-btn";
+            botao.innerText = horario;
+
+            botao.onclick = () => {
+
+                document
+                    .querySelectorAll(
+                        "#lista-horarios-duo .horario-btn"
+                    )
+                    .forEach(btn => {
+                        btn.classList.remove(
+                            "selecionado"
+                        );
+                    });
+
+                botao.classList.add(
+                    "selecionado"
+                );
+
+                window.duoSelecionado.horario =
+                    horario;
+
+                const confirmacao =
+                    document.getElementById(
+                        "confirmacao-duo"
+                    );
+
+                const resumo =
+                    document.getElementById(
+                        "resumo-duo"
+                    );
+
+                if(resumo){
+
+                    const dataObj =
+                        new Date(
+                            data + "T12:00:00"
+                        );
+
+                    resumo.innerHTML = `
+                        📅 <strong>Data:</strong>
+                        ${dataObj.toLocaleDateString("pt-BR")}
+
+                        <br>
+
+                        🕐 <strong>Horário:</strong>
+                        ${horario}
+                    `;
+                }
+
+                if(confirmacao){
+                    confirmacao.style.display =
+                        "block";
+                }
+            };
+
+            lista.appendChild(botao);
+        });
+
+    } catch(error) {
+
+        console.error(
+            "Erro ao carregar horários do Duo:",
+            error
+        );
+
+        container.innerHTML = `
+            <p style="color:#ef4444;">
+                ❌ Não foi possível carregar os horários.
+            </p>
+        `;
+    }
+}
+
+
+function fecharDuoInGame(){
+
+    const modal =
+        document.getElementById("modal-duo");
+
+    if(modal){
+        modal.style.display = "none";
+    }
 }
 
 // 📱 WHATSAPP
 function abrirWhatsAppVIP(){
 
-    alert("📱 Aqui vai abrir o suporte VIP.");
+    window.open(
+        "https://wa.me/5500000000000",
+        "_blank"
+    );
 
+}
+
+// ========================================
+// 📊 MODELOS DE RELATÓRIO POR JOGO
+// ========================================
+
+const modelosRelatorio = {
+
+    valorant: {
+
+        nome: "VALORANT",
+
+        metricas: [
+            "Aim",
+            "Movement",
+            "Utilitários",
+            "Leitura de Round",
+            "Posicionamento",
+            "Economia"
+        ],
+
+        melhorias: [
+            "Melhorar controle de recoil",
+            "Trabalhar counter-strafe",
+            "Aprimorar uso de utilitários",
+            "Melhorar tomada de decisão durante o round",
+            "Trabalhar posicionamento"
+        ],
+
+        focos: [
+            "First Bullet Accuracy",
+            "Timing dos utilitários",
+            "Peek com vantagem",
+            "Rotação",
+            "Leitura de round"
+        ]
+
+    },
+
+
+    cs2: {
+
+        nome: "COUNTER-STRIKE 2",
+
+        metricas: [
+            "Aim",
+            "Counter-Strafe",
+            "Spray Control",
+            "Grenades",
+            "Trade",
+            "Rotação",
+            "Economia"
+        ],
+
+        melhorias: [
+            "Melhorar First Bullet Accuracy",
+            "Trabalhar Spray Control",
+            "Melhorar timing das granadas",
+            "Aprimorar trades",
+            "Melhorar leitura de rotação"
+        ],
+
+        focos: [
+            "Counter-Strafe",
+            "Spray Transfer",
+            "Timing de Flash",
+            "Trade Frag",
+            "Decisão econômica"
+        ]
+
+    },
+
+
+    lol: {
+
+        nome: "LEAGUE OF LEGENDS",
+
+        metricas: [
+            "CS/min",
+            "Wave Management",
+            "Trading",
+            "Visão",
+            "Macro",
+            "Objetivos",
+            "Teamfight"
+        ],
+
+        melhorias: [
+            "Melhorar controle de wave",
+            "Aprimorar timing de recall",
+            "Melhorar controle de visão",
+            "Tomar melhores decisões antes dos objetivos",
+            "Melhorar posicionamento em teamfights"
+        ],
+
+        focos: [
+            "Wave Management",
+            "Recall Timing",
+            "Controle de visão",
+            "Macro",
+            "Teamfight"
+        ]
+
+    },
+
+
+    fortnite: {
+
+        nome: "FORTNITE",
+
+        metricas: [
+            "Aim",
+            "Build",
+            "Edit",
+            "Piece Control",
+            "Movement",
+            "Positioning",
+            "Rotation",
+            "Endgame"
+        ],
+
+        melhorias: [
+            "Melhorar Piece Control",
+            "Aprimorar velocidade de edição",
+            "Melhorar movimentação",
+            "Trabalhar rotações",
+            "Melhorar decisões de Endgame"
+        ],
+
+        focos: [
+            "Piece Control",
+            "Edit Speed",
+            "Box Fight",
+            "Resource Management",
+            "Endgame"
+        ]
+
+    },
+
+
+    r6: {
+
+        nome: "RAINBOW SIX SIEGE",
+
+        metricas: [
+            "Aim",
+            "Crosshair Placement",
+            "Recoil Control",
+            "Map Knowledge",
+            "Utility",
+            "Positioning",
+            "Communication",
+            "Game Sense"
+        ],
+
+        melhorias: [
+            "Melhorar conhecimento dos mapas",
+            "Trabalhar posicionamento",
+            "Aprimorar uso de utility",
+            "Melhorar comunicação",
+            "Trabalhar leitura do adversário"
+        ],
+
+        focos: [
+            "Map Knowledge",
+            "Utility Usage",
+            "Crosshair Placement",
+            "Roaming",
+            "Site Execution"
+        ]
+
+    }
+
+};
+
+function identificarJogoRelatorio(){
+
+    const salvo =
+        localStorage.getItem(
+            "proPlayerSelecionado"
+        );
+
+    if(!salvo){
+        return "valorant";
+    }
+
+    try{
+
+        const proPlayer =
+            JSON.parse(salvo);
+
+        const texto = JSON.stringify(
+            proPlayer
+        ).toLowerCase();
+
+        if(
+            texto.includes("valorant")
+        ){
+            return "valorant";
+        }
+
+        if(
+            texto.includes("cs2") ||
+            texto.includes("counter-strike") ||
+            texto.includes("counter strike")
+        ){
+            return "cs2";
+        }
+
+        if(
+            texto.includes("league") ||
+            texto.includes("lol")
+        ){
+            return "lol";
+        }
+
+        if(
+            texto.includes("fortnite")
+        ){
+            return "fortnite";
+        }
+
+        if(
+            texto.includes("rainbow") ||
+            texto.includes("r6")
+        ){
+            return "r6";
+        }
+
+    }catch(error){
+
+        console.error(
+            "Erro ao identificar jogo:",
+            error
+        );
+    }
+
+    return "valorant";
 }
 
 // 📊 RELATÓRIO
 function abrirRelatorioMensal(){
 
-    alert("📊 Aqui vai abrir seu relatório mensal.");
+    const modal =
+        document.getElementById(
+            "modal-relatorio-mensal"
+        );
 
+    if(!modal){
+        console.error(
+            "Modal do relatório mensal não encontrado."
+        );
+        return;
+    }
+
+    montarRelatorioPorJogo();
+
+    modal.style.display = "flex";
+}
+
+function montarRelatorioPorJogo(){
+
+    const jogo =
+        identificarJogoRelatorio();
+
+    const modelo =
+        modelosRelatorio[jogo];
+
+    if(!modelo){
+        console.warn(
+            "Modelo de relatório não encontrado:",
+            jogo
+        );
+        return;
+    }
+
+    // Nome do jogo
+    const titulo =
+        document.getElementById(
+            "relatorio-jogo"
+        );
+
+    if(titulo){
+        titulo.textContent =
+            modelo.nome;
+    }
+
+
+    // Métricas
+    const container =
+        document.getElementById(
+            "relatorio-indicadores"
+        );
+
+    if(!container) return;
+
+    container.innerHTML = "";
+
+    modelo.metricas.forEach(
+        (metrica, index) => {
+
+            // Valores fictícios para o relatório
+            const anterior =
+                65 + (index * 2);
+
+            const atual =
+                anterior + 8 + index;
+
+            const evolucao =
+                Math.round(
+                    ((atual - anterior) /
+                    anterior) * 100
+                );
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "relatorio-indicador";
+
+            card.innerHTML = `
+
+                <div>
+
+                    <span>
+                        ${metrica}
+                    </span>
+
+                    <strong>
+                        +${evolucao}%
+                    </strong>
+
+                </div>
+
+                <div class="relatorio-comparacao">
+                    ${anterior} → ${atual}
+                </div>
+
+                <div class="relatorio-barra">
+
+                    <div
+                        style="width:${atual}%"
+                    ></div>
+
+                </div>
+
+            `;
+
+            container.appendChild(card);
+        }
+    );
+
+
+    // O que melhorou
+    const melhorias =
+        document.getElementById(
+            "relatorio-melhorias"
+        );
+
+    if(melhorias){
+
+        melhorias.innerHTML =
+            modelo.melhorias
+                .slice(0, 4)
+                .map(
+                    item => `<li>${item}</li>`
+                )
+                .join("");
+    }
+
+
+    // Próximo foco
+    const focos =
+        document.getElementById(
+            "relatorio-focos"
+        );
+
+    if(focos){
+
+        focos.innerHTML =
+            modelo.focos
+                .slice(0, 4)
+                .map(
+                    item => `<li>${item}</li>`
+                )
+                .join("");
+    }
+}
+
+
+function fecharRelatorioMensal(){
+
+    const modal =
+        document.getElementById(
+            "modal-relatorio-mensal"
+        );
+
+    if(modal){
+
+        modal.style.display = "none";
+    }
+
+}
+
+function carregarVideoRelatorio(input){
+
+    const arquivo =
+        input.files?.[0];
+
+    if(!arquivo) return;
+
+    if(!arquivo.type.startsWith("video/")){
+
+        alert(
+            "Selecione um arquivo de vídeo."
+        );
+
+        input.value = "";
+
+        return;
+    }
+
+    const player =
+        document.getElementById(
+            "relatorio-video-player"
+        );
+
+    const preview =
+        document.getElementById(
+            "relatorio-video-preview"
+        );
+
+    if(!player || !preview) return;
+
+    const url =
+        URL.createObjectURL(arquivo);
+
+    player.src = url;
+
+    preview.style.display = "block";
+}
+
+function fecharRelatorioMensal(){
+
+    const modal = document.getElementById(
+        "modal-relatorio-mensal"
+    );
+
+    if(modal){
+        modal.style.display = "none";
+    }
 }
 
 // ========================================
@@ -3704,6 +4852,20 @@ function selecionarHorario(
 
 async function confirmarAula(){
 
+    const playerSelecionado =
+        playersData[playerIndexAtual];
+
+    if(!playerSelecionado){
+        alert("Erro: Pro Player não encontrado.");
+        return;
+    }
+
+    // Salva a aula que o cliente está tentando comprar
+    localStorage.setItem(
+        "aulaSelecionada",
+        JSON.stringify(playerSelecionado)
+    );
+
     if(
         !aulaSelecionada.data ||
         !aulaSelecionada.horario
@@ -3726,6 +4888,10 @@ async function confirmarAula(){
 
         alert(
             "Você precisa estar logado."
+        );
+
+        localStorage.removeItem(
+        "planoAtivoConfirmado"
         );
 
         return;
@@ -4333,23 +5499,107 @@ function fecharVODReview(){
 // ABRIR VÍDEO
 // ========================================
 
-function abrirVideoVOD(){
+function extrairYoutubeId(url){
 
-    /*
-        Coloque aqui o link do vídeo
-        que você quiser abrir.
-    */
+    if(!url) return null;
 
-    const video =
-        "https://www.youtube.com/watch?v=SEU_VIDEO_AQUI";
-
-
-    window.open(
-        video,
-        "_blank"
+    const match = String(url).match(
+        /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&/]+)/
     );
+
+    return match ? match[1] : null;
 }
 
+function abrirVODReview(){
+
+    const playerSalvo =
+        localStorage.getItem("proPlayerSelecionado");
+
+    if(!playerSalvo){
+        alert("Nenhum Pro Player selecionado.");
+        return;
+    }
+
+    const aula =
+        JSON.parse(playerSalvo);
+
+    const video =
+        aula.videos?.vod;
+
+    if(!video){
+        alert("O VOD desse Pro Player ainda não foi configurado.");
+        return;
+    }
+
+    const match = String(video).match(
+        /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([^?&/]+)/
+    );
+
+    const videoId =
+        match ? match[1] : null;
+
+    if(!videoId){
+        alert("URL da VOD inválida.");
+        return;
+    }
+
+    const titulo =
+        document.getElementById("vod-titulo");
+
+    if(titulo){
+        titulo.textContent =
+            `VOD Review — ${aula.nome.replace("👑 Pro Player: ", "")}`;
+    }
+
+    const descricao =
+        document.getElementById("vod-descricao");
+
+    if(descricao){
+        descricao.textContent =
+            `Análise de gameplay de ${aula.nome.replace("👑 Pro Player: ", "")} — ${aula.jogo}.`;
+    }
+
+    const player =
+        document.getElementById("vod-video-player");
+
+    if(player){
+        player.src =
+            `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    const modal =
+        document.getElementById("modal-vod-review");
+
+    if(modal){
+        modal.style.display = "flex";
+    }
+}
+
+function fecharVODReview(){
+
+    const modal =
+        document.getElementById(
+            "modal-vod-review"
+        );
+
+    if(modal){
+
+        modal.style.display = "none";
+
+    }
+
+    const player =
+        document.getElementById(
+            "vod-video-player"
+        );
+
+    if(player){
+
+        player.src = "";
+
+    }
+
+}
 function abrirPromocao() {
     // 1. Pega o container onde os produtos são renderizados no seu HTML
     const container = document.getElementById("lista-produtos") || document.querySelector(".produtos-grid");
@@ -4380,15 +5630,5 @@ function abrirPromocao() {
         });
     }
 
-    function selecionarJogo(valor, elemento) {
-  // Atualiza o valor do input escondido que o seu JS lê
-  document.getElementById('jogo').value = valor;
-
-  // Remove a classe 'active' de todos os cards
-  document.querySelectorAll('.game-card').forEach(card => {
-    card.classList.remove('active');
-  });
-
-  // Adiciona 'active' no card clicado
-  elemento.classList.add('active');
-}
+// Mantém um alias para caso o HTML chame por verOfertas
+window.verOfertas = abrirPromocao;
