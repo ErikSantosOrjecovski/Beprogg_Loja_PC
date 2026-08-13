@@ -1,5 +1,138 @@
 -- ========================================================
 -- BANCO DE DADOS BEPROGG
+-- SCRIPT DE ESTRUTURA (SCHEMA) - SEGURO PARA RODAR SEMPRE
+-- Este script NUNCA apaga o banco. Ele só cria o que não existe.
+-- Rode este arquivo sempre que precisar (deploy, restart, etc.)
+-- ========================================================
+
+CREATE DATABASE IF NOT EXISTS beprogg
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+USE beprogg;
+
+
+-- ========================================================
+-- 1. ESTRUTURA DAS TABELAS (DDL)
+-- ========================================================
+
+-- ========================================================
+-- 1.1 TABELA DE USUÁRIOS
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    senha_hash VARCHAR(255) NOT NULL,
+    cpf VARCHAR(20) NOT NULL,
+    telefone VARCHAR(30) NOT NULL,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- ========================================================
+-- 1.2 TABELA DE PRODUTOS
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS produtos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL UNIQUE,
+    categoria VARCHAR(50) NOT NULL,
+    preco DECIMAL(10, 2) NOT NULL,
+    preco_original DECIMAL(10, 2) NOT NULL,
+    preco_promocional DECIMAL(10, 2) DEFAULT 0.00,
+    imagem_url VARCHAR(255),
+    descricao TEXT
+);
+
+
+-- ========================================================
+-- 1.3 TABELA DE AULAS / COACH
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS aulas_coach (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL UNIQUE,
+    descricao TEXT NOT NULL
+);
+
+
+-- ========================================================
+-- 1.4 TABELA DE PEDIDOS
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NULL,
+    cliente VARCHAR(100) NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
+    endereco TEXT NOT NULL,
+    pagamento VARCHAR(50) NOT NULL,
+    usuario_email VARCHAR(100) NOT NULL,
+    usuario_nome VARCHAR(100) NOT NULL,
+    itens JSON NOT NULL,
+    total DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'Confirmado',
+    data_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_pedido_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id)
+        ON DELETE SET NULL
+);
+
+
+-- ========================================================
+-- 1.5 TABELA DE PLANOS DOS USUÁRIOS
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS planos_usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_email VARCHAR(255) NOT NULL UNIQUE,
+    plano VARCHAR(50) NOT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
+    data_ativacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_expiracao DATETIME NULL
+);
+
+
+-- ========================================================
+-- 1.6 TABELA DE DISPONIBILIDADE DO COACH
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS disponibilidade_coach (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    data DATE NOT NULL,
+    horario TIME NOT NULL,
+    disponivel BOOLEAN DEFAULT TRUE,
+
+    UNIQUE KEY horario_unico (data, horario)
+);
+
+
+-- ========================================================
+-- 1.7 TABELA DE AULAS AGENDADAS
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS aulas_agendadas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_email VARCHAR(255) NOT NULL,
+    data DATE NOT NULL,
+    horario TIME NOT NULL,
+
+    status ENUM(
+        'confirmada',
+        'cancelada'
+    ) DEFAULT 'confirmada',
+
+    data_agendamento DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE KEY aula_unica (data, horario)
+);
+
+-- ========================================================
+-- BANCO DE DADOS BEPROGG
 -- SCRIPT DE DADOS INICIAIS (SEED) - SEGURO PARA RODAR SEMPRE
 -- Usa INSERT IGNORE: se o registro já existir (mesmo nome/titulo/
 -- data+horario), ele simplesmente pula, sem duplicar e sem apagar
