@@ -13,6 +13,12 @@ function trocarAba(id){
     const aba=document.getElementById(id);
     if(aba)aba.classList.add("ativo");
 
+    // Mostra a barra de pesquisa SOMENTE na aba da loja
+    const buscaContainer = document.querySelector(".search-container");
+    if(buscaContainer){
+        buscaContainer.style.display = (id === "loja") ? "flex" : "none";
+    }
+
     atualizarCarrinhoUI();
     atualizarResumoPagamento();
 
@@ -7405,4 +7411,3 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // Mantém um alias para caso o HTML chame por verOfertas
 window.verOfertas = abrirPromocao;
-
