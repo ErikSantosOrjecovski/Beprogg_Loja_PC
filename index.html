@@ -297,6 +297,25 @@
 
 </section>
 
+    <!-- ============================= -->
+    <!-- ÁREA EXCLUSIVA DE FAVORITOS -->
+    <!-- ============================= -->
+
+    <section id="favoritos" class="conteudo">
+
+        <div class="loja-topo">
+            <h2 class="section-title">
+                ❤️ Meus Produtos Favoritos
+            </h2>
+        </div>
+
+        <div
+            id="lista-favoritos"
+            class="grid-produtos"
+        ></div>
+
+    </section>
+
 <!-- =====================================================
      DETALHES DO PRODUTO
      ===================================================== -->
@@ -430,167 +449,43 @@
 
     <h2 class="section-title">💳 Finalizar Compra</h2>
 
-    <div
-        id="checkout-pagamento"
-        style="
-            display:grid !important;
-            grid-template-columns:minmax(380px, 1fr) minmax(380px, 1fr) !important;
-            gap:30px;
-            width:100%;
-            max-width:1000px;
-            margin:0 auto;
-            align-items:start;
-        "
-    >
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 900px; margin: 0 auto;">
 
-        <!-- =====================================
-             DADOS + PAGAMENTO
-        ====================================== -->
-        <div
-            id="checkout-pagamento-esquerda"
-            class="card"
-            style="
-                display:block !important;
-                width:100%;
-                box-sizing:border-box;
-                padding:28px;
-            "
-        >
+        <div class="card">
 
-            <h3 style="margin-top:0;">
-                👤 Dados da compra
-            </h3>
-
-            <p
-                id="tipo-compra-info"
-                style="
-                    color:#94a3b8;
-                    margin-bottom:20px;
-                "
-            >
-                Preencha seus dados para continuar.
-            </p>
-
-
-            <!-- NOME -->
-            <label
-                for="nome-cliente"
-                style="
-                    display:block;
-                    color:#cbd5e1;
-                    font-weight:600;
-                    margin-bottom:7px;
-                "
-            >
-                Seu nome
-            </label>
+            <h3>📦 Dados para entrega</h3>
 
             <input
                 id="nome-cliente"
                 type="text"
-                placeholder="Digite seu nome"
-                style="
-                    width:100%;
-                    box-sizing:border-box;
-                    padding:12px;
-                    margin-bottom:15px;
-                    background:#0d1117;
-                    border:1px solid #1f293d;
-                    color:white;
-                    border-radius:8px;
-                "
+                placeholder="Seu nome"
+                style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;"
             >
-
-
-            <!-- TELEFONE -->
-            <label
-                for="telefone"
-                style="
-                    display:block;
-                    color:#cbd5e1;
-                    font-weight:600;
-                    margin-bottom:7px;
-                "
-            >
-                Telefone
-            </label>
 
             <input
                 id="telefone"
                 type="text"
-                placeholder="Digite seu telefone"
-                style="
-                    width:100%;
-                    box-sizing:border-box;
-                    padding:12px;
-                    margin-bottom:15px;
-                    background:#0d1117;
-                    border:1px solid #1f293d;
-                    color:white;
-                    border-radius:8px;
-                "
+                placeholder="Telefone"
+                style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;"
             >
 
+            <input
+                id="endereco"
+                type="text"
+                placeholder="Endereço"
+                style="width: 90%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 15px;"
+            >
 
-            <!-- ENDEREÇO -->
-            <div id="campo-endereco-checkout">
-
-                <label
-                    for="endereco"
-                    style="
-                        display:block;
-                        color:#cbd5e1;
-                        font-weight:600;
-                        margin-bottom:7px;
-                    "
-                >
-                    📦 Endereço de entrega
-                </label>
-
-                <input
-                    id="endereco"
-                    type="text"
-                    placeholder="Rua, número, bairro..."
-                    style="
-                        width:100%;
-                        box-sizing:border-box;
-                        padding:12px;
-                        margin-bottom:20px;
-                        background:#0d1117;
-                        border:1px solid #1f293d;
-                        color:white;
-                        border-radius:8px;
-                    "
-                >
-
-            </div>
-
-
-            <!-- PAGAMENTO -->
             <label
                 for="forma-pagamento"
-                style="
-                    display:block;
-                    color:#cbd5e1;
-                    font-weight:600;
-                    margin-bottom:7px;
-                "
+                style="display: block; color: #cbd5e1; font-weight: 600; margin-bottom: 7px;"
             >
                 💳 Forma de pagamento
             </label>
 
             <select
                 id="forma-pagamento"
-                style="
-                    width:100%;
-                    box-sizing:border-box;
-                    padding:12px;
-                    background:#0d1117;
-                    border:1px solid #1f293d;
-                    color:white;
-                    border-radius:8px;
-                    margin-bottom:15px;
-                "
+                style="width: 96%; padding: 10px; background: #0d1117; border: 1px solid #1f293d; color: white; border-radius: 6px; margin-bottom: 12px;"
             >
 
                 <option value="">
@@ -611,64 +506,21 @@
 
             </select>
 
-
-            <!-- DETALHES DO PAGAMENTO -->
             <div id="detalhes-pagamento"></div>
 
-
-            <!-- BOTÃO -->
-            <button
-                onclick="finalizarPedido()"
-                style="
-                    width:100%;
-                    margin-top:10px;
-                    padding:14px;
-                    border:none;
-                    border-radius:8px;
-                    background:#00d4ff;
-                    color:#061018;
-                    font-weight:800;
-                    cursor:pointer;
-                "
-            >
-                🔒 Finalizar Pedido
+            <button onclick="finalizarPedido()">
+                Finalizar Pedido
             </button>
-
-
             <p
                 id="mensagem-pedido"
-                style="
-                    margin-top:15px;
-                    color:#00d4ff;
-                    font-weight:bold;
-                "
+                style="margin-top: 15px; color: #00d4ff; font-weight: bold;"
             ></p>
-
         </div>
-
-
-        <!-- =====================================
-             RESUMO
-        ====================================== -->
-        <div
-            class="card"
-            style="
-                width:100%;
-                box-sizing:border-box;
-                padding:28px;
-            "
-        >
-
-            <h3 style="margin-top:0;">
-                🛒 Resumo do Pedido
-            </h3>
-
+        <div class="card">
+            <h3>🛒 Resumo do Pedido</h3>
             <div id="resumo-pagamento"></div>
-
         </div>
-
     </div>
-
 </section>
 
     <section id="coach" class="conteudo">
@@ -756,7 +608,7 @@
     <section id="pedidos" class="conteudo">
         <h2 class="section-title">📦 Meus Pedidos</h2>
         <p style="text-align: left; color: #94a3b8; margin-bottom: 20px;">Acompanhe aqui o histórico das suas compras realizadas na Bepro.gg.</p>
-        <div id="lista-pedidos" class="lista-pedidos"></div>
+        <div id="lista-pedidos" class="produtos-grid"></div>
     </section>
 
     <section id="login" class="conteudo">
@@ -1590,18 +1442,16 @@
 <!-- ========================================
      MODAL - RELATÓRIO MENSAL
 ======================================== -->
-<div id="modal-relatorio-mensal" class="modal-overlay">
+<div id="modal-relatorio-mensal" class="modal-overlay" style="display:none;">
 
     <div class="modal-content relatorio-mensal-modal">
 
-        <!-- BOTÃO FECHAR -->
         <button
             class="modal-fechar"
             onclick="fecharRelatorioMensal()"
         >
             &times;
         </button>
-
 
         <!-- CABEÇALHO -->
         <div class="relatorio-header">
@@ -1629,7 +1479,7 @@
             </span>
 
             <strong id="relatorio-jogo">
-                VALORANT
+             VALORANT
             </strong>
 
         </div>
@@ -1653,27 +1503,29 @@
         </div>
 
 
-        <!-- INDICADORES -->
-        <div
-            id="relatorio-indicadores"
-            class="relatorio-indicadores"
-        ></div>
+       <!-- INDICADORES -->
+<div
+    id="relatorio-indicadores"
+    class="relatorio-indicadores"
+></div>
 
-        <div class="relatorio-comparacao">
-            70 → 81
-        </div>
+                <div class="relatorio-comparacao">
+                    70 → 81
+                </div>
 
-        <div class="relatorio-barra">
-            <div style="width:81%;"></div>
+                <div class="relatorio-barra">
+                    <div style="width:81%;"></div>
+                </div>
+
+            </div>
+
         </div>
 
 
         <!-- VÍDEO -->
         <div class="relatorio-secao">
 
-            <h3>
-                🎥 Seu vídeo desse mês
-            </h3>
+            <h3>🎥 Seu video desse mês</h3>
 
             <p class="relatorio-ajuda">
                 Adicione um vídeo para o coach ver sua evolução desse mês.
@@ -1721,93 +1573,56 @@
 
 
         <!-- ANÁLISE DO COACH -->
-        <div class="relatorio-colunas">
+
+<div class="relatorio-colunas">
+
+    <!-- O QUE MELHOROU -->
+    <div class="relatorio-box">
+
+        <h3>🟢 O que melhorou</h3>
+
+        <ul id="relatorio-melhorias">
+        </ul>
+
+    </div>
 
 
-            <!-- O QUE MELHOROU -->
-            <div class="relatorio-box">
+    <!-- O QUE MELHORAR -->
+    <div class="relatorio-box">
 
-                <h3>
-                    🟢 O que melhorou
-                </h3>
+        <h3>🟡 O que melhorar</h3>
 
-                <ul id="relatorio-melhorias">
+        <ul id="relatorio-pontos-melhorar">
+        </ul>
 
-                      <li>
-            Melhorar o posicionamento durante as trocas.
-        </li>
+    </div>
 
-        <li>
-            Trabalhar mais a consistência da mira.
-        </li>
-
-        <li>
-            Evitar decisões precipitadas durante as partidas.
-        </li>
-
-                </ul>
-
-            </div>
+</div>
 
 
-            <!-- O QUE MELHORAR -->
-            <div class="relatorio-box">
+<!-- PRÓXIMO FOCO -->
 
-    <h3>
-        🟡 O que melhorar
-    </h3>
+<div class="relatorio-box">
 
-    <ul id="relatorio-pontos-melhorar">
+    <h3>🎯 Próximo foco</h3>
 
-        <li>
-            Melhorar o posicionamento durante as trocas.
-        </li>
-
-        <li>
-            Trabalhar mais a consistência da mira.
-        </li>
-
-        <li>
-            Evitar decisões precipitadas durante as partidas.
-        </li>
-
+    <ul id="relatorio-focos">
     </ul>
 
 </div>
 
 
-        <!-- PRÓXIMO FOCO -->
-        <div class="relatorio-box">
+<!-- FEEDBACK -->
 
-            <h3>
-                🎯 Próximo foco
-            </h3>
+<div class="relatorio-feedback">
 
-            <ul id="relatorio-focos">
-            </ul>
-
-        </div>
-
-
-        <!-- FEEDBACK -->
-        <div class="relatorio-feedback">
-
-    <h3>
-        🧠 Feedback do Coach
-    </h3>
+    <h3>🧠 Feedback do Coach</h3>
 
     <p id="relatorio-feedback">
-        Você apresentou uma evolução consistente durante o período.
-        Seu desempenho mecânico está melhorando, mas ainda é importante
-        trabalhar o posicionamento, a tomada de decisão e a consistência
-        durante as partidas. Continue focando nesses pontos para manter
-        sua evolução no próximo mês.
     </p>
 
 </div>
 
-
-        <!-- BOTÃO FECHAR -->
         <button
             class="relatorio-fechar-btn"
             onclick="fecharRelatorioMensal()"
@@ -1819,487 +1634,76 @@
 
 </div>
 
-<section
-    id="acompanhamento-1x1"
-    class="acompanhamento-1x1"
->
 
-    <!-- CABEÇALHO -->
-    <div class="acompanhamento-header">
 
-        <div>
-            <span class="acompanhamento-label">
-                ACOMPANHAMENTO PERSONALIZADO
-            </span>
-
-            <h1>
-                🎯 Acompanhamento 1-1
-            </h1>
-
-            <p>
-                Seu plano de evolução acompanhado diretamente pelo seu coach.
-            </p>
+    <!-- ==========================================================
+         🍪 GERENCIAMENTO DE COOKIES / LGPD
+         ========================================================== -->
+    <div id="cookie-banner" class="cookie-banner" role="dialog" aria-modal="false" aria-labelledby="cookie-title" aria-describedby="cookie-description" hidden>
+        <div class="cookie-banner-content">
+            <div class="cookie-icon" aria-hidden="true">🍪</div>
+            <div class="cookie-text">
+                <h2 id="cookie-title">Sua privacidade importa</h2>
+                <p id="cookie-description">
+                    O Bepro.gg usa cookies essenciais para o funcionamento do site e cookies opcionais para melhorar sua experiência.
+                    Você pode aceitar todos ou escolher quais categorias permitir.
+                </p>
+                <button type="button" class="cookie-link-btn" onclick="abrirPreferenciasCookies()">Ver preferências</button>
+            </div>
+            <div class="cookie-actions">
+                <button type="button" class="cookie-btn cookie-btn-secondary" onclick="recusarCookiesOpcionais()">Recusar opcionais</button>
+                <button type="button" class="cookie-btn cookie-btn-primary" onclick="aceitarTodosCookies()">Aceitar todos</button>
+            </div>
         </div>
-
-        <div class="status-acompanhamento">
-            <span class="status-ponto"></span>
-            Acompanhamento ativo
-        </div>
-
     </div>
 
+    <div id="cookie-modal" class="cookie-modal" role="dialog" aria-modal="true" aria-labelledby="cookie-modal-title" hidden>
+        <div class="cookie-modal-backdrop" onclick="fecharPreferenciasCookies()"></div>
+        <div class="cookie-modal-card">
+            <button type="button" class="cookie-modal-close" aria-label="Fechar preferências" onclick="fecharPreferenciasCookies()">&times;</button>
+            <div class="cookie-icon cookie-icon-large" aria-hidden="true">🍪</div>
+            <h2 id="cookie-modal-title">Preferências de cookies</h2>
+            <p class="cookie-modal-intro">Escolha quais tipos de cookies você permite. Os cookies essenciais não podem ser desativados porque são necessários para o funcionamento básico do Bepro.gg.</p>
 
-    <!-- INFORMAÇÕES DO COACH -->
-    <div class="acompanhamento-grid">
-
-        <div class="acompanhamento-card coach-card">
-
-            <div class="card-titulo">
-                👨‍🏫 Seu Coach
-            </div>
-
-            <div class="coach-info">
-
-                <div class="coach-avatar">
-                    🎮
-                </div>
-
+            <div class="cookie-category">
                 <div>
-                    <strong id="nome-coach">
-                        Coach Gabriel
-                    </strong>
-
-                    <span id="jogo-acompanhamento">
-                        Fortnite
-                    </span>
-
-                    <small>
-                        Especialista em evolução competitiva
-                    </small>
+                    <strong>Essenciais</strong>
+                    <p>Necessários para segurança, funcionamento e armazenamento da sua preferência de consentimento.</p>
                 </div>
-
+                <span class="cookie-always-on">Sempre ativos</span>
             </div>
 
-        </div>
-
-
-        <div class="acompanhamento-card">
-
-            <div class="card-titulo">
-                📅 Acompanhamento
-            </div>
-
-            <div class="info-linhas">
-
+            <label class="cookie-category cookie-category-toggle">
                 <div>
-                    <span>Início</span>
-                    <strong>05/08/2026</strong>
+                    <strong>Preferências</strong>
+                    <p>Permitem lembrar configurações e escolhas para tornar sua navegação mais prática.</p>
                 </div>
-
-                <div>
-                    <span>Próxima revisão</span>
-                    <strong>12/08/2026</strong>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- OBJETIVO DA SEMANA -->
-    <div class="acompanhamento-card objetivo-card">
-
-        <div class="secao-titulo">
-            🎯 Objetivo desta semana
-        </div>
-
-        <h2 id="objetivo-semana">
-            Melhorar Piece Control durante as fights
-        </h2>
-
-        <p id="descricao-objetivo">
-            O coach definiu este como seu principal objetivo.
-            Priorize situações de Box Fight e trabalhe a execução
-            antes de tentar acelerar as jogadas.
-        </p>
-
-        <div class="meta-objetivo">
-
-            <span>
-                Meta da semana
-            </span>
-
-            <strong id="meta-semana">
-                Executar corretamente em 8 de 10 situações
-            </strong>
-
-        </div>
-
-    </div>
-
-
-    <!-- PROGRESSO -->
-    <div class="acompanhamento-card">
-
-        <div class="secao-titulo">
-            📊 Sua evolução
-        </div>
-
-        <div class="progresso-principal">
-
-            <div class="progresso-numero">
-                <strong id="progresso-percentual">
-                    72%
-                </strong>
-
-                <span>
-                    progresso da semana
-                </span>
-            </div>
-
-            <div class="progresso-barra">
-                <div
-                    id="barra-progresso"
-                    style="width:72%;"
-                ></div>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- TAREFAS -->
-    <div class="acompanhamento-card">
-
-        <div class="secao-titulo">
-            📋 Tarefas da semana
-        </div>
-
-        <p class="texto-ajuda">
-            Complete as atividades definidas pelo seu coach.
-        </p>
-
-        <div class="tarefas-lista">
-
-            <label class="tarefa">
-                <input
-                    type="checkbox"
-                    onchange="atualizarProgresso1x1()"
-                >
-
-                <span>
-                    Treinar Piece Control — 30 minutos
+                <span class="cookie-switch">
+                    <input type="checkbox" id="cookie-preferencias" aria-label="Permitir cookies de preferências">
+                    <span class="cookie-slider"></span>
                 </span>
             </label>
 
-
-            <label class="tarefa">
-                <input
-                    type="checkbox"
-                    onchange="atualizarProgresso1x1()"
-                >
-
-                <span>
-                    Fazer 10 situações de Box Fight
+            <label class="cookie-category cookie-category-toggle">
+                <div>
+                    <strong>Analíticos</strong>
+                    <p>Permitem medir o uso do site para melhorar páginas e funcionalidades. Nenhuma ferramenta analítica é ativada por este código sem consentimento.</p>
+                </div>
+                <span class="cookie-switch">
+                    <input type="checkbox" id="cookie-analiticos" aria-label="Permitir cookies analíticos">
+                    <span class="cookie-slider"></span>
                 </span>
             </label>
 
-
-            <label class="tarefa">
-                <input
-                    type="checkbox"
-                    onchange="atualizarProgresso1x1()"
-                >
-
-                <span>
-                    Treinar rotações no mapa
-                </span>
-            </label>
-
-
-            <label class="tarefa">
-                <input
-                    type="checkbox"
-                    onchange="atualizarProgresso1x1()"
-                >
-
-                <span>
-                    Gravar 2 partidas
-                </span>
-            </label>
-
-
-            <label class="tarefa">
-                <input
-                    type="checkbox"
-                    onchange="atualizarProgresso1x1()"
-                >
-
-                <span>
-                    Enviar vídeo para o coach
-                </span>
-            </label>
-
+            <div class="cookie-modal-actions">
+                <button type="button" class="cookie-btn cookie-btn-secondary" onclick="recusarCookiesOpcionais()">Recusar opcionais</button>
+                <button type="button" class="cookie-btn cookie-btn-primary" onclick="salvarPreferenciasCookies()">Salvar preferências</button>
+            </div>
         </div>
-
-        <div class="tarefas-progresso">
-
-            <span id="tarefas-contador">
-                0 de 5 concluídas
-            </span>
-
-            <strong id="tarefas-percentual">
-                0%
-            </strong>
-
-        </div>
-
     </div>
 
-
-    <!-- AVALIAÇÃO DO COACH -->
-    <div class="acompanhamento-card">
-
-        <div class="secao-titulo">
-            ⭐ Avaliação do Coach
-        </div>
-
-        <div class="avaliacoes">
-
-            <div class="avaliacao">
-
-                <div>
-                    <span>Mecânica</span>
-                    <strong>90%</strong>
-                </div>
-
-                <div class="avaliacao-barra">
-                    <div style="width:90%;"></div>
-                </div>
-
-            </div>
-
-
-            <div class="avaliacao">
-
-                <div>
-                    <span>Posicionamento</span>
-                    <strong>65%</strong>
-                </div>
-
-                <div class="avaliacao-barra">
-                    <div style="width:65%;"></div>
-                </div>
-
-            </div>
-
-
-            <div class="avaliacao">
-
-                <div>
-                    <span>Tomada de decisão</span>
-                    <strong>72%</strong>
-                </div>
-
-                <div class="avaliacao-barra">
-                    <div style="width:72%;"></div>
-                </div>
-
-            </div>
-
-
-            <div class="avaliacao">
-
-                <div>
-                    <span>Consistência</span>
-                    <strong>80%</strong>
-                </div>
-
-                <div class="avaliacao-barra">
-                    <div style="width:80%;"></div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- FEEDBACK -->
-    <div class="acompanhamento-card feedback-coach">
-
-        <div class="secao-titulo">
-            💬 Feedback do Coach
-        </div>
-
-        <p id="feedback-coach">
-
-            Você está evoluindo bem nas últimas partidas.
-            Sua mecânica está mais consistente, mas ainda precisamos
-            trabalhar seu posicionamento antes de iniciar as fights.
-
-            Continue seguindo o treino definido nesta semana e envie
-            suas próximas partidas para análise.
-
-        </p>
-
-        <div class="feedback-data">
-            Última análise: 08/08/2026
-        </div>
-
-    </div>
-
-
-    <!-- ENVIAR PARTIDA -->
-    <div class="acompanhamento-card enviar-video-card">
-
-        <div class="secao-titulo">
-            🎥 Enviar partida para análise
-        </div>
-
-        <p>
-            Envie uma partida para que seu coach possa analisar sua evolução.
-        </p>
-
-        <textarea
-            id="observacao-video"
-            placeholder="Escreva o que você gostaria que o coach analisasse..."
-        ></textarea>
-
-        <label
-            for="video-1x1"
-            class="botao-upload-1x1"
-        >
-            📁 Selecionar vídeo
-        </label>
-
-        <input
-            type="file"
-            id="video-1x1"
-            accept="video/*"
-            style="display:none;"
-            onchange="selecionarVideo1x1(this)"
-        >
-
-        <div
-            id="nome-video-1x1"
-            class="nome-video-1x1"
-        ></div>
-
-        <button
-            class="botao-enviar-1x1"
-            onclick="enviarVideo1x1()"
-        >
-            Enviar para o Coach
-        </button>
-
-    </div>
-
-
-    <!-- HISTÓRICO -->
-    <div class="acompanhamento-card">
-
-        <div class="secao-titulo">
-            📚 Histórico do acompanhamento
-        </div>
-
-        <div class="historico-acompanhamento">
-
-            <div class="historico-item atual">
-
-                <div class="historico-ponto"></div>
-
-                <div>
-                    <strong>
-                        Semana 4 — Atual
-                    </strong>
-
-                    <span>
-                        Foco: Piece Control + Tomada de decisão
-                    </span>
-
-                    <small>
-                        Progresso: 72%
-                    </small>
-                </div>
-
-            </div>
-
-
-            <div class="historico-item">
-
-                <div class="historico-ponto"></div>
-
-                <div>
-                    <strong>
-                        Semana 3
-                    </strong>
-
-                    <span>
-                        Foco: Rotação
-                    </span>
-
-                    <small>
-                        Progresso: 85%
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="historico-item">
-
-                <div class="historico-ponto"></div>
-
-                <div>
-                    <strong>
-                        Semana 2
-                    </strong>
-
-                    <span>
-                        Foco: Box Fight
-                    </span>
-
-                    <small>
-                        Progresso: 68%
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <div class="historico-item">
-
-                <div class="historico-ponto"></div>
-
-                <div>
-                    <strong>
-                        Semana 1
-                    </strong>
-
-                    <span>
-                        Foco: Mecânica
-                    </span>
-
-                    <small>
-                        Progresso: 61%
-                    </small>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
+    <!-- Botão discreto para alterar o consentimento depois -->
+    <button type="button" id="cookie-settings-button" class="cookie-settings-button" onclick="abrirPreferenciasCookies()" aria-label="Alterar preferências de cookies" title="Preferências de cookies">🍪</button>
 
 </body>
 </html>
