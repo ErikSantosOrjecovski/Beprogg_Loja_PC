@@ -76,35 +76,130 @@ function mostrarNotificacaoCarrinho(nome) {
     }, 2200);
 }
 
-function atualizarCarrinhoUI(){
-    const lista=document.getElementById("lista-carrinho");
-    const total=document.getElementById("total-carrinho");
+function atualizarCarrinhoUI() {
 
-    if(!lista||!total)return;
+    const lista = document.getElementById("lista-carrinho");
+    const total = document.getElementById("total-carrinho");
+    const footer = document.getElementById("carrinho-footer");
 
-    lista.innerHTML="";
-    let soma=0;
+    if (!lista || !total) return;
 
-    if(!carrinho.length){
-        lista.innerHTML="<p style='color:#94a3b8'>Seu carrinho está vazio.</p>";
-        total.innerText="Total: R$ 0";
+    lista.innerHTML = "";
+
+    let soma = 0;
+
+
+    // ========================================
+    // CARRINHO VAZIO
+    // ========================================
+
+    if (!carrinho.length) {
+
+        lista.innerHTML = `
+            <div class="carrinho-vazio-msg">
+
+                <div style="font-size:42px;">
+                    🛒
+                </div>
+
+                <h3>
+                    Seu carrinho está vazio
+                </h3>
+
+                <p>
+                    Adicione produtos da loja para continuar.
+                </p>
+
+            </div>
+        `;
+
+        total.innerText = "Total: R$ 0,00";
+
+        if (footer) {
+            footer.style.display = "none";
+        }
+
         return;
     }
 
-    carrinho.forEach((item,index)=>{
-        soma+=Number(item.preco);
 
-        lista.innerHTML+=`
-        <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:15px;margin-bottom:10px;background:#0d1117;border:1px solid #1f293d">
-            <div>
-                <h4 style="color:#fff;margin:0">${sanitizarTexto(item.nome)}</h4>
-                <p style="color:#00d4ff;font-weight:bold;margin:5px 0 0">R$ ${item.preco}</p>
+    // ========================================
+    // PRODUTOS DO CARRINHO
+    // ========================================
+
+    carrinho.forEach((item, index) => {
+
+        const preco = Number(item.preco) || 0;
+
+        soma += preco;
+
+
+        // Pega a mesma imagem usada na loja/favoritos
+        const imagem = obterCaminhoImagem(item.nome);
+
+
+        lista.innerHTML += `
+
+            <div class="carrinho-item">
+
+                <!-- IMAGEM -->
+                <div class="carrinho-item-imagem">
+
+                    <img
+                        src="${imagem}"
+                        alt="${sanitizarTexto(item.nome)}"
+                    >
+
+                </div>
+
+
+                <!-- INFORMAÇÕES -->
+                <div class="carrinho-item-info">
+
+                    <h3>
+                        ${sanitizarTexto(item.nome)}
+                    </h3>
+
+                    <strong>
+                        R$ ${preco.toLocaleString("pt-BR", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })}
+                    </strong>
+
+                </div>
+
+
+                <!-- REMOVER -->
+                <button
+                    class="carrinho-remover"
+                    onclick="removerItem(${index})"
+                >
+                    Remover
+                </button>
+
             </div>
-            <button onclick="removerItem(${index})" style="background:#ff4d4d;color:white;border:0;padding:6px 12px;border-radius:4px">Remover</button>
-        </div>`;
+
+        `;
     });
 
-    total.innerText="Total: R$ "+soma;
+
+    // ========================================
+    // TOTAL
+    // ========================================
+
+    total.innerText =
+        "Total: R$ " +
+        soma.toLocaleString("pt-BR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+
+    // Mostra o rodapé quando existem produtos
+    if (footer) {
+        footer.style.display = "block";
+    }
 }
 
 function removerItem(index){
@@ -1033,176 +1128,536 @@ function inicializarPagamento(){
     atualizarCamposPagamento();
 }
 
+function itemEhServico(item) {
+    const nome = (item.nome || item.name || "").toLowerCase();
+
+    return (
+        nome.includes("aula") ||
+        nome.includes("coach") ||
+        nome.includes("plano") ||
+        nome.includes("player") ||
+        nome.includes("champion")
+    );
+}
+
+function carrinhoTemProdutoFisico() {
+    const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+
+    return carrinho.some(item => !itemEhServico(item));
+}
+
+function atualizarEntregaCheckout() {
+
+    const container = document.getElementById("dados-entrega-container");
+
+    if (!container) return;
+
+    if (carrinhoTemProdutoFisico()) {
+        container.style.display = "block";
+    } else {
+        container.style.display = "none";
+    }
+}
+
 
 /* =========================================================
    FINALIZAR PEDIDO
    ========================================================= */
 
    async function finalizarPedido(){
-    const cliente=document.getElementById("nome-cliente");
-    const telefone=document.getElementById("telefone");
-    const endereco=document.getElementById("endereco");
-    const pagamento=document.getElementById("forma-pagamento");
-    const msg=document.getElementById("mensagem-pedido");
 
-    if(localStorage.getItem("usuarioLogado")!=="true"){
-        alert("Você precisa estar logado para finalizar o pedido!");
+    const cliente =
+        document.getElementById("nome-cliente");
+
+    const telefone =
+        document.getElementById("telefone");
+
+    const endereco =
+        document.getElementById("endereco");
+
+    const pagamento =
+        document.getElementById("forma-pagamento");
+
+    const msg =
+        document.getElementById("mensagem-pedido");
+
+
+    /*
+     * LOGIN
+     */
+
+    if(localStorage.getItem("usuarioLogado") !== "true"){
+
+        alert(
+            "Você precisa estar logado para finalizar o pedido!"
+        );
+
         return;
     }
+
+
+    /*
+     * CARRINHO
+     */
 
     if(!carrinho.length){
-        msg.innerText="⚠️ O carrinho está vazio!";
+
+        msg.innerText =
+            "⚠️ O carrinho está vazio!";
+
         return;
     }
 
-    if(!cliente||!telefone||!endereco||!pagamento){
-        msg.innerText="⚠️ Erro: campos do checkout não encontrados.";
+
+    /*
+     * IDENTIFICA O TIPO DA COMPRA
+     */
+
+    const temProdutoFisico =
+        carrinhoTemProdutoFisico();
+
+    const planoSelecionado =
+        JSON.parse(
+            localStorage.getItem("planoSelecionado")
+        );
+
+
+    /*
+     * DADOS BÁSICOS
+     */
+
+    if(!cliente || !telefone || !pagamento){
+
+        msg.innerText =
+            "⚠️ Campos do checkout não encontrados.";
+
         return;
     }
 
-    if(!cliente.value.trim()||!telefone.value.trim()||!endereco.value.trim()||!pagamento.value){
-        msg.innerText="⚠️ Preencha todos os dados do pedido!";
+
+    if(!cliente.value.trim()){
+
+        msg.innerText =
+            "⚠️ Informe seu nome.";
+
         return;
     }
 
-    const dados={
-        cliente:cliente.value.trim(),
-        telefone:telefone.value.trim(),
-        endereco:endereco.value.trim(),
-        pagamento:pagamento.value,
-        usuario:JSON.parse(localStorage.getItem("usuario")),
-        itens:carrinho
+
+    if(!telefone.value.trim()){
+
+        msg.innerText =
+            "⚠️ Informe seu telefone.";
+
+        return;
+    }
+
+
+    if(!pagamento.value){
+
+        msg.innerText =
+            "⚠️ Selecione uma forma de pagamento.";
+
+        return;
+    }
+
+
+    /*
+     * ENDEREÇO
+     *
+     * Só é obrigatório para produto físico.
+     */
+
+    if(temProdutoFisico){
+
+        if(!endereco || !endereco.value.trim()){
+
+            msg.innerText =
+                "⚠️ Informe o endereço de entrega.";
+
+            return;
+        }
+
+    }
+
+
+    /*
+     * VALIDA PAGAMENTO
+     */
+
+    const validacao =
+        validarPagamento();
+
+    if(!validacao.ok){
+
+        msg.innerText =
+            validacao.mensagem;
+
+        return;
+    }
+
+
+    /*
+     * USUÁRIO
+     */
+
+    const usuario =
+        JSON.parse(
+            localStorage.getItem("usuario")
+        );
+
+
+    /*
+     * SEPARA PRODUTOS FÍSICOS
+     * DOS PLANOS
+     */
+
+    const produtosFisicos =
+        carrinho.filter(
+            item => !itemEhPlano(item)
+        );
+
+
+    /*
+     * DADOS ENVIADOS PARA O SERVIDOR
+     */
+
+    const dados = {
+
+        cliente:
+            cliente.value.trim(),
+
+        telefone:
+            telefone.value.trim(),
+
+        endereco:
+            temProdutoFisico
+                ? endereco.value.trim()
+                : "",
+
+        pagamento:
+            pagamento.value,
+
+        usuario,
+
+        itens:
+            produtosFisicos,
+
+        tipoPedido:
+            planoSelecionado && !temProdutoFisico
+                ? "plano"
+                : "produto",
+
+        plano:
+            planoSelecionado || null
+
     };
 
-    if(pagamento.value==="pix"){
-        dados.detalhesPagamento={
-            tipo:"pix",
-            chave:document.getElementById("pix-chave")?.value.trim()||""
+
+    /*
+     * DETALHES DO PAGAMENTO
+     */
+
+    if(pagamento.value === "pix"){
+
+        dados.detalhesPagamento = {
+
+            tipo: "pix",
+
+            chave:
+                document
+                    .getElementById("pix-chave")
+                    ?.value
+                    .trim() || ""
+
         };
+
     }
 
-    if(pagamento.value==="cartao"){
-        dados.detalhesPagamento={
-            tipo:"cartao",
-            numero:document.getElementById("cartao-numero")?.value.replace(/\D/g,"")||"",
-            nome:document.getElementById("cartao-nome")?.value.trim()||"",
-            validade:document.getElementById("cartao-validade")?.value.trim()||"",
-            parcelas:document.getElementById("cartao-parcelas")?.value||"1"
+
+    if(pagamento.value === "cartao"){
+
+        dados.detalhesPagamento = {
+
+            tipo: "cartao",
+
+            numero:
+                document
+                    .getElementById("cartao-numero")
+                    ?.value
+                    .replace(/\D/g,"") || "",
+
+            nome:
+                document
+                    .getElementById("cartao-nome")
+                    ?.value
+                    .trim() || "",
+
+            validade:
+                document
+                    .getElementById("cartao-validade")
+                    ?.value
+                    .trim() || "",
+
+            parcelas:
+                document
+                    .getElementById("cartao-parcelas")
+                    ?.value || "1"
+
         };
+
     }
 
-    if(pagamento.value==="boleto"){
-        dados.detalhesPagamento={
-            tipo:"boleto",
-            cpf:document.getElementById("boleto-cpf")?.value.replace(/\D/g,"")||""
+
+    if(pagamento.value === "boleto"){
+
+        dados.detalhesPagamento = {
+
+            tipo: "boleto",
+
+            cpf:
+                document
+                    .getElementById("boleto-cpf")
+                    ?.value
+                    .replace(/\D/g,"") || ""
+
         };
+
     }
 
-    msg.innerText="⏳ Processando pedido...";
+
+    /*
+     * PROCESSANDO
+     */
+
+    msg.innerText =
+        "⏳ Processando pagamento...";
+
 
     try{
-        const res=await fetch("http://localhost:3000/pedido",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify(dados)
-        });
 
-        let data={};
+        const res =
+            await fetch(
+                "http://localhost:3000/pedido",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(dados)
+                }
+            );
+
+
+        let data = {};
 
         try{
-            data=await res.json();
+
+            data =
+                await res.json();
+
         }catch(e){
-            data={};
+
+            data = {};
+
         }
+
 
         if(!res.ok){
-            throw new Error(data.mensagem||data.message||`Erro HTTP ${res.status}`);
-        }
-
-        msg.innerText=data.mensagem||data.message||"✅ Pedido realizado com sucesso!";
-
-
-const planoSelecionado = JSON.parse(
-    localStorage.getItem("planoSelecionado")
-);
-
-if(planoSelecionado){
-
-    const usuario = JSON.parse(
-        localStorage.getItem("usuario")
-    );
-
-    if(usuario?.email){
-
-        const plano = planoSelecionado.chave ||
-            normalizarPlano(planoSelecionado.nome);
-
-        const resPlano = await fetch(
-            "http://localhost:3000/ativar-plano",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    email: usuario.email,
-                    plano: plano
-                })
-            }
-        );
-
-        let respostaPlano = {};
-
-        try {
-            respostaPlano = await resPlano.json();
-        } catch(e) {}
-
-        if(!resPlano.ok){
 
             throw new Error(
-                respostaPlano.mensagem ||
-                respostaPlano.message ||
-                "Não foi possível ativar o plano."
+                data.mensagem ||
+                data.message ||
+                `Erro HTTP ${res.status}`
             );
+
         }
 
-        localStorage.setItem(
-            "planoAtivo",
-            plano
-        );
 
-        localStorage.removeItem(
-            "planoSelecionado"
-        );
+        /*
+         * =====================================
+         * PLANO
+         * =====================================
+         */
 
-        const nomePlano = nomePlanoBonito(plano);
+        if(
+            planoSelecionado &&
+            !temProdutoFisico
+        ){
 
-        msg.innerHTML = `
-            <span style="color:#22c55e;font-weight:bold;">
-                ✅ Pagamento confirmado! Plano ${nomePlano} ativo!
-            </span>
-        `;
+            const plano =
+                planoSelecionado.chave ||
+                normalizarPlano(
+                    planoSelecionado.nome
+                );
 
-        await carregarPlano();
 
-        setTimeout(() => {
-            trocarAba("plano");
-        }, 1200);
-    }
-}
+            const resPlano =
+                await fetch(
+                    "http://localhost:3000/ativar-plano",
+                    {
+                        method:"POST",
 
-        carrinho=[];
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                email:
+                                    usuario.email,
+
+                                plano:
+                                    plano
+
+                            })
+                    }
+                );
+
+
+            let respostaPlano = {};
+
+            try{
+
+                respostaPlano =
+                    await resPlano.json();
+
+            }catch(e){}
+
+
+            if(!resPlano.ok){
+
+                throw new Error(
+                    respostaPlano.mensagem ||
+                    respostaPlano.message ||
+                    "Não foi possível ativar o plano."
+                );
+
+            }
+
+
+            localStorage.setItem(
+                "planoAtivo",
+                plano
+            );
+
+
+            localStorage.removeItem(
+                "planoSelecionado"
+            );
+
+
+            carrinho = [];
+
+            salvarCarrinho();
+            atualizarCarrinhoUI();
+            atualizarResumoPagamento();
+            atualizarBadges();
+
+
+            msg.innerHTML = `
+
+                <span
+                    style="
+                        color:#22c55e;
+                        font-weight:bold;
+                    "
+                >
+                    ✅ Pagamento confirmado!
+                    Plano ${nomePlanoBonito(plano)}
+                    ativado com sucesso.
+                </span>
+
+            `;
+
+
+            await carregarPlano();
+
+
+            setTimeout(() => {
+
+                trocarAba("plano");
+
+            },1200);
+
+
+            return;
+
+        }
+
+
+        /*
+         * =====================================
+         * PRODUTO FÍSICO
+         * =====================================
+         */
+
+        carrinho = [];
 
         salvarCarrinho();
+
         atualizarCarrinhoUI();
+
         atualizarResumoPagamento();
+
         atualizarBadges();
 
+
+        msg.innerHTML = `
+
+            <span
+                style="
+                    color:#22c55e;
+                    font-weight:bold;
+                "
+            >
+                ✅ Pedido realizado com sucesso!
+            </span>
+
+        `;
+
+
     }catch(error){
-        console.error("Erro ao finalizar pedido:",error);
-        msg.innerText="❌ Erro ao finalizar pedido: "+error.message;
+
+        console.error(
+            "Erro ao finalizar pedido:",
+            error
+        );
+
+        msg.innerText =
+            "❌ Erro ao finalizar pedido: " +
+            error.message;
+
+    }
+
+}
+
+function atualizarCheckoutPorTipo(){
+
+    const endereco = document.getElementById("endereco");
+
+    if(!endereco) return;
+
+    const possuiProdutoFisico = carrinho.some(
+        item => item.tipo !== "servico"
+    );
+
+    if(possuiProdutoFisico){
+
+        endereco.style.display = "";
+        endereco.value = "";
+        endereco.placeholder = "Endereço para entrega";
+
+    }else{
+
+        endereco.style.display = "none";
+        endereco.value = "";
     }
 }
 
@@ -1225,84 +1680,433 @@ function abrirMeuPlano(){
     carregarPlano();
 }
 
-async function carregarPedidos(){
-    const container=document.getElementById("lista-pedidos");
-    if(!container)return;
+async function carregarPedidos() {
 
-    const usuario=JSON.parse(localStorage.getItem("usuario"));
+    const container = document.getElementById("lista-pedidos");
 
-    if(!usuario){
-        container.innerHTML=`<div class="card"><h3>🔒 Faça login</h3><p>Entre na sua conta para visualizar seus pedidos.</p></div>`;
+    if (!container) return;
+
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    if (!usuario) {
+
+        container.innerHTML = `
+            <div class="pedido-vazio">
+                <div class="pedido-vazio-icone">🔒</div>
+
+                <h3>Faça login para visualizar seus pedidos</h3>
+
+                <p>
+                    Entre na sua conta para acompanhar suas compras.
+                </p>
+            </div>
+        `;
+
         return;
     }
 
-    container.innerHTML="<p>⏳ Carregando seus pedidos...</p>";
+    container.innerHTML = `
+        <div class="pedidos-carregando">
+            ⏳ Carregando seus pedidos...
+        </div>
+    `;
 
-    try{
-        const res=await fetch(`http://localhost:3000/pedidos?email=${encodeURIComponent(usuario.email)}`);
+    try {
 
-        if(!res.ok)throw new Error(`HTTP ${res.status}`);
+        const res = await fetch(
+            `http://localhost:3000/pedidos?email=${encodeURIComponent(usuario.email)}`
+        );
 
-        const pedidos=await res.json();
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+        }
 
-        if(!Array.isArray(pedidos)||pedidos.length===0){
-            container.innerHTML=`
-                <div class="card" style="grid-column:1/-1;text-align:center;padding:40px;">
-                    <h3>📦 Nenhum pedido encontrado</h3>
-                    <p style="color:#94a3b8;">Você ainda não realizou nenhuma compra.</p>
+        const pedidos = await res.json();
+
+        if (!Array.isArray(pedidos) || pedidos.length === 0) {
+
+            container.innerHTML = `
+                <div class="pedido-vazio">
+
+                    <div class="pedido-vazio-icone">
+                        📦
+                    </div>
+
+                    <h3>Nenhum pedido encontrado</h3>
+
+                    <p>
+                        Você ainda não realizou nenhuma compra.
+                    </p>
+
+                    <button onclick="trocarAba('loja')">
+                        Ir para a loja
+                    </button>
+
                 </div>
             `;
+
             return;
         }
 
-        container.innerHTML="";
+        container.innerHTML = "";
 
-        pedidos.forEach((pedido,index)=>{
-            const itens=pedido.itens||[];
-            let listaItens="";
+        pedidos.forEach((pedido, index) => {
 
-            itens.forEach(item=>{
-                listaItens+=`
-                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1f293d;">
-                        <span>${sanitizarTexto(item.nome||"Produto")}</span>
-                        <strong>${moeda(item.preco||0)}</strong>
+            const itens = Array.isArray(pedido.itens)
+                ? pedido.itens
+                : [];
+
+            const total =
+                pedido.total ||
+                itens.reduce(
+                    (soma, item) =>
+                        soma + (Number(item.preco) || 0),
+                    0
+                );
+
+            const pagamento =
+                pedido.pagamento || "Não informado";
+
+            /*
+             * STATUS DO PEDIDO
+             */
+
+            const statusOriginal =
+                String(
+                    pedido.status ||
+                    "Pedido confirmado"
+                ).toLowerCase();
+
+            let etapaAtual = 1;
+
+            if (
+                statusOriginal.includes("prepar") ||
+                statusOriginal.includes("separ")
+            ) {
+                etapaAtual = 2;
+            }
+
+            if (
+                statusOriginal.includes("enviado") ||
+                statusOriginal.includes("postado")
+            ) {
+                etapaAtual = 3;
+            }
+
+            if (
+                statusOriginal.includes("trânsito") ||
+                statusOriginal.includes("transito")
+            ) {
+                etapaAtual = 4;
+            }
+
+            if (
+                statusOriginal.includes("entregue")
+            ) {
+                etapaAtual = 5;
+            }
+
+
+            /*
+             * TIMELINE
+             */
+
+            const etapas = [
+                {
+                    numero: 1,
+                    icone: "✓",
+                    titulo: "Pedido confirmado",
+                    descricao: "Seu pedido foi recebido."
+                },
+                {
+                    numero: 2,
+                    icone: "📦",
+                    titulo: "Preparando pedido",
+                    descricao: "Seus produtos estão sendo separados."
+                },
+                {
+                    numero: 3,
+                    icone: "🚚",
+                    titulo: "Pedido enviado",
+                    descricao: "Seu pedido saiu para entrega."
+                },
+                {
+                    numero: 4,
+                    icone: "📍",
+                    titulo: "Em trânsito",
+                    descricao: "Seu pedido está a caminho."
+                },
+                {
+                    numero: 5,
+                    icone: "🏠",
+                    titulo: "Entregue",
+                    descricao: "Pedido entregue com sucesso."
+                }
+            ];
+
+
+            const timelineHTML = etapas.map((etapa) => {
+
+                let classe = "";
+
+                if (etapa.numero < etapaAtual) {
+                    classe = "concluida";
+                }
+
+                if (etapa.numero === etapaAtual) {
+                    classe = "ativa";
+                }
+
+                if (etapa.numero > etapaAtual) {
+                    classe = "futura";
+                }
+
+                return `
+                    <div class="pedido-etapa ${classe}">
+
+                        <div class="pedido-etapa-icon">
+                            ${etapa.icone}
+                        </div>
+
+                        <div class="pedido-etapa-info">
+
+                            <strong>
+                                ${etapa.titulo}
+                            </strong>
+
+                            <span>
+                                ${etapa.descricao}
+                            </span>
+
+                        </div>
+
                     </div>
                 `;
-            });
 
-            const total=pedido.total||itens.reduce((s,item)=>s+(Number(item.preco)||0),0);
-            const pagamento=pedido.pagamento||"Não informado";
+            }).join("");
 
-            container.innerHTML+=`
-                <div class="card" style="padding:20px;margin-bottom:20px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;">
-                        <h3>📦 Pedido #${pedido.id||index+1}</h3>
-                        <span style="color:#00d4ff;font-weight:bold;">
-                            ${pedido.status||"Pedido realizado"}
-                        </span>
+
+            /*
+             * PRODUTOS
+             */
+
+            const produtosHTML = itens.map((item) => {
+
+                const nome =
+                    sanitizarTexto(
+                        item.nome || "Produto"
+                    );
+
+                const preco =
+                    moeda(item.preco || 0);
+
+                const imagem =
+                    obterCaminhoImagem(item.nome);
+
+                return `
+                    <div class="pedido-produto">
+
+                        <div class="pedido-produto-imagem">
+
+                            <img
+                                src="${imagem}"
+                                alt="${nome}"
+                                onerror="
+                                    this.src='imagens/logo-bepro.png.jpeg'
+                                "
+                            >
+
+                        </div>
+
+                        <div class="pedido-produto-info">
+
+                            <strong>
+                                ${nome}
+                            </strong>
+
+                            <span>
+                                ${preco}
+                            </span>
+
+                        </div>
+
+                    </div>
+                `;
+
+            }).join("");
+
+
+            /*
+             * CARD COMPLETO
+             */
+
+            container.innerHTML += `
+
+                <article class="pedido-card">
+
+                    <!-- CABEÇALHO -->
+
+                    <div class="pedido-card-header">
+
+                        <div>
+
+                            <span class="pedido-label">
+                                PEDIDO
+                            </span>
+
+                            <h3>
+                                #${pedido.id || index + 1}
+                            </h3>
+
+                        </div>
+
+                        <div class="pedido-status">
+
+                            <span class="pedido-status-dot"></span>
+
+                            ${sanitizarTexto(
+                                pedido.status ||
+                                "Pedido confirmado"
+                            )}
+
+                        </div>
+
                     </div>
 
-                    <p><strong>💳 Pagamento:</strong> ${sanitizarTexto(String(pagamento))}</p>
 
-                    <h4>🛒 Produtos comprados</h4>
-                    ${listaItens}
+                    <!-- LINHA DE INFORMAÇÕES -->
 
-                    <h3 style="text-align:right;color:#00d4ff;">
-                        Total: ${moeda(total)}
-                    </h3>
-                </div>
+                    <div class="pedido-info-topo">
+
+                        <div>
+
+                            <span>
+                                💳 Pagamento
+                            </span>
+
+                            <strong>
+                                ${sanitizarTexto(
+                                    String(pagamento)
+                                )}
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                🛒 Produtos
+                            </span>
+
+                            <strong>
+                                ${itens.length}
+                                ${itens.length === 1
+                                    ? "item"
+                                    : "itens"}
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                💰 Total
+                            </span>
+
+                            <strong class="pedido-total">
+                                ${moeda(total)}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACOMPANHAMENTO -->
+
+                    <div class="pedido-acompanhamento">
+
+                        <div class="pedido-acompanhamento-titulo">
+
+                            <div>
+
+                                <h4>
+                                    📍 Acompanhe seu pedido
+                                </h4>
+
+                                <p>
+                                    Veja em qual etapa sua compra está.
+                                </p>
+
+                            </div>
+
+                            <span class="pedido-etapa-atual">
+                                ${etapaAtual}/5
+                            </span>
+
+                        </div>
+
+
+                        <div class="pedido-timeline">
+
+                            ${timelineHTML}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRODUTOS -->
+
+                    <div class="pedido-produtos">
+
+                        <div class="pedido-produtos-titulo">
+                            🛍️ Produtos comprados
+                        </div>
+
+                        <div class="pedido-produtos-lista">
+
+                            ${produtosHTML}
+
+                        </div>
+
+                    </div>
+
+
+                </article>
+
             `;
+
         });
 
-    }catch(error){
-        console.error("Erro ao carregar pedidos:",error);
 
-        container.innerHTML=`
-            <div class="card">
-                <h3>❌ Não foi possível carregar seus pedidos</h3>
-                <p style="color:#94a3b8;">Verifique se o servidor está funcionando.</p>
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar pedidos:",
+            error
+        );
+
+        container.innerHTML = `
+
+            <div class="pedido-vazio">
+
+                <div class="pedido-vazio-icone">
+                    ⚠️
+                </div>
+
+                <h3>
+                    Não foi possível carregar seus pedidos
+                </h3>
+
+                <p>
+                    Verifique se o servidor está funcionando.
+                </p>
+
             </div>
+
         `;
+
     }
 }
 
@@ -2393,17 +3197,84 @@ function filtrarCategoria(categoria,elemento){
     let lista=[];
 
 
-    const busca={
-        teclados:["teclado","wooting","huntsman"],
-        mouses:["mouse","superlight","sleeve","pad", "xl"],
-        monitores:["monitor","zowie"],
-        headsets:["headset","audeze","fone"],
-        hardware:["ryzen","rtx","radeon","ddr","ssd","cooler"],
-        gpu:["rtx","rx","radeon","geforce"],
-        cpu:["ryzen","intel","i5","i7"],
-        ram:["ddr4","ddr5","ram"],
-        "fonte-armazenamento":["fonte","ssd","nvme"],
-    };
+    const busca = {
+
+    teclados: [
+        "teclado",
+        "wooting",
+        "huntsman"
+    ],
+
+    mouses: [
+        "mouse",
+        "superlight",
+        "sleeve",
+        "pad",
+        "xl"
+    ],
+
+    monitores: [
+        "monitor",
+        "zowie"
+    ],
+
+    headsets: [
+        "headset",
+        "audeze",
+        "fone"
+    ],
+
+    hardware: [
+        "ryzen",
+        "rtx",
+        "radeon",
+        "ddr",
+        "ssd",
+        "cooler"
+    ],
+
+    gpu: [
+        "rtx",
+        "rx",
+        "radeon",
+        "geforce"
+    ],
+
+    // =====================================
+    // PLACAS-MÃE
+    // =====================================
+    "placa-mae": [
+        "placa mae",
+        "placa-mãe",
+        "b650",
+        "b550",
+        "b660",
+        "x570",
+        "z690",
+        "z790",
+        "a520",
+        "x670"
+    ],
+
+    cpu: [
+        "ryzen",
+        "intel",
+        "i5",
+        "i7"
+    ],
+
+    ram: [
+        "ddr4",
+        "ddr5",
+        "ram"
+    ],
+
+    "fonte-armazenamento": [
+        "fonte",
+        "ssd",
+        "nvme"
+    ]
+};
 
 
     if(categoria==="todos"){
@@ -2760,6 +3631,31 @@ resultado.innerHTML=`
 },1500);
 }
 
+function selecionarJogo(jogo, elemento) {
+
+    // Atualiza o jogo selecionado
+    const input = document.getElementById("jogo");
+
+    if (input) {
+        input.value = jogo;
+    }
+
+    // Remove seleção dos outros cards
+    document
+        .querySelectorAll(".game-card")
+        .forEach(card => {
+            card.classList.remove("selecionado");
+        });
+
+    // Marca o card clicado
+    if (elemento) {
+        elemento.classList.add("selecionado");
+    }
+
+    console.log("Jogo selecionado:", jogo);
+    atualizarAcompanhamento1x1(jogo);
+}
+
 function adicionarPacoteCompleto(jogoChave){
 const listaItens=setups[jogoChave];
 if(!listaItens)return;
@@ -2935,20 +3831,143 @@ function assinarPlano(nomePlano, preco){
 
     const planoNormalizado = normalizarPlano(nomePlano);
 
-    localStorage.setItem("planoSelecionado", JSON.stringify({
-        nome: nomePlano,
-        chave: planoNormalizado,
-        preco: Number(preco)
-    }));
-
-    adicionarAoCarrinho(
-        `Aulas Pro Player (Plano ${nomePlano})`,
-        preco
-
+    // Guarda o plano que será ativado após o pagamento
+    localStorage.setItem(
+        "planoSelecionado",
+        JSON.stringify({
+            nome: nomePlano,
+            chave: planoNormalizado,
+            preco: Number(preco)
+        })
     );
 
+    // IMPORTANTE:
+    // Plano é serviço digital, NÃO produto físico
+    const itemPlano = {
+        nome: `Aulas Pro Player (Plano ${nomePlano})`,
+        preco: Number(preco),
+        tipo: "plano"
+    };
+
+    carrinho.push(itemPlano);
+
+    salvarCarrinho();
+    atualizarCarrinhoUI();
+    atualizarResumoPagamento();
+    atualizarBadges?.();
+
     fecharModalPlanos();
-    trocarAba("carrinho");
+
+    trocarAba("pagamento");
+
+    // Atualiza visual do checkout
+    setTimeout(() => {
+        configurarCheckout();
+    }, 100);
+}
+
+function itemEhPlano(item){
+
+    if(!item) return false;
+
+    if(item.tipo === "plano"){
+        return true;
+    }
+
+    const nome = String(item.nome || "").toLowerCase();
+
+    return (
+        nome.includes("aulas pro player") ||
+        nome.includes("plano básico") ||
+        nome.includes("plano pro") ||
+        nome.includes("plano champion") ||
+        nome.includes("plano basico")
+    );
+}
+
+function carrinhoTemProdutoFisico(){
+
+    return carrinho.some(item => !itemEhPlano(item));
+
+}
+
+function configurarCheckout(){
+
+    const campoEndereco =
+        document.getElementById("campo-endereco-checkout");
+
+    const info =
+        document.getElementById("tipo-compra-info");
+
+    if(!campoEndereco){
+        return;
+    }
+
+    const temProdutoFisico =
+        carrinhoTemProdutoFisico();
+
+    const temPlano =
+        carrinho.some(item => itemEhPlano(item));
+
+
+    /*
+     * =====================================
+     * PLANO / COACH
+     * =====================================
+     */
+
+    if(temPlano && !temProdutoFisico){
+
+        campoEndereco.style.display = "none";
+
+        if(info){
+
+            info.innerHTML = `
+                🧠 <strong style="color:#00d4ff;">
+                    Serviço de Coach / Plano
+                </strong>
+
+                <br>
+
+                <span style="color:#94a3b8;">
+                    Este produto é digital. Não é necessário
+                    endereço de entrega.
+                </span>
+            `;
+
+        }
+
+    }
+
+
+    /*
+     * =====================================
+     * PRODUTO FÍSICO
+     * =====================================
+     */
+
+    else{
+
+        campoEndereco.style.display = "block";
+
+        if(info){
+
+            info.innerHTML = `
+                📦 <strong style="color:#00d4ff;">
+                    Produto físico
+                </strong>
+
+                <br>
+
+                <span style="color:#94a3b8;">
+                    Informe seus dados e o endereço para entrega.
+                </span>
+            `;
+
+        }
+
+    }
+
 }
 
 function getFavoritos(){
@@ -3034,58 +4053,99 @@ function mostrarNotificacaoFavorito(nome,adicionado){
     },2200);
 }
 
-function verFavoritos(event){
-if(event){
-event.preventDefault();
-event.stopPropagation();
-}
+function verFavoritos(event) {
 
-trocarAba("loja");
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
 
-const container=document.getElementById("lista-produtos");
-if(!container)return;
+    // Abre a aba de favoritos
+    trocarAba("favoritos");
 
-const favoritos=getFavoritos();
+    // Container correto dos favoritos
+    const container = document.getElementById("lista-favoritos");
 
-const titulo=document.getElementById("titulo-categoria-atual");
-if(titulo)titulo.innerText="❤️ Meus Produtos Favoritos";
+    if (!container) {
+        console.error("Container de favoritos não encontrado.");
+        return;
+    }
 
-if(favoritos.length===0){
-container.innerHTML=`
-<div style="grid-column:1/-1;text-align:center;padding:40px">
-<h3>Você ainda não possui favoritos!</h3>
-<p>Clique no coração dos produtos para salvar.</p>
-</div>`;
-return;
-}
+    const favoritos = getFavoritos();
 
-const produtos=todosProdutos.filter(p=>favoritos.includes(Number(p.id)));
+    if (favoritos.length === 0) {
 
-container.innerHTML="";
+        container.innerHTML = `
+            <div style="
+                grid-column: 1 / -1;
+                text-align: center;
+                padding: 60px 20px;
+            ">
+                <h3>❤️ Você ainda não possui favoritos!</h3>
 
-produtos.forEach(p=>{
-const img=obterCaminhoImagem(p.nome);
+                <p>
+                    Clique no coração dos produtos para salvá-los aqui.
+                </p>
+            </div>
+        `;
 
-container.innerHTML+=`
-<div class="card-produto-loja">
-<button class="btn-favorito" onclick="toggleFavorito(${p.id},event)">
-<i class="fa-solid fa-heart"></i>
-</button>
+        return;
+    }
 
-<div class="card-produto-img-box">
-<img src="${img}" alt="${sanitizarTexto(p.nome)}">
-</div>
+    const produtos = todosProdutos.filter(p =>
+        favoritos.includes(Number(p.id))
+    );
 
-<div class="card-produto-detalhes">
-<h3>${sanitizarTexto(p.nome)}</h3>
-<p>R$ ${p.preco}</p>
+    container.innerHTML = "";
 
-<button onclick="adicionarAoCarrinho('${p.nome}',${p.preco})">
-Adicionar ao Carrinho
-</button>
-</div>
-</div>`;
-});
+    produtos.forEach(p => {
+
+        const img = obterCaminhoImagem(p.nome);
+
+        container.innerHTML += `
+            <div class="card-produto-loja">
+
+                <button
+                    class="btn-favorito"
+                    onclick="toggleFavorito(${p.id}, event)"
+                    title="Remover dos favoritos"
+                >
+                    <i
+                        class="fa-solid fa-heart"
+                        style="color:#ff4757"
+                    ></i>
+                </button>
+
+                <div class="card-produto-img-box">
+
+                    <img
+                        src="${img}"
+                        alt="${sanitizarTexto(p.nome)}"
+                    >
+
+                </div>
+
+                <div class="card-produto-detalhes">
+
+                    <h3>
+                        ${sanitizarTexto(p.nome)}
+                    </h3>
+
+                    <p>
+                        R$ ${p.preco}
+                    </p>
+
+                    <button
+                        onclick="adicionarAoCarrinho('${p.nome}', ${p.preco})"
+                    >
+                        Adicionar ao Carrinho
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+    });
 }
 
 function atualizarBadges(){
@@ -3100,6 +4160,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 atualizarCarrinhoUI();
 atualizarResumoPagamento();
 atualizarBadges();
+inicializarPagamento();
 inicializarPagamento();
 
 localStorage.setItem(
@@ -3264,12 +4325,17 @@ carregarProdutos();
 }
 
 function confirmarCompra(){
-if(carrinho.length===0){
-alert("Carrinho vazio!");
-return;
-}
 
-trocarAba("pagamento");
+    if(carrinho.length === 0){
+        alert("Carrinho vazio!");
+        return;
+    }
+
+    trocarAba("pagamento");
+
+    setTimeout(() => {
+        atualizarCheckoutPorTipo();
+    }, 50);
 }
 
 function voltarInicio(){
@@ -3587,10 +4653,345 @@ function abrirVODReview(){
 
 }
 
-// 📄 GUIA DE TREINO
-function abrirGuiaTreino(){
+// ========================================
+// 📄 GUIA DE TREINO PERSONALIZADO DO COACH
+// ========================================
 
-    alert("📄 Aqui vai abrir o Guia de Treino em PDF.");
+const guiasTreinoPorJogo = {
+
+    fortnite: {
+        jogo: "FORTNITE",
+        treino: "Piece Control e mapa de rotação",
+        descricao:
+            "Treino focado em controle de peças, leitura de espaço e tomada de decisão nas rotações.",
+        exercicios: [
+            "15 minutos de Piece Control",
+            "10 minutos de Box Fight",
+            "Treinar rotas e rotações em partidas",
+            "Revisar 3 situações de Endgame"
+        ]
+    },
+
+    valorant: {
+        jogo: "VALORANT",
+        treino: "Posicionamento de mira e situações de clutch",
+        descricao:
+            "Treino focado em manter a mira preparada para os ângulos certos e melhorar decisões em situações de clutch.",
+        exercicios: [
+            "15 minutos de treino de posicionamento de mira",
+            "10 minutos de First Bullet Accuracy",
+            "Treinar situações de 1v2 e 1v3",
+            "Revisar decisões tomadas em rounds de clutch"
+        ]
+    },
+
+    cs2: {
+        jogo: "COUNTER-STRIKE 2",
+        treino: "Counter-Strafe e controle de spray",
+        descricao:
+            "Treino focado em precisão do primeiro tiro, movimentação e consistência durante os duelos.",
+        exercicios: [
+            "15 minutos de Counter-Strafe",
+            "10 minutos de First Bullet Accuracy",
+            "Treinar Spray Control",
+            "Revisar 3 situações de trade"
+        ]
+    },
+
+    lol: {
+        jogo: "LEAGUE OF LEGENDS",
+        treino: "Controle de wave e tomada de decisão no mapa",
+        descricao:
+            "Treino focado em melhorar o controle de rota, recalls e decisões antes dos objetivos.",
+        exercicios: [
+            "Treinar controle das primeiras waves",
+            "Praticar recall timing",
+            "Revisar decisões antes dos objetivos",
+            "Analisar uma Teamfight da última partida"
+        ]
+    },
+
+    rainbow: {
+        jogo: "RAINBOW SIX SIEGE",
+        treino: "Posicionamento, conhecimento de mapa e uso de utility",
+        descricao:
+            "Treino focado em posicionamento defensivo, leitura do mapa e utilização eficiente da utility.",
+        exercicios: [
+            "15 minutos estudando posições do mapa",
+            "Treinar Crosshair Placement",
+            "Praticar uso de Utility",
+            "Revisar 3 decisões de posicionamento"
+        ]
+    },
+
+    warzone: {
+        jogo: "CALL OF DUTY: WARZONE",
+        treino: "Rotação, movimentação e tomada de decisão",
+        descricao:
+            "Treino focado em movimentação durante os confrontos, leitura do mapa e decisões de rotação.",
+        exercicios: [
+            "Treinar movimentação durante os duelos",
+            "Revisar rotas de rotação",
+            "Praticar decisões de posicionamento",
+            "Analisar 3 situações de Endgame"
+        ]
+    }
+
+};
+
+
+function abrirGuiaTreino() {
+
+    // Pega o coach/pro player escolhido
+    const salvo =
+        localStorage.getItem("proPlayerSelecionado");
+
+    if (!salvo) {
+
+        alert(
+            "⚠️ Você ainda não selecionou um coach."
+        );
+
+        return;
+    }
+
+    let coach;
+
+    try {
+
+        coach = JSON.parse(salvo);
+
+    } catch (error) {
+
+        console.error(
+            "Erro ao carregar coach:",
+            error
+        );
+
+        alert(
+            "❌ Não foi possível carregar o coach selecionado."
+        );
+
+        return;
+    }
+
+
+    // Pega diretamente o jogo do coach
+    let jogoChave =
+        coach.jogoChave;
+
+
+    // Compatibilidade caso algum coach antigo
+    // não tenha jogoChave salvo
+    if (!jogoChave && coach.jogo) {
+
+        const texto =
+            coach.jogo.toLowerCase();
+
+        if (texto.includes("fortnite"))
+            jogoChave = "fortnite";
+
+        else if (texto.includes("valorant"))
+            jogoChave = "valorant";
+
+        else if (
+            texto.includes("counter") ||
+            texto.includes("cs2")
+        )
+            jogoChave = "cs2";
+
+        else if (
+            texto.includes("league") ||
+            texto.includes("legends")
+        )
+            jogoChave = "lol";
+
+        else if (
+            texto.includes("rainbow") ||
+            texto.includes("siege")
+        )
+            jogoChave = "rainbow";
+
+        else if (
+            texto.includes("warzone") ||
+            texto.includes("call of duty")
+        )
+            jogoChave = "warzone";
+    }
+
+
+    const guia =
+        guiasTreinoPorJogo[jogoChave];
+
+
+    if (!guia) {
+
+        alert(
+            "⚠️ Ainda não existe um guia de treino configurado para este jogo."
+        );
+
+        return;
+    }
+
+
+    // Nome bonito do coach
+    const nomeCoach =
+        String(coach.nome || "Seu Coach")
+            .replace("👑 Pro Player: ", "");
+
+
+    // Cria o modal
+    let modal =
+        document.getElementById(
+            "modal-guia-treino"
+        );
+
+
+    if (!modal) {
+
+        modal =
+            document.createElement("div");
+
+        modal.id =
+            "modal-guia-treino";
+
+        modal.className =
+            "modal-guia-treino";
+
+        document.body.appendChild(modal);
+    }
+
+
+    // Conteúdo
+    modal.innerHTML = `
+
+        <div class="modal-guia-conteudo">
+
+            <button
+                class="modal-guia-fechar"
+                onclick="fecharGuiaTreino()"
+            >
+                &times;
+            </button>
+
+
+            <div class="guia-header">
+
+                <div class="guia-icone">
+                    🎯
+                </div>
+
+                <div>
+
+                    <span class="guia-tag">
+                        GUIA SEMANAL
+                    </span>
+
+                    <h2>
+                        Guia de Treino
+                    </h2>
+
+                    <p>
+                        ${guia.jogo}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="guia-coach">
+
+                <span>
+                    👑 Definido pelo Coach
+                </span>
+
+                <strong>
+                    ${nomeCoach}
+                </strong>
+
+            </div>
+
+
+            <div class="guia-treino-principal">
+
+                <span>
+                    🔥 TREINO DA SEMANA
+                </span>
+
+                <h3>
+                    ${guia.treino}
+                </h3>
+
+                <p>
+                    ${guia.descricao}
+                </p>
+
+            </div>
+
+
+            <div class="guia-exercicios">
+
+                <h3>
+                    📋 Exercícios da semana
+                </h3>
+
+                <ul>
+
+                    ${guia.exercicios
+                        .map(exercicio => `
+                            <li>
+                                <span>✓</span>
+                                ${exercicio}
+                            </li>
+                        `)
+                        .join("")
+                    }
+
+                </ul>
+
+            </div>
+
+
+            <div class="guia-aviso">
+
+                💡 Siga esta rotina durante a semana
+                e leve suas principais dificuldades
+                para a próxima sessão com o coach.
+
+            </div>
+
+
+            <button
+                class="guia-btn-fechar"
+                onclick="fecharGuiaTreino()"
+            >
+                Entendi, vamos treinar 🚀
+            </button>
+
+        </div>
+
+    `;
+
+
+    modal.style.display =
+        "flex";
+}
+
+
+function fecharGuiaTreino() {
+
+    const modal =
+        document.getElementById(
+            "modal-guia-treino"
+        );
+
+    if (modal) {
+
+        modal.style.display =
+            "none";
+
+    }
 
 }
 
@@ -3696,9 +5097,375 @@ function abrirGrupoVIP(){
 }
 
 // 👑 ACOMPANHAMENTO
-function abrirAcompanhamento(){
+/* =====================================================
+   ACOMPANHAMENTO 1-1
+===================================================== */
 
-    alert("👑 Aqui vai abrir seu acompanhamento 1-on-1.");
+function atualizarProgresso1x1() {
+
+    const tarefas = document.querySelectorAll(
+        '.tarefas-lista input[type="checkbox"]'
+    );
+
+    const concluidas = document.querySelectorAll(
+        '.tarefas-lista input[type="checkbox"]:checked'
+    );
+
+    const total = tarefas.length;
+    const feitas = concluidas.length;
+
+    if (total === 0) {
+        return;
+    }
+
+    const porcentagem = Math.round(
+        (feitas / total) * 100
+    );
+
+    const contador = document.getElementById(
+        "tarefas-contador"
+    );
+
+    const percentual = document.getElementById(
+        "tarefas-percentual"
+    );
+
+    const progresso = document.getElementById(
+        "progresso-percentual"
+    );
+
+    const barra = document.getElementById(
+        "barra-progresso"
+    );
+
+
+    if (contador) {
+        contador.textContent =
+            `${feitas} de ${total} concluídas`;
+    }
+
+
+    if (percentual) {
+        percentual.textContent =
+            `${porcentagem}%`;
+    }
+
+
+    if (progresso) {
+        progresso.textContent =
+            `${porcentagem}%`;
+    }
+
+
+    if (barra) {
+        barra.style.width =
+            `${porcentagem}%`;
+    }
+
+}
+
+
+/* =====================================================
+   SELECIONAR VÍDEO
+===================================================== */
+
+function selecionarVideo1x1(input) {
+
+    const nome = document.getElementById(
+        "nome-video-1x1"
+    );
+
+    if (!nome) {
+        return;
+    }
+
+    if (input.files && input.files.length > 0) {
+
+        nome.textContent =
+            "🎥 " + input.files[0].name;
+
+    } else {
+
+        nome.textContent = "";
+
+    }
+
+}
+
+
+/* =====================================================
+   ENVIAR VÍDEO
+===================================================== */
+
+function enviarVideo1x1() {
+
+    const input = document.getElementById(
+        "video-1x1"
+    );
+
+    const observacao = document.getElementById(
+        "observacao-video"
+    );
+
+    if (!input || !input.files.length) {
+
+        alert(
+            "Selecione uma partida antes de enviar."
+        );
+
+        return;
+
+    }
+
+
+    const texto =
+        observacao && observacao.value.trim()
+            ? observacao.value.trim()
+            : "Nenhuma observação informada.";
+
+
+    console.log(
+        "Vídeo enviado para o coach:",
+        input.files[0].name
+    );
+
+    console.log(
+        "Observação:",
+        texto
+    );
+
+
+    alert(
+        "Partida enviada para o coach com sucesso!"
+    );
+
+}
+
+/* =====================================================
+   CONTEÚDO DO ACOMPANHAMENTO POR JOGO
+===================================================== */
+
+const dadosAcompanhamento = {
+
+    Fortnite: {
+
+        coach: "Coach Gabriel",
+
+        objetivo:
+            "Melhorar Piece Control durante as fights",
+
+        descricao:
+            "Priorize situações de Box Fight e trabalhe a execução do Piece Control antes de tentar acelerar as jogadas.",
+
+        meta:
+            "Executar corretamente em 8 de 10 situações"
+
+    },
+
+
+    VALORANT: {
+
+        coach: "Coach Gabriel",
+
+        objetivo:
+            "Melhorar posicionamento de mira e situações de clutch",
+
+        descricao:
+            "Trabalhe seu posicionamento antes das trocas e pratique decisões rápidas em situações de desvantagem numérica.",
+
+        meta:
+            "Vencer pelo menos 6 de 10 situações de clutch"
+
+    },
+
+
+    "CS2": {
+
+        coach: "Coach Gabriel",
+
+        objetivo:
+            "Melhorar Crosshair Placement e utilização de utilitários",
+
+        descricao:
+            "Priorize manter a mira posicionada corretamente e utilize os utilitários antes de entrar nas áreas de combate.",
+
+        meta:
+            "Executar corretamente 8 de 10 situações treinadas"
+
+    },
+
+
+    "League of Legends": {
+
+        coach: "Coach Gabriel",
+
+        objetivo:
+            "Melhorar farm e controle de mapa",
+
+        descricao:
+            "Trabalhe sua consistência de farm e desenvolva uma rotina de controle de visão e rotações pelo mapa.",
+
+        meta:
+            "Manter 7+ CS por minuto durante os treinos"
+
+    }
+
+};
+
+
+/* =====================================================
+   ATUALIZAR ACOMPANHAMENTO
+===================================================== */
+
+function atualizarProgresso1x1() {
+
+    const tarefas = document.querySelectorAll(
+        '.tarefas-lista input[type="checkbox"]'
+    );
+
+    const concluidas = document.querySelectorAll(
+        '.tarefas-lista input[type="checkbox"]:checked'
+    );
+
+    const total = tarefas.length;
+    const feitas = concluidas.length;
+
+    if (total === 0) {
+        return;
+    }
+
+    const porcentagem = Math.round(
+        (feitas / total) * 100
+    );
+
+    const contador = document.getElementById(
+        "tarefas-contador"
+    );
+
+    const percentual = document.getElementById(
+        "tarefas-percentual"
+    );
+
+    const progresso = document.getElementById(
+        "progresso-percentual"
+    );
+
+    const barra = document.getElementById(
+        "barra-progresso"
+    );
+
+
+    if (contador) {
+        contador.textContent =
+            `${feitas} de ${total} concluídas`;
+    }
+
+    if (percentual) {
+        percentual.textContent =
+            `${porcentagem}%`;
+    }
+
+    if (progresso) {
+        progresso.textContent =
+            `${porcentagem}%`;
+    }
+
+    if (barra) {
+        barra.style.width =
+            `${porcentagem}%`;
+    }
+
+}
+
+function abrirAcompanhamento() {
+
+    const acompanhamento = document.getElementById("acompanhamento-1x1");
+
+    if (acompanhamento) {
+        acompanhamento.style.display = "block";
+
+        acompanhamento.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        return;
+    }
+
+    alert("Área de acompanhamento 1-on-1 não encontrada.");
+}
+
+function atualizarAcompanhamento1x1(jogo) {
+
+    const dados =
+        dadosAcompanhamento[jogo];
+
+    if (!dados) {
+
+        console.log(
+            "Nenhuma configuração encontrada para:",
+            jogo
+        );
+
+        return;
+
+    }
+
+
+    const coach =
+        document.getElementById(
+            "nome-coach"
+        );
+
+    const jogoElemento =
+        document.getElementById(
+            "jogo-acompanhamento"
+        );
+
+    const objetivo =
+        document.getElementById(
+            "objetivo-semana"
+        );
+
+    const descricao =
+        document.getElementById(
+            "descricao-objetivo"
+        );
+
+    const meta =
+        document.getElementById(
+            "meta-semana"
+        );
+
+
+    if (coach) {
+        coach.textContent =
+            dados.coach;
+    }
+
+
+    if (jogoElemento) {
+        jogoElemento.textContent =
+            jogo;
+    }
+
+
+    if (objetivo) {
+        objetivo.textContent =
+            dados.objetivo;
+    }
+
+
+    if (descricao) {
+        descricao.textContent =
+            dados.descricao;
+    }
+
+
+    if (meta) {
+        meta.textContent =
+            dados.meta;
+    }
 
 }
 
@@ -4261,21 +6028,36 @@ function identificarJogoRelatorio(){
 // 📊 RELATÓRIO
 function abrirRelatorioMensal(){
 
-    const modal =
-        document.getElementById(
-            "modal-relatorio-mensal"
-        );
+    const usuario = JSON.parse(
+        localStorage.getItem("usuario")
+    );
+
+    if(!usuario?.email){
+        alert("Você precisa estar logado para acessar o relatório.");
+        return;
+    }
+
+    const planoAtivo = normalizarPlano(
+        localStorage.getItem("planoAtivo")
+    );
+
+    if(planoAtivo !== "champion"){
+        alert("📊 O Relatório Mensal está disponível apenas para o Plano Champion.");
+        return;
+    }
+
+    const modal = document.getElementById(
+        "modal-relatorio-mensal"
+    );
 
     if(!modal){
-        console.error(
-            "Modal do relatório mensal não encontrado."
-        );
+        console.error("Modal do relatório mensal não encontrado.");
         return;
     }
 
     montarRelatorioPorJogo();
 
-    modal.style.display = "flex";
+    modal.classList.add("ativo");
 }
 
 function montarRelatorioPorJogo(){
@@ -4410,19 +6192,6 @@ function montarRelatorioPorJogo(){
 }
 
 
-function fecharRelatorioMensal(){
-
-    const modal =
-        document.getElementById(
-            "modal-relatorio-mensal"
-        );
-
-    if(modal){
-
-        modal.style.display = "none";
-    }
-
-}
 
 function carregarVideoRelatorio(input){
 
@@ -4469,7 +6238,7 @@ function fecharRelatorioMensal(){
     );
 
     if(modal){
-        modal.style.display = "none";
+        modal.classList.remove("ativo");
     }
 }
 
@@ -5630,5 +7399,10 @@ function abrirPromocao() {
         });
     }
 
+document.addEventListener("DOMContentLoaded", function() {
+    atualizarEntregaCheckout();
+});
+
 // Mantém um alias para caso o HTML chame por verOfertas
 window.verOfertas = abrirPromocao;
+
