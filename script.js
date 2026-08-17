@@ -2328,24 +2328,44 @@ function inicializarPagamento(){
 
 let todosProdutos=[];
 
-async function carregarProdutos(){
-    const container=document.getElementById("lista-produtos");
-    if(!container)return;
+async function carregarProdutos() {
+    console.log("🟢 carregarProdutos iniciou");
 
-    container.innerHTML="<p>Carregando produtos...</p>";
+    const container = document.getElementById("lista-produtos");
 
-    try{
-        const res=await fetch("http://localhost:3000/produtos");
-        todosProdutos=await res.json();
-        window.todosProdutos=todosProdutos;
+    console.log("📦 container:", container);
+
+    if (!container) {
+        console.error("❌ #lista-produtos não existe");
+        return;
+    }
+
+    try {
+        console.log("🌐 Fazendo fetch...");
+
+        const res = await fetch("http://localhost:3000/produtos");
+
+        console.log("📡 Resposta:", res.status, res.ok);
+
+        const dados = await res.json();
+
+        console.log("📦 Produtos recebidos:", dados);
+        console.log("🔢 Quantidade:", dados.length);
+
+        todosProdutos = dados;
+        window.todosProdutos = dados;
+
+        console.log("🎨 Chamando filtrarCategoria...");
+
         filtrarCategoria("todos");
 
-    }catch(e){
-        console.error(e);
-        container.innerHTML="<p>Erro ao carregar produtos.</p>";
+        console.log("✅ Produtos renderizados!");
+
+    } catch (e) {
+        console.error("❌ ERRO:", e);
+        container.innerHTML = `<p>Erro: ${e.message}</p>`;
     }
 }
-
 function pesquisarProdutos() {
     const input = document.getElementById("barra-pesquisa");
     const container = document.getElementById("lista-produtos");
@@ -2816,6 +2836,18 @@ function obterCaminhoImagem(nomeProduto) {
         .replace(/[\u0300-\u036f]/g, "");
 
     // =====================================================
+    // MANGUITOS
+    // =====================================================
+
+    if (nome.includes("base labs gaming sleeve")) {
+    return "imagens/baselabs_sleeve.png";
+}
+
+if (nome.includes("pulsar es arm sleeve")) {
+    return "imagens/Pulsar ES Arm Sleeve.png";
+}
+
+    // =====================================================
     // PROCESSADORES AMD
     // =====================================================
 
@@ -3015,6 +3047,10 @@ if (nome.includes("rx 6750 xt")) {
         return "imagens/fonte550w.png";
     }
 
+    if (nome.includes("rm1000e")) {
+    return "imagens/Fonte Corsair RM1000e 1000W 80+ Gold ATX 3.0.png";
+}
+
 
     // =====================================================
     // COOLERS
@@ -3068,6 +3104,10 @@ if (nome.includes("rx 6750 xt")) {
         return "imagens/Wooting 60HE+.png";
     }
 
+    if (nome.includes("k70 max")) {
+    return "imagens/Corsair K70 MAX RGB Magnetic.png";
+}
+
     if (nome.includes("wooting 80he")) {
         return "imagens/wooting-80he-removebg-preview.png";
     }
@@ -3110,6 +3150,10 @@ if (nome.includes("rx 6750 xt")) {
         return "imagens/logitech-superlight2-removebg-preview.png";
     }
 
+    if (nome.includes("viper v3 pro")) {
+    return "imagens/Razer Viper V3 Pro.png";
+}
+
 
     // =====================================================
     // MOUSEPADS
@@ -3135,6 +3179,17 @@ if (nome.includes("rx 6750 xt")) {
         return "imagens/hayate-otsu-removebg-preview.png";
     }
 
+    if (nome.includes("zero soft")) {
+    return "imagens/Artisan FX Zero Soft XL.png";
+    }
+
+    if (nome.includes("ninja") && nome.includes("zero")) {
+    return "imagens/Artisan Ninja FX Zero Mid.png";
+    }
+
+    if (nome.includes("base labs")) {
+    return "imagens/Base Labs Gaming Sleeve.png";
+    }
 
     // =====================================================
     // HEADSETS
@@ -3155,6 +3210,11 @@ if (nome.includes("rx 6750 xt")) {
         return "imagens/HyperX Cloud III Wireless.png";
     }
 
+    if (nome.includes("g pro x 2")) {
+    return "imagens/Logitech G Pro X 2 LIGHTSPEED.png";
+}
+
+
 
     // =====================================================
     // MONITORES
@@ -3173,6 +3233,18 @@ if (nome.includes("rx 6750 xt")) {
         nome.includes("zowie")) {
         return "imagens/BenqZowie.png";
     }
+
+    if (nome.includes("360hz oled")) {
+    return "imagens/ASUS ROG Swift 360Hz OLED.png";
+}
+
+if (nome.includes("pg27aqdm")) {
+    return "imagens/ASUS ROG Swift PG27AQDM.png";
+}
+
+if (nome.includes("alienware")) {
+    return "imagens/Alienware AW2725DF (360Hz QD-OLED).png";
+}
 
 
     // =====================================================
@@ -4998,6 +5070,8 @@ function fecharGuiaTreino() {
             "none";
 
     }
+
+    
 
 }
 
@@ -7411,3 +7485,89 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // Mantém um alias para caso o HTML chame por verOfertas
 window.verOfertas = abrirPromocao;
+
+let notaSelecionada = 0;
+
+function abrirAvaliacaoProduto() {
+    const modal = document.getElementById("modal-avaliacao-produto");
+
+    if (modal) {
+        modal.style.display = "flex";
+    }
+}
+
+function fecharAvaliacaoProduto() {
+    const modal = document.getElementById("modal-avaliacao-produto");
+
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+function selecionarNota(nota) {
+    notaSelecionada = nota;
+
+    const estrelas = document.querySelectorAll("#estrelas-avaliacao button");
+
+    estrelas.forEach((estrela, index) => {
+        estrela.style.color = index < nota ? "#ffd700" : "#555";
+    });
+}
+
+function enviarAvaliacao() {
+    const comentario = document.getElementById("comentario-avaliacao").value.trim();
+
+    if (!notaSelecionada || notaSelecionada < 1) {
+        alert("Selecione uma nota!");
+        return;
+    }
+
+    // ALTERA AS ESTRELAS DE CIMA
+    const estrelasTopo = document.getElementById("produto-estrelas");
+    const contadorTopo = document.getElementById("produto-avaliacoes");
+
+    estrelasTopo.textContent =
+        "★".repeat(notaSelecionada) +
+        "☆".repeat(5 - notaSelecionada);
+
+    contadorTopo.textContent = "1 avaliação";
+
+    // Coloca a avaliação na lista
+    const lista = document.getElementById("lista-avaliacoes-produto");
+
+    if (lista) {
+        lista.innerHTML = `
+            <div class="avaliacao-item">
+                <div class="avaliacao-estrelas">
+                    ${"★".repeat(notaSelecionada)}${"☆".repeat(5 - notaSelecionada)}
+                </div>
+                <p>${comentario || "Sem comentário."}</p>
+            </div>
+        `;
+    }
+
+    // Fecha a janela
+    const modal = document.getElementById("modal-avaliacao");
+    if (modal) {
+        modal.style.display = "none";
+    }
+
+    const mensagem = document.getElementById("mensagem-avaliacao");
+
+if (mensagem) {
+    mensagem.style.display = "block";
+}
+
+const notificacao = document.getElementById("notificacao-avaliacao");
+
+if (notificacao) {
+    notificacao.classList.add("mostrar");
+
+    setTimeout(() => {
+        notificacao.classList.remove("mostrar");
+    }, 4000);
+}
+
+
+}
+

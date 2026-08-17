@@ -8235,3 +8235,93 @@ html {
     }
 
 }
+
+/* MODAL DE AVALIAÇÃO */
+#modal-avaliacao-produto {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+}
+
+#modal-avaliacao-produto.ativo {
+    display: flex;
+}
+
+#modal-avaliacao-produto .conteudo-avaliacao {
+    background: #080d16;
+    border: 1px solid #00cfff;
+    border-radius: 10px;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.estrelas-input {
+    display: flex;
+    gap: 5px;
+    margin: 15px 0;
+}
+
+.estrelas-input button {
+    font-size: 25px;
+    cursor: pointer;
+}
+
+#comentario-avaliacao {
+    width: 100%;
+    min-height: 120px;
+    box-sizing: border-box;
+}
+
+.notificacao-avaliacao {
+    position: fixed;
+    top: 35px;
+    right: 25px;
+    width: 320px;
+    padding: 14px 18px;
+    background: #080d17;
+    border: 1px solid #00d9ff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 99999;
+
+    opacity: 0;
+    transform: translateX(120%);
+    pointer-events: none;
+    transition: 0.4s ease;
+}
+
+.notificacao-avaliacao.mostrar {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.icone-notificacao {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 217, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.notificacao-avaliacao strong {
+    display: block;
+    color: #00d9ff;
+    font-size: 15px;
+}
+
+.notificacao-avaliacao span {
+    display: block;
+    color: #ccc;
+    font-size: 13px;
+    margin-top: 3px;
+}

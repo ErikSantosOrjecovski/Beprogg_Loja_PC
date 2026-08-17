@@ -349,9 +349,13 @@
                 Produto
             </h1>
             <div class="produto-avaliacao">
-                <span class="estrelas">★★★★★</span>
-                <span id="produto-avaliacoes">0 avaliações</span>
-            </div>
+    <span id="produto-estrelas" class="estrelas">☆☆☆☆☆</span>
+    <span id="produto-avaliacoes">0 avaliações</span>
+</div>
+
+<button id="btn-avaliar-produto" class="btn-avaliar-produto" onclick="abrirAvaliacaoProduto()">
+    ⭐ Avaliar produto
+</button>
 
             <div class="produto-vendedor">
                 Vendido e entregue por:
@@ -403,7 +407,51 @@
             Produto gamer selecionado pela Bepro.gg.
         </p>
     </div>
+
+    <div id="lista-avaliacoes-produto">
+    <p>Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>
+</div>
+
+<p id="mensagem-avaliacao" style="display:none;">
+    Obrigado pela sua avaliação! ⭐
+</p>
 </section>
+
+<div id="modal-avaliacao-produto">
+
+    <div class="conteudo-avaliacao">
+
+        <h2>Avaliar produto</h2>
+
+        <button type="button" onclick="fecharAvaliacaoProduto()">
+            ✕
+        </button>
+
+        <div id="estrelas-avaliacao" class="estrelas-input">
+            <button type="button" onclick="selecionarNota(1)">★</button>
+            <button type="button" onclick="selecionarNota(2)">★</button>
+            <button type="button" onclick="selecionarNota(3)">★</button>
+            <button type="button" onclick="selecionarNota(4)">★</button>
+            <button type="button" onclick="selecionarNota(5)">★</button>
+        </div>
+
+        <textarea
+            id="comentario-avaliacao"
+            placeholder="Conte o que você achou deste produto..."
+            maxlength="1000"
+        ></textarea>
+
+        <button
+            type="button"
+            class="btn-enviar-avaliacao"
+            onclick="enviarAvaliacao()"
+        >
+            Enviar avaliação
+        </button>
+
+    </div>
+
+</div>
 
 <section id="carrinho" class="conteudo" style="display: none;">
   <div class="favoritos-container">
@@ -2300,6 +2348,15 @@
     </div>
 
 </section>
+
+<div id="notificacao-avaliacao" class="notificacao-avaliacao">
+    <div class="icone-notificacao">⭐</div>
+
+    <div>
+        <strong>Avaliação enviada!</strong>
+        <span>Obrigado pela sua avaliação.</span>
+    </div>
+</div>
 
 </body>
 </html>
