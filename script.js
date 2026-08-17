@@ -1346,19 +1346,24 @@ function atualizarEntregaCheckout() {
 
         usuario,
 
-        itens:
-            produtosFisicos,
+  itens:
+        temProdutoFisico
+            ? produtosFisicos
+            : planoSelecionado
+                ? [{
+                    nome: planoSelecionado.nome,
+                    preco: Number(planoSelecionado.preco)
+                }]
+                : carrinho,
 
-        tipoPedido:
-            planoSelecionado && !temProdutoFisico
-                ? "plano"
-                : "produto",
+    tipoPedido:
+        planoSelecionado && !temProdutoFisico
+            ? "plano"
+            : "produto",
 
-        plano:
-            planoSelecionado || null
-
-    };
-
+    plano:
+        planoSelecionado || null
+};
 
     /*
      * DETALHES DO PAGAMENTO
@@ -7570,4 +7575,100 @@ if (notificacao) {
 
 
 }
+
+// ========================================
+// 🍪 AVISO DE COOKIES
+// ========================================
+
+function iniciarCookies() {
+
+    // Se o usuário já escolheu, não mostra novamente
+
+    const banner = document.createElement("div");
+
+    banner.id = "cookie-banner";
+
+    banner.innerHTML = `
+        <div class="cookie-conteudo">
+
+            <div class="cookie-texto">
+                <h2>Primeiro, vamos falar dos cookies 🍪</h2>
+
+                <p>
+                    Utilizamos cookies essenciais para o funcionamento
+                    da BePro. Podemos utilizar outros cookies para melhorar
+                    sua experiência no nosso site, mas somente se você permitir.
+                </p>
+            </div>
+
+            <div class="cookie-botoes">
+                <button id="aceitar-cookies" class="cookie-btn aceitar">
+                    Aceitar cookies
+                </button>
+
+                <button id="recusar-cookies" class="cookie-btn recusar">
+                    Recusar
+                </button>
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(banner);
+
+
+    // ACEITAR
+    document
+        .getElementById("aceitar-cookies")
+        .addEventListener("click", function () {
+
+            localStorage.setItem(
+                "bepro_cookie_consent",
+                "aceito"
+            );
+
+            fecharBannerCookies();
+        });
+
+
+    // RECUSAR
+    document
+        .getElementById("recusar-cookies")
+        .addEventListener("click", function () {
+
+            localStorage.setItem(
+                "bepro_cookie_consent",
+                "recusado"
+            );
+
+            fecharBannerCookies();
+        });
+}
+
+
+// ========================================
+// FECHAR BANNER
+// ========================================
+
+function fecharBannerCookies() {
+
+    const banner = document.getElementById("cookie-banner");
+
+    if (banner) {
+        banner.classList.add("cookie-fechando");
+
+        setTimeout(() => {
+            banner.remove();
+        }, 300);
+    }
+}
+
+
+// ========================================
+// INICIAR AO ABRIR O SITE
+// ========================================
+
+document.addEventListener("DOMContentLoaded", function () {
+    iniciarCookies();
+});
 

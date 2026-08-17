@@ -61,15 +61,46 @@ function isNonEmptyString(value) {
 }
 
 function validatePedido(pedido) {
-    if (!pedido || typeof pedido !== 'object') return false;
+    if (!pedido || typeof pedido !== "object") return false;
+
     if (!isNonEmptyString(pedido.cliente)) return false;
     if (!isNonEmptyString(pedido.telefone)) return false;
-    if (!isNonEmptyString(pedido.endereco)) return false;
     if (!isNonEmptyString(pedido.pagamento)) return false;
-    if (!pedido.usuario || !isNonEmptyString(pedido.usuario.email) || !isNonEmptyString(pedido.usuario.nome)) return false;
-    if (!Array.isArray(pedido.itens) || pedido.itens.length === 0) return false;
-    
-    return pedido.itens.every(item => item && isNonEmptyString(item.nome) && !Number.isNaN(Number(item.preco)));
+
+    if (
+        !pedido.usuario ||
+        !isNonEmptyString(pedido.usuario.email) ||
+        !isNonEmptyString(pedido.usuario.nome)
+    ) {
+        return false;
+    }
+
+    if (!Array.isArray(pedido.itens) || pedido.itens.length === 0) {
+        return false;
+    }
+
+    const possuiProdutoFisico = pedido.itens.some(item => {
+        const nome = String(item.nome || "").toLowerCase();
+
+        return !(
+            nome.includes("aula") ||
+            nome.includes("coach") ||
+            nome.includes("plano") ||
+            nome.includes("player") ||
+            nome.includes("champion")
+        );
+    });
+
+    // Endereço só é obrigatório para produto físico
+    if (possuiProdutoFisico && !isNonEmptyString(pedido.endereco)) {
+        return false;
+    }
+
+    return pedido.itens.every(item =>
+        item &&
+        isNonEmptyString(item.nome) &&
+        !Number.isNaN(Number(item.preco))
+    );
 }
 
 // ==========================================
@@ -156,6 +187,10 @@ app.post("/recomendar", (req, res) => {
 // ============================
 app.post("/pedido", (req, res) => {
     const pedido = req.body;
+
+    console.log("========== PEDIDO RECEBIDO ==========");
+console.log(JSON.stringify(pedido, null, 2));
+console.log("=====================================");   
 
     if (!validatePedido(pedido)) {
         return res.status(400).json({ error: 'Payload de pedido inválido.' });

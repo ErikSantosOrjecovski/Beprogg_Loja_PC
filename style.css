@@ -8325,3 +8325,326 @@ html {
     font-size: 13px;
     margin-top: 3px;
 }
+
+/* ========================================
+   🍪 BANNER DE COOKIES - BEPRO
+   ======================================== */
+
+#cookie-banner {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+
+    background: #0d1117;
+    color: #ffffff;
+
+    padding: 24px 32px;
+
+    box-sizing: border-box;
+
+    z-index: 999999;
+
+    border-top: 1px solid #1f293d;
+
+    box-shadow:
+        0 -8px 30px rgba(0, 0, 0, 0.45);
+
+    font-family: inherit;
+
+    animation: cookieEntrar 0.35s ease;
+}
+
+
+/* ========================================
+   LINHA SUPERIOR DE DESTAQUE
+   ======================================== */
+
+#cookie-banner::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background: #00d4ff;
+
+    box-shadow:
+        0 0 10px rgba(0, 212, 255, 0.45);
+}
+
+
+/* ========================================
+   CONTEÚDO
+   ======================================== */
+
+.cookie-conteudo {
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 40px;
+}
+
+
+/* ========================================
+   TEXTO
+   ======================================== */
+
+.cookie-texto {
+    flex: 1;
+}
+
+.cookie-texto h2 {
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.2px;
+}
+
+.cookie-texto p {
+    margin: 0;
+
+    max-width: 900px;
+
+    color: #94a3b8;
+
+    font-size: 15px;
+
+    line-height: 1.6;
+}
+
+
+/* ========================================
+   DESTAQUE NO 🍪
+   ======================================== */
+
+.cookie-texto h2::first-letter {
+    color: #00d4ff;
+}
+
+
+/* ========================================
+   BOTÕES
+   ======================================== */
+
+.cookie-botoes {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex-shrink: 0;
+}
+
+
+/* ========================================
+   BOTÃO BASE
+   ======================================== */
+
+.cookie-btn {
+    min-width: 145px;
+
+    padding: 13px 22px;
+
+    border-radius: 7px;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* ========================================
+   ACEITAR
+   ======================================== */
+
+.cookie-btn.aceitar {
+    background: #00d4ff;
+
+    color: #061018;
+
+    border: 1px solid #00d4ff;
+
+    box-shadow:
+        0 0 12px rgba(0, 212, 255, 0.12);
+}
+
+.cookie-btn.aceitar:hover {
+    background: #19dcff;
+
+    border-color: #19dcff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 0 18px rgba(0, 212, 255, 0.3);
+}
+
+
+/* ========================================
+   RECUSAR
+   ======================================== */
+
+.cookie-btn.recusar {
+    background: #111823;
+
+    color: #cbd5e1;
+
+    border: 1px solid #1f293d;
+}
+
+.cookie-btn.recusar:hover {
+    background: #17202d;
+
+    color: #ffffff;
+
+    border-color: #334155;
+
+    transform: translateY(-1px);
+}
+
+
+/* ========================================
+   ANIMAÇÃO ENTRADA
+   ======================================== */
+
+@keyframes cookieEntrar {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(100%);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+/* ========================================
+   ANIMAÇÃO SAÍDA
+   ======================================== */
+
+.cookie-fechando {
+    animation:
+        cookieSair 0.3s ease forwards;
+}
+
+@keyframes cookieSair {
+
+    from {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+
+    to {
+        opacity: 0;
+
+        transform:
+            translateY(100%);
+    }
+
+}
+
+
+/* ========================================
+   📱 RESPONSIVO
+   ======================================== */
+
+@media (max-width: 768px) {
+
+    #cookie-banner {
+        padding: 22px 18px;
+    }
+
+    .cookie-conteudo {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 18px;
+    }
+
+    .cookie-texto h2 {
+        font-size: 19px;
+    }
+
+    .cookie-texto p {
+        font-size: 14px;
+
+        line-height: 1.5;
+    }
+
+    .cookie-botoes {
+        width: 100%;
+
+        display: flex;
+
+        gap: 10px;
+    }
+
+    .cookie-btn {
+        flex: 1;
+
+        min-width: 0;
+
+        padding: 12px 14px;
+
+        font-size: 14px;
+    }
+
+}
+
+
+/* ========================================
+   📱 CELULAR PEQUENO
+   ======================================== */
+
+@media (max-width: 420px) {
+
+    .cookie-botoes {
+        flex-direction: column;
+    }
+
+    .cookie-btn {
+        width: 100%;
+    }
+
+}
